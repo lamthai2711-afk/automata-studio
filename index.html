@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Automata Studio: Interactive Learning Laboratory</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+
+  <!-- Top Header -->
+  <header class="bg-slate-900 text-white border-b border-slate-800 px-4 sm:px-6 py-4 shadow-sm">
+    <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <span class="text-2xl">🧠</span>
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight">Automata Studio: Interactive Learning Laboratory</h1>
+          <p class="text-xs text-slate-400">Dynamic Visual Pipelines &bull; Step-by-Step Mathematical Decomposition &bull; String Execution Tracing</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3 text-xs">
+        <span class="px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 font-mono" id="headerSessionBadge">Actions: 0</span>
+        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-mono">SZE Formal Languages Lab</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="max-w-[1600px] w-full mx-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 sm:p-6">
+
+    <!-- Sidebar Configuration (Left 3 cols) -->
+    <aside class="lg:col-span-3 bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-5 h-fit">
+      <div>
+        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+          <span>⚙️</span> <span>Experiment Controls</span>
+        </h2>
+        <label class="block text-xs font-medium text-slate-600 mt-2 mb-1" for="participantIdInput">Participant ID (Optional)</label>
+        <input id="participantIdInput" type="text" placeholder="e.g., SZE-XXXXXX"
+          class="w-full px-3 py-2 text-xs font-mono rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+      </div>
+
+      <hr class="border-slate-200" />
+
+      <div>
+        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+          <span>📚</span> <span>Scenarios &amp; Presets</span>
+        </h2>
+        <label class="block text-xs font-medium text-slate-600 mt-2 mb-1" for="presetSelect">Select Scenario Preset:</label>
+        <select id="presetSelect" class="w-full px-3 py-2 text-xs font-medium rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-blue-500">
+          <option value="Contains Empty Transition (ε)">Contains Empty Transition (ε)</option>
+          <option value="Ends with '01'">Ends with '01'</option>
+          <option value="Even number of 1s">Even number of 1s</option>
+          <option value="Post-Survey Context 1 (A, B, C)">Post-Survey Context 1 (A, B, C)</option>
+          <option value="Post-Survey Context 2 (1, 2, 3)">Post-Survey Context 2 (1, 2, 3)</option>
+          <option value="Custom Automaton">Custom Automaton</option>
+        </select>
+        <div id="scenarioDescriptionBox" class="mt-2 p-2.5 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-900"></div>
+      </div>
+
+      <div class="space-y-3">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">NFA Formal Specification</h3>
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1" for="statesInput">States (comma-separated)</label>
+          <input id="statesInput" type="text" value="A, B, C"
+            class="w-full px-3 py-1.5 text-xs font-mono rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1" for="alphabetInput">Alphabet (comma-separated, 'e' for ε)</label>
+          <input id="alphabetInput" type="text" value="0, 1, e"
+            class="w-full px-3 py-1.5 text-xs font-mono rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1" for="startStateSelect">Start State (q0)</label>
+            <select id="startStateSelect" class="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-slate-300 bg-white"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Accept States (F)</label>
+            <div id="acceptStatesContainer" class="flex flex-wrap gap-1.5 p-1.5 rounded-lg border border-slate-200 bg-slate-50 min-h-[34px]"></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-1.5">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Transition Table Builder</h3>
+          <span class="text-[11px] text-slate-400">Click targets to toggle</span>
+        </div>
+        <div id="transitionsBuilderContainer" class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1 custom-scroll"></div>
+      </div>
+    </aside>
+
+    <!-- Main Content Tabs (Right 9 cols) -->
+    <main class="lg:col-span-9 space-y-5">
+
+      <!-- Tab Navigation -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-1.5 flex flex-wrap gap-1.5 shadow-xs">
+        <button type="button" id="tabBtnPipeline" onclick="switchTab('pipeline')"
+          class="flex-1 min-w-[180px] py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-blue-600 text-white shadow-xs">
+          📊 1. Visual Pipeline (NFA ➔ DFA ➔ Min DFA)
+        </button>
+        <button type="button" id="tabBtnStepper" onclick="switchTab('stepper')"
+          class="flex-1 min-w-[180px] py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">
+          ⏯️ 2. Step-by-Step String Stepper
+        </button>
+        <button type="button" id="tabBtnTelemetry" onclick="switchTab('telemetry')"
+          class="flex-1 min-w-[180px] py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">
+          📋 3. Research Telemetry &amp; Activity Log
+        </button>
+      </div>
+
+      <!-- TAB 1: VISUAL PIPELINE -->
+      <section id="tabPanelPipeline" class="space-y-5">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-slate-900">Comparative Automata Transformation Pipeline</h2>
+              <p class="text-xs text-slate-500">Visualizing the topological progression from NFA to Deterministic Machine to Minimal Canonical Form.</p>
+            </div>
+            <!-- Color Legend (Mayer's Signaling Principle) -->
+            <div class="flex flex-wrap items-center gap-3 text-xs">
+              <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#dbeafe] border-2 border-[#1d4ed8]"></span>Start State</span>
+              <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-white border-2 border-double border-slate-700"></span>Accept State (Double Circle)</span>
+              <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#fee2e2] border-2 border-[#b91c1c]"></span>Trap (Dead) State</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+            <!-- Column 1: Original NFA -->
+            <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4 flex flex-col justify-between space-y-4">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="text-sm font-bold text-slate-800">1. Original NFA</h3>
+                  <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-200 text-slate-700" id="nfaStatsBadge"></span>
+                </div>
+                <div id="nfaGraphContainer" class="bg-white rounded-lg border border-slate-200 p-2 min-h-[230px] flex items-center justify-center overflow-x-auto"></div>
+              </div>
+              <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 text-white px-3 py-2 text-xs font-semibold flex justify-between items-center">
+                  <span>Show E-Closure (E-sets)</span>
+                  <span class="text-[11px] font-mono text-slate-300">E-set(q)</span>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-100 text-slate-600 border-b border-slate-200">
+                      <tr>
+                        <th class="py-2 px-3 font-semibold">NFA State</th>
+                        <th class="py-2 px-3 font-semibold">E-set (Epsilon Closure)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="eClosureTableBody" class="divide-y divide-slate-200 font-mono"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 2: Converted DFA -->
+            <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4 flex flex-col justify-between space-y-4">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="text-sm font-bold text-slate-800">2. Converted DFA (Subset Construction)</h3>
+                  <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-blue-100 text-blue-800" id="dfaStatsBadge"></span>
+                </div>
+                <div id="dfaGraphContainer" class="bg-white rounded-lg border border-slate-200 p-2 min-h-[230px] flex items-center justify-center overflow-x-auto"></div>
+              </div>
+              <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 text-white px-3 py-2 text-xs font-semibold flex justify-between items-center">
+                  <span>Subset Construction Transition Table</span>
+                  <span class="text-[11px] font-mono text-slate-300">E-set(Move(S, σ))</span>
+                </div>
+                <div class="overflow-x-auto max-h-[240px] custom-scroll">
+                  <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-100 text-slate-600 border-b border-slate-200 sticky top-0">
+                      <tr>
+                        <th class="py-2 px-2.5 font-semibold">Current S</th>
+                        <th class="py-2 px-2 font-semibold">σ</th>
+                        <th class="py-2 px-2.5 font-semibold">Move(S, σ)</th>
+                        <th class="py-2 px-2.5 font-semibold">E-set(Move) ➔ Target</th>
+                      </tr>
+                    </thead>
+                    <tbody id="subsetTableBody" class="divide-y divide-slate-200 font-mono"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 3: Minimized DFA -->
+            <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4 flex flex-col justify-between space-y-4">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="text-sm font-bold text-slate-800">3. Minimized DFA (Equivalence Partitions)</h3>
+                  <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800" id="minDfaStatsBadge"></span>
+                </div>
+                <div id="minDfaGraphContainer" class="bg-white rounded-lg border border-slate-200 p-2 min-h-[230px] flex items-center justify-center overflow-x-auto"></div>
+              </div>
+              <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 text-white px-3 py-2 text-xs font-semibold flex justify-between items-center">
+                  <span>State Collapsing Equivalence Map</span>
+                  <span class="text-[11px] font-mono text-slate-300">Moore Partitioning</span>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-100 text-slate-600 border-b border-slate-200">
+                      <tr>
+                        <th class="py-2 px-3 font-semibold">Minimized Group</th>
+                        <th class="py-2 px-3 font-semibold">Original Component States</th>
+                      </tr>
+                    </thead>
+                    <tbody id="minMapTableBody" class="divide-y divide-slate-200 font-mono"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: STEP-BY-STEP STRING STEPPER -->
+      <section id="tabPanelStepper" class="space-y-5 hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-5">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">Interactive Step-by-Step String Stepper</h2>
+            <p class="text-xs text-slate-500">Navigate character transitions one click at a time with active state (#86efac) and active transition edge (#dc2626) signaling.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+            <div class="md:col-span-6">
+              <label class="block text-xs font-semibold text-slate-700 mb-1" for="stepperStringInput">Input String to Trace:</label>
+              <input id="stepperStringInput" type="text" value="0101"
+                class="w-full px-3.5 py-2 text-sm font-mono rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div class="md:col-span-6">
+              <span class="block text-xs font-semibold text-slate-700 mb-1">Select Target Automaton:</span>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="flex items-center justify-center p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 text-xs font-semibold">
+                  <input type="radio" name="stepperTargetMachine" value="Minimized DFA" checked class="mr-2 text-blue-600" />
+                  <span>Minimized DFA</span>
+                </label>
+                <label class="flex items-center justify-center p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 text-xs font-semibold">
+                  <input type="radio" name="stepperTargetMachine" value="Standard DFA" class="mr-2 text-blue-600" />
+                  <span>Standard DFA</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stepper Control Buttons -->
+          <div class="flex flex-wrap items-center gap-2.5 pt-2">
+            <button type="button" id="btnStepReset" onclick="stepperAction('reset')"
+              class="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-2xs">
+              ⏮️ Reset
+            </button>
+            <button type="button" id="btnStepPrev" onclick="stepperAction('prev')"
+              class="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-2xs">
+              ◀️ Prev Step
+            </button>
+            <button type="button" id="btnStepNext" onclick="stepperAction('next')"
+              class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-semibold text-white shadow-xs">
+              Next Step ▶️
+            </button>
+            <div class="ml-auto flex items-center gap-3 text-xs font-mono bg-slate-100 px-3.5 py-2 rounded-xl border border-slate-200">
+              <span id="stepperProgressLabel">Step 0 of 4</span>
+              <span>|</span>
+              <span>Active State: <strong id="stepperActiveStateBadge" class="text-emerald-700">M0</strong></span>
+            </div>
+          </div>
+
+          <!-- Character Tape Visualizer -->
+          <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-600">
+              <span>String Progress:</span>
+              <div id="stepperTapeContainer" class="flex items-center gap-1.5 font-mono text-sm"></div>
+            </div>
+            <div id="stepperTraceSequence" class="text-xs font-mono text-slate-600"></div>
+          </div>
+
+          <!-- Highlighted Graph -->
+          <div id="stepperGraphContainer" class="bg-white rounded-xl border border-slate-200 p-4 min-h-[280px] flex items-center justify-center overflow-x-auto"></div>
+
+          <!-- Acceptance Banner -->
+          <div id="stepperResultBanner" class="p-4 rounded-xl text-sm font-medium hidden"></div>
+        </div>
+      </section>
+
+      <!-- TAB 3: RESEARCH TELEMETRY -->
+      <section id="tabPanelTelemetry" class="space-y-5 hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-5">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">📋 Educational Interaction Telemetry</h2>
+            <p class="text-xs text-slate-500">Verifiable interaction log recorded during this learning session for research validation.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="text-xs text-slate-500 font-medium">Active Session Time</div>
+              <div id="metricSessionTime" class="text-2xl font-bold text-slate-900 mt-1">0.0 mins</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="text-xs text-slate-500 font-medium">Total User Actions</div>
+              <div id="metricTotalActions" class="text-2xl font-bold text-blue-600 mt-1">0 events</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Session Verification JSON</h3>
+              <button type="button" id="btnCopyTelemetry" onclick="copyTelemetryJson()"
+                class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium">
+                Copy JSON
+              </button>
+            </div>
+            <pre id="telemetryJsonPre" class="p-4 rounded-xl bg-slate-900 text-emerald-300 font-mono text-xs overflow-x-auto"></pre>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // ==========================================
+    // 1. SCENARIOS LIBRARY (Matches NFA.py + Post-Survey Contexts 1 & 2)
+    // ==========================================
+    const PREBUILT_SCENARIOS = {
+      "Contains Empty Transition (ε)": {
+        states: "A, B, C",
+        alphabet: "0, 1, e",
+        start: "A",
+        accept: ["C"],
+        transitions: {
+          "A": { "0": ["A"], "e": ["B"] },
+          "B": { "1": ["B", "C"] },
+          "C": {}
+        },
+        sampleStr: "0101",
+        description: "Standard NFA featuring epsilon reachability E-set(A) = {A, B} and branch expansion."
+      },
+      "Ends with '01'": {
+        states: "q0, q1, q2",
+        alphabet: "0, 1",
+        start: "q0",
+        accept: ["q2"],
+        transitions: {
+          "q0": { "0": ["q0", "q1"], "1": ["q0"] },
+          "q1": { "1": ["q2"] },
+          "q2": {}
+        },
+        sampleStr: "001",
+        description: "Pattern matching automaton demonstrating non-deterministic path forks."
+      },
+      "Even number of 1s": {
+        states: "Even, Odd",
+        alphabet: "0, 1",
+        start: "Even",
+        accept: ["Even"],
+        transitions: {
+          "Even": { "0": ["Even"], "1": ["Odd"] },
+          "Odd": { "0": ["Odd"], "1": ["Even"] }
+        },
+        sampleStr: "1010",
+        description: "Parity checker automaton exhibiting symmetric cyclic equivalence."
+      },
+      "Post-Survey Context 1 (A, B, C)": {
+        states: "A, B, C",
+        alphabet: "0, 1, e",
+        start: "A",
+        accept: ["C"],
+        transitions: {
+          "A": { "0": ["A"], "e": ["B"] },
+          "B": { "1": ["C"] },
+          "C": { "0": ["C"] }
+        },
+        sampleStr: "010",
+        description: "Post-Survey Part B (Q5–Q8): Start A, Accept C, δ(A,0)={A}, δ(A,ε)={B}, δ(B,1)={C}, δ(C,0)={C}."
+      },
+      "Post-Survey Context 2 (1, 2, 3)": {
+        states: "1, 2, 3",
+        alphabet: "a, b, e",
+        start: "1",
+        accept: ["3"],
+        transitions: {
+          "1": { "a": ["1"], "e": ["2"] },
+          "2": { "b": ["2", "3"] },
+          "3": { "a": ["3"] }
+        },
+        sampleStr: "aba",
+        description: "Post-Survey Part D (Q11–Q13): Start 1, Accept 3, δ(1,a)={1}, δ(1,ε)={2}, δ(2,b)={2,3}, δ(3,a)={3}."
+      }
+    };
+
+    const appState = {
+      sessionStartTime: Date.now(),
+      userActionsLog: [],
+      simStepIndex: 0,
+      presetName: "Contains Empty Transition (ε)",
+      states: ["A", "B", "C"],
+      alphabet: ["0", "1", "e"],
+      startState: "A",
+      acceptStates: ["C"],
+      transitions: {
+        "A": { "0": ["A"], "e": ["B"] },
+        "B": { "1": ["B", "C"] },
+        "C": {}
+      },
+      dfaDef: null,
+      stepData: null,
+      minDfaDef: null,
+      minMapping: []
+    };
+
+    function logAction(actionType, details = "") {
+      const elapsed = Number(((Date.now() - appState.sessionStartTime) / 1000).toFixed(1));
+      appState.userActionsLog.push({ timestamp_sec: elapsed, action: actionType, details });
+      document.getElementById("headerSessionBadge").textContent = `Actions: ${appState.userActionsLog.length}`;
+      updateTelemetryView();
+    }
+
+    // ==========================================
+    // 2. FORMAL ALGORITHM ENGINES (Exact Port of NFA.py)
+    // ==========================================
+    function getEmptyClosure(stateArray, transitions) {
+      const closure = new Set(stateArray);
+      const stack = [...stateArray];
+      while (stack.length > 0) {
+        const curr = stack.pop();
+        const epsTargets = (transitions[curr] && transitions[curr]["e"]) ? transitions[curr]["e"] : [];
+        for (const nxt of epsTargets) {
+          if (!closure.has(nxt)) {
+            closure.add(nxt);
+            stack.push(nxt);
+          }
+        }
+      }
+      return Array.from(closure).sort();
+    }
+
+    function moveSet(stateArray, symbol, transitions) {
+      const reachable = new Set();
+      for (const s of stateArray) {
+        const targets = (transitions[s] && transitions[s][symbol]) ? transitions[s][symbol] : [];
+        for (const nxt of targets) reachable.add(nxt);
+      }
+      return Array.from(reachable).sort();
+    }
+
+    function formatStateName(stateArray) {
+      if (!stateArray || stateArray.length === 0) return "Trap";
+      if (stateArray.length === 1 && stateArray[0] === "Trap") return "Trap";
+      return "{" + [...stateArray].sort().join(", ") + "}";
+    }
+
+    function nfaToDfaWithSteps(nfaDef) {
+      const alphabet = nfaDef.alphabet.filter(s => s !== "e");
+      const nfaTrans = nfaDef.transitions;
+      const startState = nfaDef.start_state;
+      const nfaAccept = new Set(nfaDef.accept_states);
+
+      const stepData = { e_sets: {}, initial_state: null, transitions_log: [], final_states: [] };
+      if (!startState) return { dfaDef: null, stepData };
+
+      for (const st of nfaDef.states) {
+        stepData.e_sets[st] = formatStateName(getEmptyClosure([st], nfaTrans));
+      }
+
+      const initialClosure = getEmptyClosure([startState], nfaTrans);
+      stepData.initial_state = formatStateName(initialClosure);
+
+      const dfaTransitions = {};
+      const dfaAccept = new Set();
+      const dfaStates = [initialClosure];
+      const seenKeys = new Set([formatStateName(initialClosure)]);
+      const queue = [initialClosure];
+
+      while (queue.length > 0) {
+        const curr = queue.shift();
+        const stateLabel = formatStateName(curr);
+        dfaTransitions[stateLabel] = {};
+
+        if (curr.some(s => nfaAccept.has(s))) {
+          dfaAccept.add(stateLabel);
+          if (!stepData.final_states.includes(stateLabel)) stepData.final_states.push(stateLabel);
+        }
+
+        for (const sym of alphabet) {
+          const m = moveSet(curr, sym, nfaTrans);
+          const c = m.length > 0 ? getEmptyClosure(m, nfaTrans) : ["Trap"];
+          const targetLabel = formatStateName(c);
+          dfaTransitions[stateLabel][sym] = targetLabel;
+
+          stepData.transitions_log.push({
+            current: stateLabel,
+            symbol: sym,
+            move: m.length > 0 ? formatStateName(m) : "∅",
+            target: targetLabel
+          });
+
+          if (targetLabel !== "Trap" && !seenKeys.has(targetLabel)) {
+            seenKeys.add(targetLabel);
+            dfaStates.push(c);
+            queue.push(c);
+          }
+        }
+      }
+
+      const needsTrap = Object.values(dfaTransitions).some(row => Object.values(row).includes("Trap"));
+      if (needsTrap && !dfaTransitions["Trap"]) {
+        dfaTransitions["Trap"] = {};
+        for (const sym of alphabet) {
+          dfaTransitions["Trap"][sym] = "Trap";
+          stepData.transitions_log.push({ current: "Trap", symbol: sym, move: "∅", target: "Trap" });
+        }
+      }
+
+      const finalStatesList = dfaStates.map(formatStateName);
+      if (needsTrap) finalStatesList.push("Trap");
+
+      return {
+        dfaDef: {
+          states: finalStatesList,
+          alphabet,
+          start_state: formatStateName(initialClosure),
+          accept_states: Array.from(dfaAccept),
+          transitions: dfaTransitions
+        },
+        stepData
+      };
+    }
+
+    function minimizeDfa(dfaDef) {
+      if (!dfaDef || !dfaDef.states || dfaDef.states.length === 0) return { minDfa: null, mapping: [] };
+      const states = dfaDef.states;
+      const acceptSet = new Set(dfaDef.accept_states);
+      const nonAccept = states.filter(s => !acceptSet.has(s));
+      const accept = states.filter(s => acceptSet.has(s));
+      const alphabet = dfaDef.alphabet;
+      const transitions = dfaDef.transitions;
+
+      let partitions = [];
+      if (nonAccept.length > 0) partitions.push(nonAccept);
+      if (accept.length > 0) partitions.push(accept);
+
+      while (true) {
+        const newPartitions = [];
+        for (const part of partitions) {
+          const sigMap = new Map();
+          for (const st of part) {
+            const sig = alphabet.map(sym => {
+              const target = (transitions[st] && transitions[st][sym]) ? transitions[st][sym] : "Trap";
+              return partitions.findIndex(p => p.includes(target));
+            }).join(",");
+            if (!sigMap.has(sig)) sigMap.set(sig, []);
+            sigMap.get(sig).push(st);
+          }
+          const sortedKeys = Array.from(sigMap.keys()).sort();
+          for (const k of sortedKeys) newPartitions.push(sigMap.get(k));
+        }
+        if (newPartitions.length === partitions.length) break;
+        partitions = newPartitions;
+      }
+
+      const startState = dfaDef.start_state;
+      partitions.sort((a, b) => {
+        const aHasStart = a.includes(startState);
+        const bHasStart = b.includes(startState);
+        if (aHasStart && !bHasStart) return -1;
+        if (!aHasStart && bHasStart) return 1;
+        const aMin = [...a].sort()[0] || "";
+        const bMin = [...b].sort()[0] || "";
+        return aMin.localeCompare(bMin);
+      });
+
+      const stateMap = {};
+      const mapping = [];
+      partitions.forEach((p, idx) => {
+        const label = `M${idx}`;
+        const sortedMembers = [...p].sort();
+        sortedMembers.forEach(s => { stateMap[s] = label; });
+        mapping.push({ group: label, members: sortedMembers.join(", ") });
+      });
+
+      const minStates = partitions.map((_, idx) => `M${idx}`);
+      const minStart = stateMap[startState];
+      const minAccept = Array.from(new Set(accept.map(s => stateMap[s]).filter(Boolean)));
+      const minTrans = {};
+
+      for (const s of states) {
+        const srcGroup = stateMap[s];
+        if (!minTrans[srcGroup]) minTrans[srcGroup] = {};
+        for (const sym of alphabet) {
+          const t = transitions[s] ? transitions[s][sym] : null;
+          if (t && stateMap[t]) minTrans[srcGroup][sym] = stateMap[t];
+        }
+      }
+
+      return {
+        minDfa: {
+          states: minStates,
+          alphabet,
+          start_state: minStart,
+          accept_states: minAccept,
+          transitions: minTrans
+        },
+        mapping
+      };
+    }
+
+    function simulateString(dfaDef, inputStr) {
+      const currStart = dfaDef.start_state;
+      const path = [{ state: currStart, symbol: "Start" }];
+      if (!currStart) return { isAccepted: false, path, msg: "No initial start state defined." };
+
+      let curr = currStart;
+      for (const ch of inputStr) {
+        if (!dfaDef.alphabet.includes(ch)) {
+          return { isAccepted: false, path, msg: `Invalid symbol '${ch}' not in alphabet {${dfaDef.alphabet.join(", ")}}.` };
+        }
+        const nextSt = (dfaDef.transitions[curr] && dfaDef.transitions[curr][ch]) ? dfaDef.transitions[curr][ch] : "Trap";
+        path.push({ state: nextSt, symbol: ch });
+        curr = nextSt;
+      }
+      return { isAccepted: dfaDef.accept_states.includes(curr), path, msg: "Success" };
+    }
+
+    // ==========================================
+    // 3. SVG AUTOMATON RENDERER (With Edge Merging & Mayer Signaling)
+    // ==========================================
+    function renderAutomatonSvg(automatonDef, highlightedStates = [], activeEdge = null) {
+      if (!automatonDef || !automatonDef.states || automatonDef.states.length === 0) {
+        return `<div class="text-xs text-slate-400 p-4">No states to display</div>`;
+      }
+      const states = automatonDef.states;
+      const n = states.length;
+      const acceptSet = new Set(automatonDef.accept_states || []);
+      const highlightSet = new Set(highlightedStates || []);
+
+      // Layout coordinates: horizontal pipeline for <= 4 states, elliptical for > 4
+      const width = Math.max(380, n * 135);
+      const height = n <= 3 ? 210 : 250;
+      const coords = {};
+
+      if (n <= 4) {
+        const spacing = (width - 110) / Math.max(1, n - 1);
+        states.forEach((st, i) => {
+          coords[st] = {
+            x: n === 1 ? width / 2 : 65 + i * spacing,
+            y: (n >= 3 && i % 2 === 1) ? height * 0.36 : height * 0.62
+          };
+        });
+      } else {
+        const cx = width / 2, cy = height / 2;
+        const rx = (width - 130) / 2, ry = (height - 95) / 2;
+        states.forEach((st, i) => {
+          const angle = Math.PI + (2 * Math.PI * i) / n;
+          coords[st] = { x: cx + rx * Math.cos(angle), y: cy + ry * Math.sin(angle) };
+        });
+      }
+
+      // Group edges by (src, dest)
+      const edgeGroups = new Map();
+      for (const [src, row] of Object.entries(automatonDef.transitions || {})) {
+        for (const [sym, dests] of Object.entries(row || {})) {
+          const list = Array.isArray(dests) ? dests : [dests];
+          for (const dest of list) {
+            if (!coords[src] || !coords[dest]) continue;
+            const key = `${src}|||${dest}`;
+            if (!edgeGroups.has(key)) edgeGroups.set(key, []);
+            edgeGroups.get(key).push(sym);
+          }
+        }
+      }
+
+      const uid = "m" + Math.random().toString(36).slice(2, 8);
+      let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" class="w-full h-auto max-h-[260px]">
+        <defs>
+          <marker id="arrow-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b"/>
+          </marker>
+          <marker id="arrow-active-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+          </marker>
+          <marker id="arrow-start-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+          </marker>
+        </defs>`;
+
+      // Start arrow
+      const startPos = coords[automatonDef.start_state];
+      if (startPos) {
+        svg += `<line x1="${startPos.x - 48}" y1="${startPos.y}" x2="${startPos.x - 27}" y2="${startPos.y}" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arrow-start-${uid})" />`;
+      }
+
+      const R = 24;
+      // Draw edges
+      for (const [key, syms] of edgeGroups.entries()) {
+        const [src, dest] = key.split("|||");
+        const p1 = coords[src], p2 = coords[dest];
+        const isHit = activeEdge && activeEdge.src === src && activeEdge.dest === dest && syms.includes(activeEdge.symbol);
+        const strokeColor = isHit ? "#dc2626" : "#64748b";
+        const strokeWidth = isHit ? "2.8" : "1.4";
+        const marker = isHit ? `url(#arrow-active-${uid})` : `url(#arrow-${uid})`;
+        const label = syms.map(s => s === "e" ? "ε" : s).join(", ");
+
+        if (src === dest) {
+          // Self loop above node
+          const lx = p1.x, ly = p1.y - R;
+          svg += `<path d="M ${lx - 10} ${ly + 2} C ${lx - 24} ${ly - 38}, ${lx + 24} ${ly - 38}, ${lx + 10} ${ly + 2}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
+          svg += `<text x="${lx}" y="${ly - 32}" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="600" fill="${isHit ? '#dc2626' : '#1e293b'}">${label}</text>`;
+        } else {
+          const hasReverse = edgeGroups.has(`${dest}|||${src}`);
+          const dx = p2.x - p1.x, dy = p2.y - p1.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          const ux = dx / dist, uy = dy / dist;
+          const nx = -uy, ny = ux;
+          const curveOffset = hasReverse ? 22 : 0;
+
+          const sx = p1.x + ux * R + nx * (curveOffset * 0.25);
+          const sy = p1.y + uy * R + ny * (curveOffset * 0.25);
+          const ex = p2.x - ux * (R + 3) + nx * (curveOffset * 0.25);
+          const ey = p2.y - uy * (R + 3) + ny * (curveOffset * 0.25);
+          const cx = (p1.x + p2.x) / 2 + nx * curveOffset;
+          const cy = (p1.y + p2.y) / 2 + ny * curveOffset;
+
+          svg += `<path d="M ${sx} ${sy} Q ${cx} ${cy} ${ex} ${ey}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
+          const tx = (p1.x + p2.x) / 2 + nx * (curveOffset * 0.75 + (curveOffset >= 0 ? -9 : 9));
+          const ty = (p1.y + p2.y) / 2 + ny * (curveOffset * 0.75 + (curveOffset >= 0 ? -9 : 9));
+          svg += `<rect x="${tx - (label.length * 3.8 + 4)}" y="${ty - 9}" width="${label.length * 7.6 + 8}" height="15" rx="3" fill="white" fill-opacity="0.88" />`;
+          svg += `<text x="${tx}" y="${ty + 2}" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="600" fill="${isHit ? '#dc2626' : '#0f172a'}">${label}</text>`;
+        }
+      }
+
+      // Draw nodes
+      for (const st of states) {
+        const { x, y } = coords[st];
+        let fill = "#ffffff", stroke = "#64748b", sw = "1.5";
+        if (highlightSet.has(st)) {
+          fill = "#86efac"; stroke = "#15803d"; sw = "3.2";
+        } else if (st === automatonDef.start_state) {
+          fill = "#dbeafe"; stroke = "#1d4ed8"; sw = "2.2";
+        } else if (st === "Trap") {
+          fill = "#fee2e2"; stroke = "#b91c1c"; sw = "1.8";
+        }
+
+        svg += `<circle cx="${x}" cy="${y}" r="${R}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" />`;
+        if (acceptSet.has(st)) {
+          svg += `<circle cx="${x}" cy="${y}" r="${R - 4}" fill="none" stroke="${stroke}" stroke-width="1.4" />`;
+        }
+        const fontSize = st.length > 6 ? 9.5 : 11.5;
+        svg += `<text x="${x}" y="${y + 4}" text-anchor="middle" font-size="${fontSize}" font-family="JetBrains Mono, monospace" font-weight="700" fill="#0f172a">${st}</text>`;
+      }
+
+      svg += `</svg>`;
+      return svg;
+    }
+
+    // ==========================================
+    // 4. UI SYNCHRONIZATION & INTERACTION HANDLERS
+    // ==========================================
+    function loadPreset(presetName) {
+      appState.presetName = presetName;
+      const descBox = document.getElementById("scenarioDescriptionBox");
+      if (presetName !== "Custom Automaton" && PREBUILT_SCENARIOS[presetName]) {
+        const p = PREBUILT_SCENARIOS[presetName];
+        document.getElementById("statesInput").value = p.states;
+        document.getElementById("alphabetInput").value = p.alphabet;
+        appState.states = p.states.split(",").map(s => s.trim()).filter(Boolean);
+        appState.alphabet = p.alphabet.split(",").map(s => s.trim()).filter(Boolean);
+        appState.startState = p.start;
+        appState.acceptStates = [...p.accept];
+        appState.transitions = JSON.parse(JSON.stringify(p.transitions));
+        document.getElementById("stepperStringInput").value = p.sampleStr || "0101";
+        descBox.textContent = `ℹ️ Scenario Note: ${p.description}`;
+        descBox.classList.remove("hidden");
+      } else {
+        descBox.textContent = "ℹ️ Custom mode: Edit states, alphabet, and toggle transition targets below.";
+      }
+      appState.simStepIndex = 0;
+      rebuildSidebarControls();
+      recomputeAndRenderAll();
+    }
+
+    function rebuildSidebarControls() {
+      const startSel = document.getElementById("startStateSelect");
+      startSel.innerHTML = "";
+      appState.states.forEach(st => {
+        const opt = document.createElement("option");
+        opt.value = st;
+        opt.textContent = st;
+        if (st === appState.startState) opt.selected = true;
+        startSel.appendChild(opt);
+      });
+
+      const accContainer = document.getElementById("acceptStatesContainer");
+      accContainer.innerHTML = "";
+      appState.states.forEach(st => {
+        const isAcc = appState.acceptStates.includes(st);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `px-2 py-0.5 rounded text-xs font-mono font-semibold border transition ${
+          isAcc ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-600 border-slate-300 hover:bg-slate-100"
+        }`;
+        btn.textContent = st;
+        btn.addEventListener("click", () => {
+          if (appState.acceptStates.includes(st)) {
+            appState.acceptStates = appState.acceptStates.filter(x => x !== st);
+          } else {
+            appState.acceptStates.push(st);
+          }
+          logAction("toggle_accept_state", st);
+          rebuildSidebarControls();
+          recomputeAndRenderAll();
+        });
+        accContainer.appendChild(btn);
+      });
+
+      const transBuilder = document.getElementById("transitionsBuilderContainer");
+      transBuilder.innerHTML = "";
+      appState.states.forEach(st => {
+        if (!appState.transitions[st]) appState.transitions[st] = {};
+        const card = document.createElement("div");
+        card.className = "p-2.5 rounded-xl border border-slate-200 bg-slate-50 space-y-2";
+        const title = document.createElement("div");
+        title.className = "text-xs font-bold text-slate-800 font-mono";
+        title.textContent = `Transitions from '${st}':`;
+        card.appendChild(title);
+
+        appState.alphabet.forEach(sym => {
+          const row = document.createElement("div");
+          row.className = "flex items-center justify-between gap-2 text-xs";
+          const lbl = document.createElement("span");
+          lbl.className = "font-mono text-slate-600 whitespace-nowrap";
+          lbl.textContent = `Read '${sym === "e" ? "ε (e)" : sym}' ➔`;
+          row.appendChild(lbl);
+
+          const targetsWrap = document.createElement("div");
+          targetsWrap.className = "flex flex-wrap gap-1 justify-end";
+          const currentTargets = appState.transitions[st][sym] || [];
+
+          appState.states.forEach(targetSt => {
+            const active = currentTargets.includes(targetSt);
+            const chip = document.createElement("button");
+            chip.type = "button";
+            chip.className = `px-1.5 py-0.5 rounded font-mono text-[11px] border transition ${
+              active ? "bg-emerald-600 text-white border-emerald-600 font-semibold" : "bg-white text-slate-600 border-slate-300 hover:bg-slate-100"
+            }`;
+            chip.textContent = targetSt;
+            chip.addEventListener("click", () => {
+              const arr = appState.transitions[st][sym] || [];
+              if (arr.includes(targetSt)) {
+                appState.transitions[st][sym] = arr.filter(x => x !== targetSt);
+              } else {
+                appState.transitions[st][sym] = [...arr, targetSt];
+              }
+              logAction("toggle_transition", `${st} --${sym}--> ${targetSt}`);
+              rebuildSidebarControls();
+              recomputeAndRenderAll();
+            });
+            targetsWrap.appendChild(chip);
+          });
+
+          row.appendChild(targetsWrap);
+          card.appendChild(row);
+        });
+        transBuilder.appendChild(card);
+      });
+    }
+
+    function recomputeAndRenderAll() {
+      const nfaDef = {
+        states: appState.states,
+        alphabet: appState.alphabet,
+        start_state: appState.startState,
+        accept_states: appState.acceptStates,
+        transitions: appState.transitions
+      };
+
+      const { dfaDef, stepData } = nfaToDfaWithSteps(nfaDef);
+      const { minDfa, mapping } = minimizeDfa(dfaDef);
+
+      appState.dfaDef = dfaDef;
+      appState.stepData = stepData;
+      appState.minDfaDef = minDfa;
+      appState.minMapping = mapping;
+
+      // Render Pipeline Graphs
+      document.getElementById("nfaStatsBadge").textContent = `${nfaDef.states.length} states`;
+      document.getElementById("dfaStatsBadge").textContent = dfaDef ? `${dfaDef.states.length} states` : "0 states";
+      document.getElementById("minDfaStatsBadge").textContent = minDfa ? `${minDfa.states.length} states` : "0 states";
+
+      document.getElementById("nfaGraphContainer").innerHTML = renderAutomatonSvg(nfaDef);
+      document.getElementById("dfaGraphContainer").innerHTML = renderAutomatonSvg(dfaDef);
+      document.getElementById("minDfaGraphContainer").innerHTML = renderAutomatonSvg(minDfa);
+
+      // Render E-Closure Table
+      const eBody = document.getElementById("eClosureTableBody");
+      eBody.innerHTML = Object.entries(stepData.e_sets).map(([st, eset]) => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-1.5 px-3 font-semibold text-slate-800">${st}</td>
+          <td class="py-1.5 px-3 text-blue-700 font-semibold">${eset}</td>
+        </tr>
+      `).join("");
+
+      // Render Subset Construction Table
+      const subBody = document.getElementById("subsetTableBody");
+      subBody.innerHTML = stepData.transitions_log.map(row => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-1.5 px-2.5 font-semibold text-slate-800">${row.current}</td>
+          <td class="py-1.5 px-2 text-slate-600">${row.symbol}</td>
+          <td class="py-1.5 px-2.5 text-slate-600">${row.move}</td>
+          <td class="py-1.5 px-2.5 font-semibold ${row.target === 'Trap' ? 'text-rose-600' : 'text-emerald-700'}">${row.target}</td>
+        </tr>
+      `).join("");
+
+      // Render Minimization Mapping Table
+      const minBody = document.getElementById("minMapTableBody");
+      minBody.innerHTML = mapping.map(row => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-1.5 px-3 font-bold text-emerald-700">${row.group}</td>
+          <td class="py-1.5 px-3 text-slate-700">${row.members}</td>
+        </tr>
+      `).join("");
+
+      renderStepperView();
+      updateTelemetryView();
+    }
+
+    function renderStepperView() {
+      const targetStr = document.getElementById("stepperStringInput").value.trim();
+      const machineChoice = document.querySelector("input[name='stepperTargetMachine']:checked")?.value || "Minimized DFA";
+      const chosenMachine = (machineChoice === "Minimized DFA" && appState.minDfaDef) ? appState.minDfaDef : appState.dfaDef;
+
+      if (!chosenMachine) return;
+      const { isAccepted, path, msg } = simulateString(chosenMachine, targetStr);
+      const banner = document.getElementById("stepperResultBanner");
+
+      if (msg !== "Success") {
+        banner.className = "p-4 rounded-xl text-sm font-medium bg-amber-50 text-amber-900 border border-amber-300";
+        banner.textContent = `⚠️ Simulation Alert: ${msg}`;
+        banner.classList.remove("hidden");
+        return;
+      }
+
+      const maxSteps = path.length - 1;
+      appState.simStepIndex = Math.min(appState.simStepIndex, maxSteps);
+      const currIdx = appState.simStepIndex;
+      const currState = path[currIdx].state;
+      const consumedSym = path[currIdx].symbol;
+
+      document.getElementById("stepperProgressLabel").textContent = `Step ${currIdx} of ${maxSteps}`;
+      document.getElementById("stepperActiveStateBadge").textContent = currState;
+
+      // Render character tape
+      const tape = document.getElementById("stepperTapeContainer");
+      if (targetStr.length === 0) {
+        tape.innerHTML = `<span class="text-xs text-slate-400 italic">ε (empty string)</span>`;
+      } else {
+        tape.innerHTML = targetStr.split("").map((ch, i) => {
+          if (i < currIdx) {
+            return `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold border border-emerald-300">${ch}</span>`;
+          } else if (i === currIdx) {
+            return `<span class="px-2 py-0.5 rounded bg-amber-200 text-slate-900 font-bold border border-amber-400">${ch}</span>`;
+          }
+          return `<span class="px-2 py-0.5 rounded bg-white text-slate-400 border border-slate-200">${ch}</span>`;
+        }).join("");
+      }
+
+      const visitedTrace = path.slice(0, currIdx + 1).map(p => p.state).join(" ➔ ");
+      document.getElementById("stepperTraceSequence").textContent = `Path: ${visitedTrace}`;
+
+      let activeEdge = null;
+      if (currIdx > 0) {
+        activeEdge = { src: path[currIdx - 1].state, dest: currState, symbol: consumedSym };
+      }
+
+      document.getElementById("stepperGraphContainer").innerHTML = renderAutomatonSvg(chosenMachine, [currState], activeEdge);
+
+      if (currIdx === maxSteps) {
+        banner.classList.remove("hidden");
+        if (isAccepted) {
+          banner.className = "p-4 rounded-xl text-sm font-semibold bg-emerald-50 text-emerald-900 border border-emerald-300";
+          banner.innerHTML = `🎉 Simulation Complete: The string <code>'${targetStr}'</code> is <strong>ACCEPTED</strong> (Ended in accepting state <code>${currState}</code>).`;
+        } else {
+          banner.className = "p-4 rounded-xl text-sm font-semibold bg-rose-50 text-rose-900 border border-rose-300";
+          banner.innerHTML = `🛑 Simulation Complete: The string <code>'${targetStr}'</code> is <strong>REJECTED</strong> (Ended in non-accept state <code>${currState}</code>).`;
+        }
+      } else {
+        banner.classList.add("hidden");
+      }
+    }
+
+    function stepperAction(type) {
+      const targetStr = document.getElementById("stepperStringInput").value.trim();
+      const maxSteps = targetStr.length;
+      if (type === "reset") {
+        appState.simStepIndex = 0;
+        logAction("stepper_reset");
+      } else if (type === "prev") {
+        appState.simStepIndex = Math.max(0, appState.simStepIndex - 1);
+        logAction("stepper_prev", `Step_${appState.simStepIndex}`);
+      } else if (type === "next") {
+        appState.simStepIndex = Math.min(maxSteps, appState.simStepIndex + 1);
+        logAction("stepper_next", `Step_${appState.simStepIndex}`);
+      }
+      renderStepperView();
+    }
+
+    function switchTab(tabName) {
+      const tabs = ["pipeline", "stepper", "telemetry"];
+      tabs.forEach(t => {
+        const panel = document.getElementById(`tabPanel${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (t === tabName) {
+          panel.classList.remove("hidden");
+          btn.className = "flex-1 min-w-[180px] py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-blue-600 text-white shadow-xs";
+        } else {
+          panel.classList.add("hidden");
+          btn.className = "flex-1 min-w-[180px] py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100";
+        }
+      });
+      logAction("switch_tab", tabName);
+    }
+
+    function updateTelemetryView() {
+      const elapsedSec = Number(((Date.now() - appState.sessionStartTime) / 1000).toFixed(1));
+      const elapsedMin = (elapsedSec / 60).toFixed(1);
+      document.getElementById("metricSessionTime").textContent = `${elapsedMin} mins`;
+      document.getElementById("metricTotalActions").textContent = `${appState.userActionsLog.length} events`;
+
+      const pid = document.getElementById("participantIdInput").value.trim() || "ANONYMOUS";
+      const payload = {
+        participant_id: pid,
+        elapsed_seconds: elapsedSec,
+        actions_summary_count: appState.userActionsLog.length,
+        recent_actions: appState.userActionsLog.slice(-10)
+      };
+      document.getElementById("telemetryJsonPre").textContent = JSON.stringify(payload, null, 2);
+    }
+
+    function copyTelemetryJson() {
+      const text = document.getElementById("telemetryJsonPre").textContent;
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      const btn = document.getElementById("btnCopyTelemetry");
+      btn.textContent = "Copied!";
+      setTimeout(() => { btn.textContent = "Copy JSON"; }, 2000);
+    }
+
+    // Event Listeners
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("presetSelect").addEventListener("change", (e) => {
+        logAction("select_preset", e.target.value);
+        loadPreset(e.target.value);
+      });
+
+      document.getElementById("statesInput").addEventListener("change", (e) => {
+        const list = e.target.value.split(",").map(s => s.trim()).filter(Boolean);
+        if (list.length > 0) {
+          appState.states = Array.from(new Set(list));
+          if (!appState.states.includes(appState.startState)) appState.startState = appState.states[0];
+          appState.acceptStates = appState.acceptStates.filter(s => appState.states.includes(s));
+          logAction("edit_states", appState.states.join(","));
+          rebuildSidebarControls();
+          recomputeAndRenderAll();
+        }
+      });
+
+      document.getElementById("alphabetInput").addEventListener("change", (e) => {
+        const list = e.target.value.split(",").map(s => s.trim()).filter(Boolean);
+        if (list.length > 0) {
+          appState.alphabet = Array.from(new Set(list));
+          logAction("edit_alphabet", appState.alphabet.join(","));
+          rebuildSidebarControls();
+          recomputeAndRenderAll();
+        }
+      });
+
+      document.getElementById("startStateSelect").addEventListener("change", (e) => {
+        appState.startState = e.target.value;
+        logAction("select_start_state", appState.startState);
+        recomputeAndRenderAll();
+      });
+
+      document.getElementById("stepperStringInput").addEventListener("input", () => {
+        appState.simStepIndex = 0;
+        renderStepperView();
+      });
+
+      document.querySelectorAll("input[name='stepperTargetMachine']").forEach(r => {
+        r.addEventListener("change", () => {
+          appState.simStepIndex = 0;
+          logAction("switch_stepper_target", r.value);
+          renderStepperView();
+        });
+      });
+
+      document.getElementById("participantIdInput").addEventListener("input", updateTelemetryView);
+
+      loadPreset("Contains Empty Transition (ε)");
+    });
+  </script>
+</body>
+</html>
