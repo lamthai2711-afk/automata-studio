@@ -26,6 +26,10 @@
         </div>
       </div>
       <div class="flex items-center space-x-3 text-xs">
+        <button type="button" id="btnHeaderReset" onclick="resetToDefault()"
+          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold transition flex items-center gap-1.5">
+          <span>🔄</span> <span>Reset to Default</span>
+        </button>
         <span class="px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 font-mono" id="headerSessionBadge">Actions: 0</span>
         <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-mono">SZE Formal Languages Lab</span>
       </div>
@@ -38,9 +42,12 @@
     <!-- Sidebar Configuration (Left 3 cols) -->
     <aside class="lg:col-span-3 bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-5 h-fit">
       <div>
-        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-          <span>⚙️</span> <span>Experiment Controls</span>
-        </h2>
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+            <span>⚙️</span> <span>Experiment Controls</span>
+          </h2>
+          <span id="resetStatusToast" class="text-[11px] font-semibold text-emerald-600 hidden">✓ Reset complete</span>
+        </div>
         <label class="block text-xs font-medium text-slate-600 mt-2 mb-1" for="participantIdInput">Participant ID (Optional)</label>
         <input id="participantIdInput" type="text" placeholder="e.g., SZE-XXXXXX"
           class="w-full px-3 py-2 text-xs font-mono rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
@@ -48,11 +55,13 @@
 
       <hr class="border-slate-200" />
 
-      <div>
-        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-          <span>📚</span> <span>Scenarios &amp; Presets</span>
-        </h2>
-        <label class="block text-xs font-medium text-slate-600 mt-2 mb-1" for="presetSelect">Select Scenario Preset:</label>
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+            <span>📚</span> <span>Scenarios &amp; Presets</span>
+          </h2>
+        </div>
+        <label class="block text-xs font-medium text-slate-600 mb-1" for="presetSelect">Select Scenario Preset:</label>
         <select id="presetSelect" class="w-full px-3 py-2 text-xs font-medium rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-blue-500">
           <option value="Contains Empty Transition (ε)">Contains Empty Transition (ε)</option>
           <option value="Ends with '01'">Ends with '01'</option>
@@ -61,7 +70,20 @@
           <option value="Post-Survey Context 2 (1, 2, 3)">Post-Survey Context 2 (1, 2, 3)</option>
           <option value="Custom Automaton">Custom Automaton</option>
         </select>
-        <div id="scenarioDescriptionBox" class="mt-2 p-2.5 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-900"></div>
+
+        <!-- Reset Buttons Row -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button type="button" id="btnSidebarResetDefault" onclick="resetToDefault()"
+            class="w-full py-2 px-2.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition flex items-center justify-center gap-1">
+            <span>🔄</span> <span>Reset to Default</span>
+          </button>
+          <button type="button" id="btnSidebarResetPreset" onclick="resetCurrentPreset()"
+            class="w-full py-2 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-semibold transition flex items-center justify-center gap-1">
+            <span>↺</span> <span>Reset Preset</span>
+          </button>
+        </div>
+
+        <div id="scenarioDescriptionBox" class="p-2.5 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-900"></div>
       </div>
 
       <div class="space-y-3">
@@ -255,7 +277,7 @@
           <div class="flex flex-wrap items-center gap-2.5 pt-2">
             <button type="button" id="btnStepReset" onclick="stepperAction('reset')"
               class="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-2xs">
-              ⏮️ Reset
+              ⏮️ Reset Stepper
             </button>
             <button type="button" id="btnStepPrev" onclick="stepperAction('prev')"
               class="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-2xs">
@@ -325,9 +347,8 @@
   </div>
 
   <script>
-    // ==========================================
-    // 1. SCENARIOS LIBRARY (Matches NFA.py + Post-Survey Contexts 1 & 2)
-    // ==========================================
+    const DEFAULT_PRESET_NAME = "Contains Empty Transition (ε)";
+
     const PREBUILT_SCENARIOS = {
       "Contains Empty Transition (ε)": {
         states: "A, B, C",
@@ -399,7 +420,7 @@
       sessionStartTime: Date.now(),
       userActionsLog: [],
       simStepIndex: 0,
-      presetName: "Contains Empty Transition (ε)",
+      presetName: DEFAULT_PRESET_NAME,
       states: ["A", "B", "C"],
       alphabet: ["0", "1", "e"],
       startState: "A",
@@ -422,9 +443,34 @@
       updateTelemetryView();
     }
 
-    // ==========================================
-    // 2. FORMAL ALGORITHM ENGINES (Exact Port of NFA.py)
-    // ==========================================
+    function flashResetToast(msg = "✓ Reset to Default") {
+      const toast = document.getElementById("resetStatusToast");
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 2200);
+    }
+
+    function resetToDefault() {
+      document.getElementById("presetSelect").value = DEFAULT_PRESET_NAME;
+      const minRadio = document.querySelector("input[name='stepperTargetMachine'][value='Minimized DFA']");
+      if (minRadio) minRadio.checked = true;
+      logAction("reset_to_default", DEFAULT_PRESET_NAME);
+      loadPreset(DEFAULT_PRESET_NAME);
+      flashResetToast("✓ Reset to Default");
+    }
+
+    function resetCurrentPreset() {
+      const current = document.getElementById("presetSelect").value;
+      if (current === "Custom Automaton") {
+        resetToDefault();
+        return;
+      }
+      logAction("reset_current_preset", current);
+      loadPreset(current);
+      flashResetToast("✓ Preset Restored");
+    }
+
     function getEmptyClosure(stateArray, transitions) {
       const closure = new Set(stateArray);
       const stack = [...stateArray];
@@ -628,9 +674,6 @@
       return { isAccepted: dfaDef.accept_states.includes(curr), path, msg: "Success" };
     }
 
-    // ==========================================
-    // 3. SVG AUTOMATON RENDERER (With Edge Merging & Mayer Signaling)
-    // ==========================================
     function renderAutomatonSvg(automatonDef, highlightedStates = [], activeEdge = null) {
       if (!automatonDef || !automatonDef.states || automatonDef.states.length === 0) {
         return `<div class="text-xs text-slate-400 p-4">No states to display</div>`;
@@ -640,7 +683,6 @@
       const acceptSet = new Set(automatonDef.accept_states || []);
       const highlightSet = new Set(highlightedStates || []);
 
-      // Layout coordinates: horizontal pipeline for <= 4 states, elliptical for > 4
       const width = Math.max(380, n * 135);
       const height = n <= 3 ? 210 : 250;
       const coords = {};
@@ -662,7 +704,6 @@
         });
       }
 
-      // Group edges by (src, dest)
       const edgeGroups = new Map();
       for (const [src, row] of Object.entries(automatonDef.transitions || {})) {
         for (const [sym, dests] of Object.entries(row || {})) {
@@ -690,14 +731,12 @@
           </marker>
         </defs>`;
 
-      // Start arrow
       const startPos = coords[automatonDef.start_state];
       if (startPos) {
         svg += `<line x1="${startPos.x - 48}" y1="${startPos.y}" x2="${startPos.x - 27}" y2="${startPos.y}" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arrow-start-${uid})" />`;
       }
 
       const R = 24;
-      // Draw edges
       for (const [key, syms] of edgeGroups.entries()) {
         const [src, dest] = key.split("|||");
         const p1 = coords[src], p2 = coords[dest];
@@ -708,7 +747,6 @@
         const label = syms.map(s => s === "e" ? "ε" : s).join(", ");
 
         if (src === dest) {
-          // Self loop above node
           const lx = p1.x, ly = p1.y - R;
           svg += `<path d="M ${lx - 10} ${ly + 2} C ${lx - 24} ${ly - 38}, ${lx + 24} ${ly - 38}, ${lx + 10} ${ly + 2}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
           svg += `<text x="${lx}" y="${ly - 32}" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="600" fill="${isHit ? '#dc2626' : '#1e293b'}">${label}</text>`;
@@ -735,7 +773,6 @@
         }
       }
 
-      // Draw nodes
       for (const st of states) {
         const { x, y } = coords[st];
         let fill = "#ffffff", stroke = "#64748b", sw = "1.5";
@@ -759,9 +796,6 @@
       return svg;
     }
 
-    // ==========================================
-    // 4. UI SYNCHRONIZATION & INTERACTION HANDLERS
-    // ==========================================
     function loadPreset(presetName) {
       appState.presetName = presetName;
       const descBox = document.getElementById("scenarioDescriptionBox");
@@ -888,7 +922,6 @@
       appState.minDfaDef = minDfa;
       appState.minMapping = mapping;
 
-      // Render Pipeline Graphs
       document.getElementById("nfaStatsBadge").textContent = `${nfaDef.states.length} states`;
       document.getElementById("dfaStatsBadge").textContent = dfaDef ? `${dfaDef.states.length} states` : "0 states";
       document.getElementById("minDfaStatsBadge").textContent = minDfa ? `${minDfa.states.length} states` : "0 states";
@@ -897,7 +930,6 @@
       document.getElementById("dfaGraphContainer").innerHTML = renderAutomatonSvg(dfaDef);
       document.getElementById("minDfaGraphContainer").innerHTML = renderAutomatonSvg(minDfa);
 
-      // Render E-Closure Table
       const eBody = document.getElementById("eClosureTableBody");
       eBody.innerHTML = Object.entries(stepData.e_sets).map(([st, eset]) => `
         <tr class="hover:bg-slate-50">
@@ -906,7 +938,6 @@
         </tr>
       `).join("");
 
-      // Render Subset Construction Table
       const subBody = document.getElementById("subsetTableBody");
       subBody.innerHTML = stepData.transitions_log.map(row => `
         <tr class="hover:bg-slate-50">
@@ -917,7 +948,6 @@
         </tr>
       `).join("");
 
-      // Render Minimization Mapping Table
       const minBody = document.getElementById("minMapTableBody");
       minBody.innerHTML = mapping.map(row => `
         <tr class="hover:bg-slate-50">
@@ -955,7 +985,6 @@
       document.getElementById("stepperProgressLabel").textContent = `Step ${currIdx} of ${maxSteps}`;
       document.getElementById("stepperActiveStateBadge").textContent = currState;
 
-      // Render character tape
       const tape = document.getElementById("stepperTapeContainer");
       if (targetStr.length === 0) {
         tape.innerHTML = `<span class="text-xs text-slate-400 italic">ε (empty string)</span>`;
@@ -1001,7 +1030,7 @@
         appState.simStepIndex = 0;
         logAction("stepper_reset");
       } else if (type === "prev") {
-        appState.simStepIndex = Math.max(0, appState.simStepIndex - 1);
+        appState.simStepIndex = maxSteps > 0 ? Math.max(0, appState.simStepIndex - 1) : 0;
         logAction("stepper_prev", `Step_${appState.simStepIndex}`);
       } else if (type === "next") {
         appState.simStepIndex = Math.min(maxSteps, appState.simStepIndex + 1);
@@ -1055,7 +1084,6 @@
       setTimeout(() => { btn.textContent = "Copy JSON"; }, 2000);
     }
 
-    // Event Listeners
     document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("presetSelect").addEventListener("change", (e) => {
         logAction("select_preset", e.target.value);
@@ -1105,7 +1133,7 @@
 
       document.getElementById("participantIdInput").addEventListener("input", updateTelemetryView);
 
-      loadPreset("Contains Empty Transition (ε)");
+      loadPreset(DEFAULT_PRESET_NAME);
     });
   </script>
 </body>
