@@ -268,7 +268,11 @@ def minimize_dfa(dfa_def):
 
     start_state = dfa_def["start_state"]
     def partition_key(p):
-        return "" if start_state in p else min(list(p))
+        if start_state in p:
+            return (0, "")
+        if "Trap" in p and len(p) == 1:
+            return (2, "Trap")
+        return (1, min(list(p)))
     partitions.sort(key=partition_key)
 
     state_map = {}
