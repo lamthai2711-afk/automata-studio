@@ -15,15 +15,19 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Initialize persistent session states for Telemetry & Challenges
+DEFAULT_PRESET_NAME = "Contains Empty Transition (ε)"
+
+# Initialize persistent session states for Telemetry & Controls
 if "user_actions_log" not in st.session_state:
     st.session_state.user_actions_log = []
 if "session_start_time" not in st.session_state:
     st.session_state.session_start_time = time.time()
 if "sim_step_index" not in st.session_state:
     st.session_state.sim_step_index = 0
-if "challenge_scores" not in st.session_state:
-    st.session_state.challenge_scores = {"c1": None, "c2": None, "c3": None}
+if "scenario_choice_key" not in st.session_state:
+    st.session_state.scenario_choice_key = DEFAULT_PRESET_NAME
+if "reset_counter" not in st.session_state:
+    st.session_state.reset_counter = 0
 
 def log_action(action_type, details=""):
     """Tracks learner behavior for educational research telemetry."""
@@ -33,6 +37,16 @@ def log_action(action_type, details=""):
         "action": action_type,
         "details": details
     })
+
+def reset_to_default():
+    """Resets all automaton parameters, transitions, and stepper state back to default."""
+    st.session_state.scenario_choice_key = DEFAULT_PRESET_NAME
+    st.session_state.sim_step_index = 0
+    st.session_state.reset_counter += 1
+    for key in list(st.session_state.keys()):
+        if key.startswith("trans_") or key in ("states_input_key", "alpha_input_key", "stepper_str_input"):
+            del st.session_state[key]
+    log_action("reset_to_default", DEFAULT_PRESET_NAME)
 
 # ==========================================
 # 2. SCENARIOS LIBRARY
@@ -72,6 +86,30 @@ PREBUILT_SCENARIOS = {
             "Odd": {"0": "Odd", "1": "Even"}
         },
         "description": "Parity checker automaton exhibiting symmetric cyclic equivalence."
+    },
+    "Post-Survey Context 1 (A, B, C)": {
+        "states": "A, B, C",
+        "alphabet": "0, 1, e",
+        "start": "A",
+        "accept": ["C"],
+        "transitions": {
+            "A": {"0": "A", "e": "B"},
+            "B": {"1": "C"},
+            "C": {"0": "C"}
+        },
+        "description": "Post-Survey Part B (Q5–Q8): Start A, Accept C, δ(A,0)={A}, δ(A,ε)={B}, δ(B,1)={C}, δ(C,0)={C}."
+    },
+    "Post-Survey Context 2 (1, 2, 3)": {
+        "states": "1, 2, 3",
+        "alphabet": "a, b, e",
+        "start": "1",
+        "accept": ["3"],
+        "transitions": {
+            "1": {"a": "1", "e": "2"},
+            "2": {"b": "2, 3"},
+            "3": {"a": "3"}
+        },
+        "description": "Post-Survey Part D (Q11–Q13): Start 1, Accept 3, δ(1,a)={1}, δ(1,ε)={2}, δ(2,b)={2,3}, δ(3,a)={3}."
     }
 }
 
@@ -122,11 +160,9 @@ def nfa_to_dfa_with_steps(nfa_def):
     if not start_state:
         return None, step_data
 
-    # Log E-set for all atomic NFA states
     for state in nfa_def["states"]:
         step_data["e_sets"][state] = format_state_name(get_empty_closure([state], nfa_trans))
 
-    # Initial start state calculation
     initial_closure = get_empty_closure([start_state], nfa_trans)
     step_data["initial_state"] = format_state_name(initial_closure)
     
@@ -142,7 +178,6 @@ def nfa_to_dfa_with_steps(nfa_def):
         state_label = format_state_name(curr)
         dfa_transitions[state_label] = {}
         
-        # Accept condition check: S ∩ F != ∅
         if any(s in nfa_accept for s in curr):
             dfa_accept.add(state_label)
             if state_label not in step_data["final_states"]:
@@ -168,7 +203,6 @@ def nfa_to_dfa_with_steps(nfa_def):
                 dfa_states.append(c)
                 unmarked.append(c)
                 
-    # Total function enforcement via Trap / Dead state
     needs_trap = any("Trap" in dfa_transitions[st].values() for st in dfa_transitions)
     if needs_trap and "Trap" not in dfa_transitions:
         dfa_transitions["Trap"] = {sym: "Trap" for sym in alphabet}
@@ -200,14 +234,12 @@ def minimize_dfa(dfa_def):
     alphabet = dfa_def["alphabet"]
     transitions = dfa_def["transitions"]
     
-    # Step 1: Initial Partition P0 = {Accept, Non-Accept}
     partitions = []
     if non_accept_states:
         partitions.append(non_accept_states)
     if accept_states:
         partitions.append(accept_states)
         
-    # Step 2: Iterative Refinement
     while True:
         new_partitions = []
         for part in partitions:
@@ -234,13 +266,11 @@ def minimize_dfa(dfa_def):
             break
         partitions = new_partitions
 
-    # Step 3: Normalization (Start state partition is always M0)
     start_state = dfa_def["start_state"]
     def partition_key(p):
         return "" if start_state in p else min(list(p))
     partitions.sort(key=partition_key)
 
-    # Step 4: Construct Minimized Automaton
     state_map = {}
     for idx, p in enumerate(partitions):
         label = f"M{idx}"
@@ -305,7 +335,6 @@ def draw_automaton(automaton_def, name="Automaton", highlighted_states=None, act
     if not automaton_def.get('start_state'):
         return dot
 
-    # Invisible start anchor
     dot.node('hidden_start', label='', shape='none', width='0', height='0')
     dot.edge('hidden_start', automaton_def['start_state'], color='#2563eb', penwidth='2')
     
@@ -315,17 +344,16 @@ def draw_automaton(automaton_def, name="Automaton", highlighted_states=None, act
         shape = 'doublecircle' if state in automaton_def['accept_states'] else 'circle'
         fontcolor = '#0f172a'
         
-        # Pedagogical Signaling (Cueing Principle - Mayer)
         if state in highlighted_states:
-            fillcolor = '#86efac'  # Emerald highlight
+            fillcolor = '#86efac'
             penwidth = '3.5'
             color = '#15803d'
         elif state == automaton_def['start_state']:
-            fillcolor = '#dbeafe'  # Blue start node
+            fillcolor = '#dbeafe'
             penwidth = '2.0'
             color = '#1d4ed8'
         elif state == "Trap":
-            fillcolor = '#fee2e2'  # Rose trap node
+            fillcolor = '#fee2e2'
             penwidth = '1.5'
             color = '#b91c1c'
         else:
@@ -336,7 +364,6 @@ def draw_automaton(automaton_def, name="Automaton", highlighted_states=None, act
         dot.node(state, state, shape=shape, style='filled', fillcolor=fillcolor,
                  color=color, penwidth=penwidth, fontcolor=fontcolor, fontname='Arial')
         
-    # Merge parallel edges sharing (src, dest)
     edge_groups = {}
     for src, transitions in automaton_def['transitions'].items():
         for symbol, dests in transitions.items():
@@ -348,7 +375,7 @@ def draw_automaton(automaton_def, name="Automaton", highlighted_states=None, act
         is_hit = active_edge and (src == active_edge[0] and dest == active_edge[1] and active_edge[2] in symbols)
         edge_color = '#dc2626' if is_hit else '#64748b'
         edge_width = '3.0' if is_hit else '1.0'
-        label_str = ", ".join(symbols)
+        label_str = ", ".join("ε" if s == "e" else s for s in symbols)
         dot.edge(src, dest, label=f" {label_str} ", fontcolor='#1e293b',
                  color=edge_color, penwidth=edge_width)
     return dot
@@ -365,16 +392,21 @@ def main():
         """
     )
 
-    # --- SIDEBAR CONFIGURATION ---
     with st.sidebar:
         st.header("⚙️ Experiment Controls")
         participant_tag = st.text_input("Participant ID (Optional)", placeholder="e.g., SZE-XXXXXX")
         
+        if st.button("🔄 Reset to Default", use_container_width=True, type="secondary"):
+            reset_to_default()
+            st.rerun()
+
         st.divider()
         st.header("📚 Scenarios & Presets")
+        scenario_options = list(PREBUILT_SCENARIOS.keys()) + ["Custom Automaton"]
         scenario_choice = st.selectbox(
             "Select Scenario Preset:",
-            list(PREBUILT_SCENARIOS.keys()) + ["Custom Automaton"]
+            scenario_options,
+            key="scenario_choice_key"
         )
         
         if scenario_choice != "Custom Automaton":
@@ -385,28 +417,32 @@ def main():
             def_acc = preset["accept"]
             st.info(f"ℹ️ **Scenario Note:** {preset['description']}")
         else:
+            preset = None
             def_states = "q0, q1, q2"
             def_alpha = "0, 1, e"
             def_start = "q0"
             def_acc = ["q2"]
 
+        rc = st.session_state.reset_counter
         st.subheader("NFA Formal Specification")
-        raw_states = st.text_input("States (comma-separated)", value=def_states)
+        raw_states = st.text_input("States (comma-separated)", value=def_states, key=f"states_in_{scenario_choice}_{rc}")
         states_list = [s.strip() for s in raw_states.split(",") if s.strip()]
         
-        raw_alphabet = st.text_input("Alphabet (comma-separated)", value=def_alpha)
+        raw_alphabet = st.text_input("Alphabet (comma-separated)", value=def_alpha, key=f"alpha_in_{scenario_choice}_{rc}")
         alphabet_list = [a.strip() for a in raw_alphabet.split(",") if a.strip()]
         
         start_state = st.selectbox(
             "Start State (q0)",
             options=states_list,
-            index=states_list.index(def_start) if def_start in states_list else 0
+            index=states_list.index(def_start) if def_start in states_list else 0,
+            key=f"start_sel_{scenario_choice}_{rc}"
         ) if states_list else None
         
         accept_states = st.multiselect(
             "Accept States (F)",
             options=states_list,
-            default=[a for a in def_acc if a in states_list]
+            default=[a for a in def_acc if a in states_list],
+            key=f"acc_sel_{scenario_choice}_{rc}"
         )
         
         st.markdown("#### Transition Table Builder")
@@ -416,7 +452,7 @@ def main():
             with st.expander(f"Transitions from state: '{state}'", expanded=(scenario_choice != "Custom Automaton")):
                 for sym in alphabet_list:
                     default_targets = []
-                    if scenario_choice != "Custom Automaton" and state in preset["transitions"]:
+                    if preset and state in preset["transitions"]:
                         if sym in preset["transitions"][state]:
                             raw_t = preset["transitions"][state][sym]
                             if isinstance(raw_t, str):
@@ -428,7 +464,7 @@ def main():
                         f"Read '{sym}' ➔ Go to:",
                         options=states_list,
                         default=default_targets,
-                        key=f"trans_{state}_{sym}"
+                        key=f"trans_{scenario_choice}_{rc}_{state}_{sym}"
                     )
                     if selected:
                         nfa_transitions[state][sym] = selected
@@ -500,7 +536,7 @@ def main():
             
             ctrl_cols = st.columns([1, 1, 1, 3])
             with ctrl_cols[0]:
-                if st.button("⏮️ Reset", use_container_width=True):
+                if st.button("⏮️ Reset Stepper", use_container_width=True):
                     st.session_state.sim_step_index = 0
                     log_action("stepper_reset")
             with ctrl_cols[1]:

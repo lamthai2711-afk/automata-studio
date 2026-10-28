@@ -1,3 +1,16 @@
+# ==============================================================================
+# AUTOMATA STUDIO - PYTHON REQUIREMENTS & QUICK RUN GUIDE
+# ==============================================================================
+# How to run NFA.py on your computer:
+# 1. Install Graphviz system binary (https://graphviz.org/download/)
+#    - macOS: brew install graphviz
+#    - Ubuntu/Debian: sudo apt-get install -y graphviz
+# 2. Install Python packages in this folder:
+#    pip install -r requirements.txt
+# 3. Launch the Streamlit web app:
+#    streamlit run NFA.py
+# ==============================================================================
+
 streamlit>=1.32.0
 graphviz>=0.20.1
 pandas>=2.0.0
