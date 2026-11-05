@@ -3,66 +3,583 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Automata Studio: Interactive Learning Laboratory</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Automata Studio: Cognitive Learning Lab</title>
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    .font-mono { font-family: 'JetBrains Mono', monospace; }
-    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    :root {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --bg-dark: #0f172a;
+      --bg-dark-2: #1e293b;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text-main: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --blue: #2563eb;
+      --blue-hover: #1d4ed8;
+      --blue-soft: #eff6ff;
+      --blue-border: #bfdbfe;
+      --emerald: #059669;
+      --emerald-soft: #ecfdf5;
+      --emerald-border: #a7f3d0;
+      --rose: #e11d48;
+      --rose-soft: #fff1f2;
+      --rose-border: #fecdd3;
+      --amber-soft: #fefce8;
+      --amber-border: #fde047;
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    code, pre, .mono { font-family: var(--mono); }
+
+    /* Top Header */
+    .top-header {
+      background: var(--bg-dark);
+      color: #ffffff;
+      border-bottom: 1px solid var(--bg-dark-2);
+      padding: 14px 22px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+    }
+    .header-inner {
+      max-width: 1620px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand-row { display: flex; align-items: center; gap: 12px; }
+    .brand-icon { font-size: 26px; line-height: 1; }
+    .brand-title { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+    .brand-sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+    .header-badges { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; }
+    .btn-header {
+      background: var(--bg-dark-2);
+      color: #e2e8f0;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+    .btn-header:hover { background: #334155; }
+    .pill-blue {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.18);
+      color: #93c5fd;
+      border: 1px solid rgba(96, 165, 250, 0.32);
+      font-family: var(--mono);
+    }
+    .pill-emerald {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.18);
+      color: #6ee7b7;
+      border: 1px solid rgba(52, 211, 153, 0.32);
+      font-family: var(--mono);
+    }
+
+    /* Main Workspace Grid */
+    .workspace {
+      max-width: 1620px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 330px minmax(0, 1fr);
+      gap: 20px;
+      flex: 1;
+      align-items: start;
+    }
+    @media (max-width: 1060px) {
+      .workspace { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    /* Sidebar */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .sec-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-body);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 5px;
+    }
+    .input-text, .select-box {
+      width: 100%;
+      padding: 7px 10px;
+      font-size: 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .input-text:focus, .select-box:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
+    .divider { border: 0; border-top: 1px solid var(--border); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .btn-reset-default {
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: var(--rose-soft);
+      color: #be123c;
+      border: 1px solid var(--rose-border);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-reset-default:hover { background: #ffe4e6; }
+    .btn-reset-preset {
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: var(--bg-subtle);
+      color: var(--text-body);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-reset-preset:hover { background: #e2e8f0; }
+
+    .info-note {
+      padding: 10px 12px;
+      border-radius: 9px;
+      background: var(--blue-soft);
+      border: 1px solid var(--blue-border);
+      color: #1e3a8a;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .toast-inline { font-size: 11px; font-weight: 600; color: var(--emerald); }
+    .hidden { display: none !important; }
+
+    .chips-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      min-height: 34px;
+      align-items: center;
+    }
+    .chip-btn {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border-strong);
+      background: #ffffff;
+      color: #475569;
+      transition: all 0.12s;
+    }
+    .chip-btn:hover { background: var(--bg-subtle); }
+    .chip-btn.active-blue { background: var(--blue); color: #ffffff; border-color: var(--blue); }
+    .chip-btn.active-emerald { background: var(--emerald); color: #ffffff; border-color: var(--emerald); }
+
+    /* Per-State Accordion Expanders (matches NFA.py st.expander) */
+    .builder-stack { display: flex; flex-direction: column; gap: 8px; }
+    details.state-expander {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #f8fafc;
+      overflow: hidden;
+    }
+    details.state-expander > summary {
+      padding: 8px 11px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--mono);
+      color: var(--text-main);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f1f5f9;
+    }
+    details.state-expander > summary::-webkit-details-marker { display: none; }
+    details.state-expander > summary::after {
+      content: "▸";
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: transform 0.15s;
+    }
+    details.state-expander[open] > summary::after { transform: rotate(90deg); }
+    .expander-body { padding: 9px 11px; display: flex; flex-direction: column; gap: 7px; background: #ffffff; }
+    .trans-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      padding-bottom: 5px;
+      border-bottom: 1px dashed #f1f5f9;
+    }
+    .trans-row:last-child { border-bottom: 0; padding-bottom: 0; }
+
+    /* Main Tabs */
+    .main-area { display: flex; flex-direction: column; gap: 16px; }
+    .tab-bar {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tab-btn {
+      flex: 1;
+      min-width: 190px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 0;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      background: transparent;
+      color: #475569;
+      transition: all 0.15s;
+    }
+    .tab-btn:hover { background: var(--bg-subtle); }
+    .tab-btn.active {
+      background: var(--blue);
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
+    }
+
+    /* Pipeline Grid */
+    .pipeline-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .legend-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; font-size: 12px; color: var(--text-body); }
+    .legend-dot {
+      width: 12px; height: 12px; border-radius: 999px; display: inline-block; vertical-align: middle; margin-right: 5px;
+    }
+    .expand-toggle-bar {
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--text-body);
+      font-weight: 500;
+    }
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 1280px) {
+      .pipeline-grid { grid-template-columns: 1fr; }
+    }
+    .stage-card {
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: #f8fafc;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .stage-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .stage-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
+    .stat-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    .graph-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      min-height: 235px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: auto;
+    }
+
+    /* Step Table Expanders */
+    details.step-expander {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    details.step-expander > summary {
+      background: var(--bg-dark-2);
+      color: #ffffff;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    details.step-expander > summary::-webkit-details-marker { display: none; }
+    .sum-right { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: #cbd5e1; }
+    details.step-expander > summary .caret::before { content: "▸ Show"; font-size: 11px; color: #93c5fd; }
+    details.step-expander[open] > summary .caret::before { content: "▾ Hide"; color: #6ee7b7; }
+
+    .table-wrap { overflow-x: auto; max-height: 250px; overflow-y: auto; }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+    table.data-table th {
+      background: var(--bg-subtle);
+      color: #475569;
+      font-weight: 600;
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+    }
+    table.data-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #f1f5f9;
+      font-family: var(--mono);
+    }
+    table.data-table tr:hover td { background: #f8fafc; }
+
+    /* Stepper */
+    .stepper-inputs {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 16px;
+      align-items: end;
+      margin-top: 14px;
+    }
+    @media (max-width: 780px) { .stepper-inputs { grid-template-columns: 1fr; } }
+    .radio-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px 10px;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #ffffff;
+    }
+    .stepper-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .btn-step {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-strong);
+      background: #ffffff;
+      color: var(--text-body);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-step:hover { background: var(--bg-subtle); }
+    .btn-step-primary {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--blue);
+      background: var(--blue);
+      color: #ffffff;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-step-primary:hover { background: var(--blue-hover); }
+    .step-status-pill {
+      margin-left: auto;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      padding: 7px 13px;
+      border-radius: 10px;
+      font-family: var(--mono);
+      font-size: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+    .tape-bar {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .tape-cells { display: inline-flex; flex-wrap: wrap; gap: 5px; align-items: center; font-family: var(--mono); }
+    .cell-done { padding: 2px 8px; border-radius: 6px; background: #dcfce7; color: #166534; font-weight: 700; border: 1px solid #86efac; }
+    .cell-curr { padding: 2px 8px; border-radius: 6px; background: #fde047; color: #0f172a; font-weight: 700; border: 1px solid #eab308; }
+    .cell-wait { padding: 2px 8px; border-radius: 6px; background: #ffffff; color: #94a3b8; border: 1px solid var(--border); }
+
+    .banner-acc {
+      margin-top: 14px;
+      padding: 13px 16px;
+      border-radius: 12px;
+      background: var(--emerald-soft);
+      border: 1px solid var(--emerald-border);
+      color: #065f46;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+    .banner-rej {
+      margin-top: 14px;
+      padding: 13px 16px;
+      border-radius: 12px;
+      background: var(--rose-soft);
+      border: 1px solid var(--rose-border);
+      color: #9f1239;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+    .banner-warn {
+      margin-top: 14px;
+      padding: 13px 16px;
+      border-radius: 12px;
+      background: var(--amber-soft);
+      border: 1px solid var(--amber-border);
+      color: #854d0e;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    /* Telemetry */
+    .kpi-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+    @media (max-width: 640px) { .kpi-grid { grid-template-columns: 1fr; } }
+    .kpi-card {
+      padding: 15px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+    }
+    .kpi-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    .kpi-val { font-size: 24px; font-weight: 700; margin-top: 4px; }
+    .code-pre {
+      margin-top: 8px;
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--bg-dark);
+      color: #6ee7b7;
+      font-size: 12px;
+      overflow-x: auto;
+    }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+<body>
 
   <!-- Top Header -->
-  <header class="bg-slate-900 text-white border-b border-slate-800 px-4 sm:px-6 py-4 shadow-sm">
-    <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center space-x-3">
-        <span class="text-2xl">🧠</span>
+  <header class="top-header">
+    <div class="header-inner">
+      <div class="brand-row">
+        <span class="brand-icon">🧠</span>
         <div>
-          <h1 class="text-lg sm:text-xl font-bold tracking-tight">Automata Studio: Interactive Learning Laboratory</h1>
-          <p class="text-xs text-slate-400">Dynamic Visual Pipelines &bull; Step-by-Step Mathematical Decomposition &bull; String Execution Tracing</p>
+          <h1 class="brand-title">Automata Studio: Interactive Learning Laboratory</h1>
+          <p class="brand-sub">Explore state transformation algorithms through Dynamic Visual Pipelines, Step-by-Step Mathematical Decomposition, and Interactive String Execution Tracing.</p>
         </div>
       </div>
-      <div class="flex items-center space-x-3 text-xs">
-        <button type="button" id="btnHeaderReset" onclick="resetToDefault()"
-          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold transition flex items-center gap-1.5">
+      <div class="header-badges">
+        <button type="button" id="btnHeaderReset" onclick="resetToDefault()" class="btn-header">
           <span>🔄</span> <span>Reset to Default</span>
         </button>
-        <span class="px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 font-mono" id="headerSessionBadge">Actions: 0</span>
-        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-mono">SZE Formal Languages Lab</span>
+        <span class="pill-blue" id="headerSessionBadge">Actions: 0</span>
+        <span class="pill-emerald">SZE Formal Languages Lab</span>
       </div>
     </div>
   </header>
 
   <!-- Main Workspace -->
-  <div class="max-w-[1600px] w-full mx-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 sm:p-6">
+  <div class="workspace">
 
-    <!-- Sidebar Configuration (Left 3 cols) -->
-    <aside class="lg:col-span-3 bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-5 h-fit">
+    <!-- Sidebar Configuration -->
+    <aside class="card sidebar">
       <div>
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-            <span>⚙️</span> <span>Experiment Controls</span>
-          </h2>
-          <span id="resetStatusToast" class="text-[11px] font-semibold text-emerald-600 hidden">✓ Reset complete</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <h2 class="sec-title"><span>⚙️</span> <span>Experiment Controls</span></h2>
+          <span id="resetStatusToast" class="toast-inline hidden">✓ Reset complete</span>
         </div>
-        <label class="block text-xs font-medium text-slate-600 mt-2 mb-1" for="participantIdInput">Participant ID (Optional)</label>
-        <input id="participantIdInput" type="text" placeholder="e.g., SZE-XXXXXX"
-          class="w-full px-3 py-2 text-xs font-mono rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+        <label class="field-label" style="margin-top:10px;" for="participantIdInput">Participant ID (Optional)</label>
+        <input id="participantIdInput" type="text" placeholder="e.g., SZE-XXXXXX" class="input-text mono" />
+        <div class="grid-2" style="margin-top:10px;">
+          <button type="button" id="btnSidebarResetDefault" onclick="resetToDefault()" class="btn-reset-default">🔄 Reset Default</button>
+          <button type="button" id="btnSidebarResetPreset" onclick="resetCurrentPreset()" class="btn-reset-preset">↺ Reset Preset</button>
+        </div>
       </div>
 
-      <hr class="border-slate-200" />
+      <hr class="divider" />
 
-      <div class="space-y-2.5">
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-            <span>📚</span> <span>Scenarios &amp; Presets</span>
-          </h2>
-        </div>
-        <label class="block text-xs font-medium text-slate-600 mb-1" for="presetSelect">Select Scenario Preset:</label>
-        <select id="presetSelect" class="w-full px-3 py-2 text-xs font-medium rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-blue-500">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <h2 class="sec-title"><span>📚</span> <span>Scenarios &amp; Presets</span></h2>
+        <label class="field-label" for="presetSelect">Select Scenario Preset:</label>
+        <select id="presetSelect" class="select-box">
           <option value="Contains Empty Transition (ε)">Contains Empty Transition (ε)</option>
           <option value="Ends with '01'">Ends with '01'</option>
           <option value="Even number of 1s">Even number of 1s</option>
@@ -70,275 +587,267 @@
           <option value="Post-Survey Context 2 (1, 2, 3)">Post-Survey Context 2 (1, 2, 3)</option>
           <option value="Custom Automaton">Custom Automaton</option>
         </select>
-
-        <!-- Reset Buttons Row -->
-        <div class="grid grid-cols-2 gap-2 pt-1">
-          <button type="button" id="btnSidebarResetDefault" onclick="resetToDefault()"
-            class="w-full py-2 px-2.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition flex items-center justify-center gap-1">
-            <span>🔄</span> <span>Reset to Default</span>
-          </button>
-          <button type="button" id="btnSidebarResetPreset" onclick="resetCurrentPreset()"
-            class="w-full py-2 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-semibold transition flex items-center justify-center gap-1">
-            <span>↺</span> <span>Reset Preset</span>
-          </button>
-        </div>
-
-        <div id="scenarioDescriptionBox" class="p-2.5 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-900"></div>
+        <div id="scenarioDescriptionBox" class="info-note"></div>
       </div>
 
-      <div class="space-y-3">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">NFA Formal Specification</h3>
+      <hr class="divider" />
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <h3 class="sec-title">NFA Formal Specification</h3>
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1" for="statesInput">States (comma-separated)</label>
-          <input id="statesInput" type="text" value="A, B, C"
-            class="w-full px-3 py-1.5 text-xs font-mono rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500" />
+          <label class="field-label" for="statesInput">States (comma-separated)</label>
+          <input id="statesInput" type="text" value="A, B, C" class="input-text mono" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1" for="alphabetInput">Alphabet (comma-separated, 'e' for ε)</label>
-          <input id="alphabetInput" type="text" value="0, 1, e"
-            class="w-full px-3 py-1.5 text-xs font-mono rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500" />
+          <label class="field-label" for="alphabetInput">Alphabet (comma-separated, 'e' for ε)</label>
+          <input id="alphabetInput" type="text" value="0, 1, e" class="input-text mono" />
         </div>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid-2">
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1" for="startStateSelect">Start State (q0)</label>
-            <select id="startStateSelect" class="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-slate-300 bg-white"></select>
+            <label class="field-label" for="startStateSelect">Start State (q0)</label>
+            <select id="startStateSelect" class="select-box mono"></select>
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Accept States (F)</label>
-            <div id="acceptStatesContainer" class="flex flex-wrap gap-1.5 p-1.5 rounded-lg border border-slate-200 bg-slate-50 min-h-[34px]"></div>
+            <label class="field-label">Accept States (F)</label>
+            <div id="acceptStatesContainer" class="chips-box"></div>
           </div>
         </div>
       </div>
+
+      <hr class="divider" />
 
       <div>
-        <div class="flex items-center justify-between mb-1.5">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Transition Table Builder</h3>
-          <span class="text-[11px] text-slate-400">Click targets to toggle</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <h3 class="sec-title">Transition Table Builder</h3>
+          <span style="font-size:11px;color:var(--text-muted);">Click state to expand</span>
         </div>
-        <div id="transitionsBuilderContainer" class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1 custom-scroll"></div>
+        <div id="transitionsBuilderContainer" class="builder-stack"></div>
       </div>
     </aside>
 
-    <!-- Main Content Tabs (Right 9 cols) -->
-    <main class="lg:col-span-9 space-y-5">
+    <!-- Main Content Tabs -->
+    <main class="main-area">
 
       <!-- Tab Navigation -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-1.5 flex flex-wrap gap-1.5 shadow-xs">
-        <button type="button" id="tabBtnPipeline" onclick="switchTab('pipeline')"
-          class="flex-1 min-w-[180px] py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-blue-600 text-white shadow-xs">
+      <div class="tab-bar">
+        <button type="button" id="tabBtnPipeline" onclick="switchTab('pipeline')" class="tab-btn active">
           📊 1. Visual Pipeline (NFA ➔ DFA ➔ Min DFA)
         </button>
-        <button type="button" id="tabBtnStepper" onclick="switchTab('stepper')"
-          class="flex-1 min-w-[180px] py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">
+        <button type="button" id="tabBtnStepper" onclick="switchTab('stepper')" class="tab-btn">
           ⏯️ 2. Step-by-Step String Stepper
         </button>
-        <button type="button" id="tabBtnTelemetry" onclick="switchTab('telemetry')"
-          class="flex-1 min-w-[180px] py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">
+        <button type="button" id="tabBtnTelemetry" onclick="switchTab('telemetry')" class="tab-btn">
           📋 3. Research Telemetry &amp; Activity Log
         </button>
       </div>
 
       <!-- TAB 1: VISUAL PIPELINE -->
-      <section id="tabPanelPipeline" class="space-y-5">
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
-          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+      <section id="tabPanelPipeline">
+        <div class="card">
+          <div class="pipeline-top">
             <div>
-              <h2 class="text-base sm:text-lg font-bold text-slate-900">Comparative Automata Transformation Pipeline</h2>
-              <p class="text-xs text-slate-500">Visualizing the topological progression from NFA to Deterministic Machine to Minimal Canonical Form.</p>
+              <h2 style="font-size:17px;font-weight:700;">Comparative Automata Transformation Pipeline</h2>
+              <p style="font-size:12.5px;color:var(--text-muted);">Visualizing the topological progression from NFA to Deterministic Machine to Minimal Canonical Form.</p>
             </div>
-            <!-- Color Legend (Mayer's Signaling Principle) -->
-            <div class="flex flex-wrap items-center gap-3 text-xs">
-              <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#dbeafe] border-2 border-[#1d4ed8]"></span>Start State</span>
-              <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-white border-2 border-double border-slate-700"></span>Accept State (Double Circle)</span>
-              <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#fee2e2] border-2 border-[#b91c1c]"></span>Trap (Dead) State</span>
+            <div class="legend-row">
+              <span><span class="legend-dot" style="background:#dbeafe;border:2px solid #1d4ed8;"></span>Start State</span>
+              <span><span class="legend-dot" style="background:#ffffff;border:3px double #334155;"></span>Accept State (Double Circle)</span>
+              <span><span class="legend-dot" style="background:#fee2e2;border:2px solid #b91c1c;"></span>Trap (Dead) State</span>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+          <label class="expand-toggle-bar" style="cursor:pointer;user-select:none;">
+            <input type="checkbox" id="chkExpandAllTables" onchange="toggleAllStepTables(this.checked)" />
+            <span>Expand all mathematical derivation tables</span>
+          </label>
+
+          <div class="pipeline-grid">
             <!-- Column 1: Original NFA -->
-            <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4 flex flex-col justify-between space-y-4">
-              <div>
-                <div class="flex items-center justify-between mb-2">
-                  <h3 class="text-sm font-bold text-slate-800">1. Original NFA</h3>
-                  <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-200 text-slate-700" id="nfaStatsBadge"></span>
-                </div>
-                <div id="nfaGraphContainer" class="bg-white rounded-lg border border-slate-200 p-2 min-h-[230px] flex items-center justify-center overflow-x-auto"></div>
+            <div class="stage-card">
+              <div class="stage-head">
+                <h3 class="stage-title">1. Original NFA</h3>
+                <span class="stat-badge" style="background:#e2e8f0;color:#334155;" id="nfaStatsBadge"></span>
               </div>
-              <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
-                <div class="bg-slate-800 text-white px-3 py-2 text-xs font-semibold flex justify-between items-center">
+              <div id="nfaGraphContainer" class="graph-box"></div>
+              <details class="step-expander" id="expEClosure">
+                <summary>
                   <span>Show E-Closure (E-sets)</span>
-                  <span class="text-[11px] font-mono text-slate-300">E-set(q)</span>
-                </div>
-                <div class="overflow-x-auto">
-                  <table class="w-full text-xs text-left">
-                    <thead class="bg-slate-100 text-slate-600 border-b border-slate-200">
+                  <span class="sum-right"><span>E-set(q)</span><span class="caret"></span></span>
+                </summary>
+                <div class="table-wrap">
+                  <table class="data-table">
+                    <thead>
                       <tr>
-                        <th class="py-2 px-3 font-semibold">NFA State</th>
-                        <th class="py-2 px-3 font-semibold">E-set (Epsilon Closure)</th>
+                        <th>NFA State</th>
+                        <th>E-set (Epsilon Closure)</th>
                       </tr>
                     </thead>
-                    <tbody id="eClosureTableBody" class="divide-y divide-slate-200 font-mono"></tbody>
+                    <tbody id="eClosureTableBody"></tbody>
                   </table>
                 </div>
-              </div>
+              </details>
             </div>
 
             <!-- Column 2: Converted DFA -->
-            <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4 flex flex-col justify-between space-y-4">
-              <div>
-                <div class="flex items-center justify-between mb-2">
-                  <h3 class="text-sm font-bold text-slate-800">2. Converted DFA (Subset Construction)</h3>
-                  <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-blue-100 text-blue-800" id="dfaStatsBadge"></span>
-                </div>
-                <div id="dfaGraphContainer" class="bg-white rounded-lg border border-slate-200 p-2 min-h-[230px] flex items-center justify-center overflow-x-auto"></div>
+            <div class="stage-card">
+              <div class="stage-head">
+                <h3 class="stage-title">2. Converted DFA (Subset Construction)</h3>
+                <span class="stat-badge" style="background:#dbeafe;color:#1e40af;" id="dfaStatsBadge"></span>
               </div>
-              <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
-                <div class="bg-slate-800 text-white px-3 py-2 text-xs font-semibold flex justify-between items-center">
+              <div id="dfaGraphContainer" class="graph-box"></div>
+              <details class="step-expander" id="expSubset">
+                <summary>
                   <span>Subset Construction Transition Table</span>
-                  <span class="text-[11px] font-mono text-slate-300">E-set(Move(S, σ))</span>
-                </div>
-                <div class="overflow-x-auto max-h-[240px] custom-scroll">
-                  <table class="w-full text-xs text-left">
-                    <thead class="bg-slate-100 text-slate-600 border-b border-slate-200 sticky top-0">
+                  <span class="sum-right"><span>E-set(Move(S, σ))</span><span class="caret"></span></span>
+                </summary>
+                <div class="table-wrap">
+                  <table class="data-table">
+                    <thead>
                       <tr>
-                        <th class="py-2 px-2.5 font-semibold">Current S</th>
-                        <th class="py-2 px-2 font-semibold">σ</th>
-                        <th class="py-2 px-2.5 font-semibold">Move(S, σ)</th>
-                        <th class="py-2 px-2.5 font-semibold">E-set(Move) ➔ Target</th>
+                        <th>Current State S</th>
+                        <th>Symbol σ</th>
+                        <th>Move(S, σ)</th>
+                        <th>E-set(Move) -> Target</th>
                       </tr>
                     </thead>
-                    <tbody id="subsetTableBody" class="divide-y divide-slate-200 font-mono"></tbody>
+                    <tbody id="subsetTableBody"></tbody>
                   </table>
                 </div>
-              </div>
+              </details>
             </div>
 
             <!-- Column 3: Minimized DFA -->
-            <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4 flex flex-col justify-between space-y-4">
-              <div>
-                <div class="flex items-center justify-between mb-2">
-                  <h3 class="text-sm font-bold text-slate-800">3. Minimized DFA (Equivalence Partitions)</h3>
-                  <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800" id="minDfaStatsBadge"></span>
-                </div>
-                <div id="minDfaGraphContainer" class="bg-white rounded-lg border border-slate-200 p-2 min-h-[230px] flex items-center justify-center overflow-x-auto"></div>
+            <div class="stage-card">
+              <div class="stage-head">
+                <h3 class="stage-title">3. Minimized DFA (Equivalence Partitions)</h3>
+                <span class="stat-badge" style="background:#d1fae5;color:#065f46;" id="minDfaStatsBadge"></span>
               </div>
-              <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
-                <div class="bg-slate-800 text-white px-3 py-2 text-xs font-semibold flex justify-between items-center">
+              <div id="minDfaGraphContainer" class="graph-box"></div>
+              <details class="step-expander" id="expMinMap">
+                <summary>
                   <span>State Collapsing Equivalence Map</span>
-                  <span class="text-[11px] font-mono text-slate-300">Moore Partitioning</span>
-                </div>
-                <div class="overflow-x-auto">
-                  <table class="w-full text-xs text-left">
-                    <thead class="bg-slate-100 text-slate-600 border-b border-slate-200">
+                  <span class="sum-right"><span>Moore Partitioning</span><span class="caret"></span></span>
+                </summary>
+                <div class="table-wrap">
+                  <table class="data-table">
+                    <thead>
                       <tr>
-                        <th class="py-2 px-3 font-semibold">Minimized Group</th>
-                        <th class="py-2 px-3 font-semibold">Original Component States</th>
+                        <th>Minimized Group</th>
+                        <th>Original Component States</th>
                       </tr>
                     </thead>
-                    <tbody id="minMapTableBody" class="divide-y divide-slate-200 font-mono"></tbody>
+                    <tbody id="minMapTableBody"></tbody>
                   </table>
                 </div>
-              </div>
+              </details>
             </div>
           </div>
         </div>
       </section>
 
       <!-- TAB 2: STEP-BY-STEP STRING STEPPER -->
-      <section id="tabPanelStepper" class="space-y-5 hidden">
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-5">
+      <section id="tabPanelStepper" class="hidden">
+        <div class="card">
           <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900">Interactive Step-by-Step String Stepper</h2>
-            <p class="text-xs text-slate-500">Navigate character transitions one click at a time with active state (#86efac) and active transition edge (#dc2626) signaling.</p>
+            <h2 style="font-size:17px;font-weight:700;">Interactive Step-by-Step String Stepper</h2>
+            <p style="font-size:12.5px;color:var(--text-muted);">Avoid information overload by navigating character transitions one click at a time.</p>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-            <div class="md:col-span-6">
-              <label class="block text-xs font-semibold text-slate-700 mb-1" for="stepperStringInput">Input String to Trace:</label>
-              <input id="stepperStringInput" type="text" value="0101"
-                class="w-full px-3.5 py-2 text-sm font-mono rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500" />
+          <div class="stepper-inputs">
+            <div>
+              <label class="field-label" for="stepperStringInput">Input String to Trace:</label>
+              <input id="stepperStringInput" type="text" value="0101" class="input-text mono" style="font-size:13.5px;padding:8px 12px;" />
             </div>
-            <div class="md:col-span-6">
-              <span class="block text-xs font-semibold text-slate-700 mb-1">Select Target Automaton:</span>
-              <div class="grid grid-cols-2 gap-2">
-                <label class="flex items-center justify-center p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 text-xs font-semibold">
-                  <input type="radio" name="stepperTargetMachine" value="Minimized DFA" checked class="mr-2 text-blue-600" />
+            <div>
+              <span class="field-label">Select Target Automaton:</span>
+              <div class="grid-2">
+                <label class="radio-card">
+                  <input type="radio" name="stepperTargetMachine" value="Minimized DFA" checked />
                   <span>Minimized DFA</span>
                 </label>
-                <label class="flex items-center justify-center p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 text-xs font-semibold">
-                  <input type="radio" name="stepperTargetMachine" value="Standard DFA" class="mr-2 text-blue-600" />
+                <label class="radio-card">
+                  <input type="radio" name="stepperTargetMachine" value="Standard DFA" />
                   <span>Standard DFA</span>
                 </label>
               </div>
             </div>
           </div>
 
-          <!-- Stepper Control Buttons -->
-          <div class="flex flex-wrap items-center gap-2.5 pt-2">
-            <button type="button" id="btnStepReset" onclick="stepperAction('reset')"
-              class="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-2xs">
-              ⏮️ Reset Stepper
-            </button>
-            <button type="button" id="btnStepPrev" onclick="stepperAction('prev')"
-              class="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-2xs">
-              ◀️ Prev Step
-            </button>
-            <button type="button" id="btnStepNext" onclick="stepperAction('next')"
-              class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-semibold text-white shadow-xs">
-              Next Step ▶️
-            </button>
-            <div class="ml-auto flex items-center gap-3 text-xs font-mono bg-slate-100 px-3.5 py-2 rounded-xl border border-slate-200">
+          <div class="stepper-controls">
+            <button type="button" id="btnStepReset" onclick="stepperAction('reset')" class="btn-step">⏮️ Reset Stepper</button>
+            <button type="button" id="btnStepPrev" onclick="stepperAction('prev')" class="btn-step">◀️ Prev Step</button>
+            <button type="button" id="btnStepNext" onclick="stepperAction('next')" class="btn-step-primary">Next Step ▶️</button>
+            <div class="step-status-pill">
               <span id="stepperProgressLabel">Step 0 of 4</span>
               <span>|</span>
-              <span>Active State: <strong id="stepperActiveStateBadge" class="text-emerald-700">M0</strong></span>
+              <span>Active State: <strong id="stepperActiveStateBadge" style="color:var(--emerald);">M0</strong></span>
             </div>
           </div>
 
-          <!-- Character Tape Visualizer -->
-          <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-2 text-xs font-semibold text-slate-600">
+          <div class="tape-bar">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:#475569;">
               <span>String Progress:</span>
-              <div id="stepperTapeContainer" class="flex items-center gap-1.5 font-mono text-sm"></div>
+              <div id="stepperTapeContainer" class="tape-cells"></div>
             </div>
-            <div id="stepperTraceSequence" class="text-xs font-mono text-slate-600"></div>
+            <div id="stepperTraceSequence" class="mono" style="font-size:12px;color:#475569;"></div>
           </div>
 
-          <!-- Highlighted Graph -->
-          <div id="stepperGraphContainer" class="bg-white rounded-xl border border-slate-200 p-4 min-h-[280px] flex items-center justify-center overflow-x-auto"></div>
-
-          <!-- Acceptance Banner -->
-          <div id="stepperResultBanner" class="p-4 rounded-xl text-sm font-medium hidden"></div>
+          <div id="stepperGraphContainer" class="graph-box" style="margin-top:14px;min-height:280px;"></div>
+          <div id="stepperResultBanner" class="hidden"></div>
         </div>
       </section>
 
-      <!-- TAB 3: RESEARCH TELEMETRY -->
-      <section id="tabPanelTelemetry" class="space-y-5 hidden">
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-5">
+      <!-- TAB 3: RESEARCH TELEMETRY & ACTIVITY LOG -->
+      <section id="tabPanelTelemetry" class="hidden">
+        <div class="card">
           <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900">📋 Educational Interaction Telemetry</h2>
-            <p class="text-xs text-slate-500">Verifiable interaction log recorded during this learning session for research validation.</p>
+            <h2 style="font-size:17px;font-weight:700;">📋 Educational Interaction Telemetry</h2>
+            <p style="font-size:12.5px;color:var(--text-muted);">Verifiable interaction log recorded during this learning session. Useful for research validation.</p>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-              <div class="text-xs text-slate-500 font-medium">Active Session Time</div>
-              <div id="metricSessionTime" class="text-2xl font-bold text-slate-900 mt-1">0.0 mins</div>
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-label">Active Session Time</div>
+              <div id="metricSessionTime" class="kpi-val">0.0 mins</div>
             </div>
-            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-              <div class="text-xs text-slate-500 font-medium">Total User Actions</div>
-              <div id="metricTotalActions" class="text-2xl font-bold text-blue-600 mt-1">0 events</div>
+            <div class="kpi-card">
+              <div class="kpi-label">Total User Actions</div>
+              <div id="metricTotalActions" class="kpi-val" style="color:var(--blue);">0 events</div>
             </div>
           </div>
 
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Session Verification JSON</h3>
-              <button type="button" id="btnCopyTelemetry" onclick="copyTelemetryJson()"
-                class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium">
+          <div style="margin-top:18px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <div>
+                <h3 style="font-size:13.5px;font-weight:700;">Session Verification Code</h3>
+                <p style="font-size:12px;color:var(--text-muted);">You can copy this JSON string as proof of active participation if requested by your instructor:</p>
+              </div>
+              <button type="button" id="btnCopyTelemetry" onclick="copyTelemetryJson()" class="btn-header" style="background:var(--bg-dark);color:#fff;">
                 Copy JSON
               </button>
             </div>
-            <pre id="telemetryJsonPre" class="p-4 rounded-xl bg-slate-900 text-emerald-300 font-mono text-xs overflow-x-auto"></pre>
+            <pre id="telemetryJsonPre" class="code-pre"></pre>
+          </div>
+
+          <!-- Restored from canonical NFA.py: Detailed Action Event Log -->
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
+            <label style="display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;cursor:pointer;user-select:none;">
+              <input type="checkbox" id="chkDetailedEventLog" onchange="updateTelemetryView()" />
+              <span>Show Detailed Action Event Log</span>
+            </label>
+            <div id="detailedEventLogContainer" class="table-wrap hidden" style="margin-top:10px;border:1px solid var(--border);border-radius:10px;max-height:300px;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>timestamp_sec</th>
+                    <th>action</th>
+                    <th>details</th>
+                  </tr>
+                </thead>
+                <tbody id="detailedEventLogBody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
@@ -399,7 +908,7 @@
           "C": { "0": ["C"] }
         },
         sampleStr: "010",
-        description: "Post-Survey Part B (Q5–Q8): Start A, Accept C, δ(A,0)={A}, δ(A,ε)={B}, δ(B,1)={C}, δ(C,0)={C}."
+        description: "Post-Survey Part B (Q5-Q8): Start A, Accept C, δ(A,0)={A}, δ(A,ε)={B}, δ(B,1)={C}, δ(C,0)={C}."
       },
       "Post-Survey Context 2 (1, 2, 3)": {
         states: "1, 2, 3",
@@ -412,7 +921,7 @@
           "3": { "a": ["3"] }
         },
         sampleStr: "aba",
-        description: "Post-Survey Part D (Q11–Q13): Start 1, Accept 3, δ(1,a)={1}, δ(1,ε)={2}, δ(2,b)={2,3}, δ(3,a)={3}."
+        description: "Post-Survey Part D (Q11-Q13): Start 1, Accept 3, δ(1,a)={1}, δ(1,ε)={2}, δ(2,b)={2,3}, δ(3,a)={3}."
       }
     };
 
@@ -430,11 +939,24 @@
         "B": { "1": ["B", "C"] },
         "C": {}
       },
+      openBuilderStates: new Set(["A", "B", "C"]),
       dfaDef: null,
       stepData: null,
       minDfaDef: null,
       minMapping: []
     };
+
+    function asciiCompare(a, b) {
+      return a < b ? -1 : (a > b ? 1 : 0);
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
 
     function logAction(actionType, details = "") {
       const elapsed = Number(((Date.now() - appState.sessionStartTime) / 1000).toFixed(1));
@@ -449,6 +971,14 @@
       toast.textContent = msg;
       toast.classList.remove("hidden");
       setTimeout(() => toast.classList.add("hidden"), 2200);
+    }
+
+    function toggleAllStepTables(expand) {
+      ["expEClosure", "expSubset", "expMinMap"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.open = expand;
+      });
+      logAction("toggle_step_tables", expand ? "expand_all" : "collapse_all");
     }
 
     function resetToDefault() {
@@ -471,6 +1001,9 @@
       flashResetToast("✓ Preset Restored");
     }
 
+    // ==========================================
+    // FORMAL ALGORITHM ENGINES (1:1 WITH NFA.py)
+    // ==========================================
     function getEmptyClosure(stateArray, transitions) {
       const closure = new Set(stateArray);
       const stack = [...stateArray];
@@ -484,7 +1017,7 @@
           }
         }
       }
-      return Array.from(closure).sort();
+      return Array.from(closure).sort(asciiCompare);
     }
 
     function moveSet(stateArray, symbol, transitions) {
@@ -493,13 +1026,13 @@
         const targets = (transitions[s] && transitions[s][symbol]) ? transitions[s][symbol] : [];
         for (const nxt of targets) reachable.add(nxt);
       }
-      return Array.from(reachable).sort();
+      return Array.from(reachable).sort(asciiCompare);
     }
 
     function formatStateName(stateArray) {
       if (!stateArray || stateArray.length === 0) return "Trap";
       if (stateArray.length === 1 && stateArray[0] === "Trap") return "Trap";
-      return "{" + [...stateArray].sort().join(", ") + "}";
+      return "{" + [...stateArray].sort(asciiCompare).join(", ") + "}";
     }
 
     function nfaToDfaWithSteps(nfaDef) {
@@ -571,8 +1104,7 @@
         dfaDef: {
           states: finalStatesList,
           alphabet,
-          start_state: formatStateName(initialClosure),
-          accept_states: Array.from(dfaAccept),
+          start_state: formatStateName(initialClosure),\n          accept_states: Array.from(dfaAccept),
           transitions: dfaTransitions
         },
         stepData
@@ -600,40 +1132,50 @@
             const sig = alphabet.map(sym => {
               const target = (transitions[st] && transitions[st][sym]) ? transitions[st][sym] : "Trap";
               return partitions.findIndex(p => p.includes(target));
-            }).join(",");
-            if (!sigMap.has(sig)) sigMap.set(sig, []);
-            sigMap.get(sig).push(st);
+            });
+            const sigKey = JSON.stringify(sig);
+            if (!sigMap.has(sigKey)) sigMap.set(sigKey, { vec: sig, members: [] });
+            sigMap.get(sigKey).members.push(st);
           }
-          const sortedKeys = Array.from(sigMap.keys()).sort();
-          for (const k of sortedKeys) newPartitions.push(sigMap.get(k));
+          const entries = Array.from(sigMap.values()).sort((a, b) => {
+            for (let i = 0; i < Math.min(a.vec.length, b.vec.length); i++) {
+              if (a.vec[i] !== b.vec[i]) return a.vec[i] - b.vec[i];
+            }
+            return a.vec.length - b.vec.length;
+          });
+          for (const entry of entries) newPartitions.push(entry.members);
         }
         if (newPartitions.length === partitions.length) break;
         partitions = newPartitions;
       }
 
       const startState = dfaDef.start_state;
+      function partitionRank(p) {
+        if (p.includes(startState)) return { tier: 0, key: "" };
+        if (p.length === 1 && p[0] === "Trap") return { tier: 2, key: "Trap" };
+        return { tier: 1, key: [...p].sort(asciiCompare)[0] || "" };
+      }
+
       partitions.sort((a, b) => {
-        const aHasStart = a.includes(startState);
-        const bHasStart = b.includes(startState);
-        if (aHasStart && !bHasStart) return -1;
-        if (!aHasStart && bHasStart) return 1;
-        const aMin = [...a].sort()[0] || "";
-        const bMin = [...b].sort()[0] || "";
-        return aMin.localeCompare(bMin);
+        const ra = partitionRank(a);
+        const rb = partitionRank(b);
+        if (ra.tier !== rb.tier) return ra.tier - rb.tier;
+        return asciiCompare(ra.key, rb.key);
       });
 
       const stateMap = {};
       const mapping = [];
       partitions.forEach((p, idx) => {
         const label = `M${idx}`;
-        const sortedMembers = [...p].sort();
+        const sortedMembers = [...p].sort(asciiCompare);
         sortedMembers.forEach(s => { stateMap[s] = label; });
         mapping.push({ group: label, members: sortedMembers.join(", ") });
       });
 
       const minStates = partitions.map((_, idx) => `M${idx}`);
       const minStart = stateMap[startState];
-      const minAccept = Array.from(new Set(accept.map(s => stateMap[s]).filter(Boolean)));
+      const minAccept = Array.from(new Set(accept.map(s => stateMap[s]).filter(Boolean)))
+        .sort((a, b) => parseInt(a.slice(1), 10) - parseInt(b.slice(1), 10));
       const minTrans = {};
 
       for (const s of states) {
@@ -674,35 +1216,98 @@
       return { isAccepted: dfaDef.accept_states.includes(curr), path, msg: "Success" };
     }
 
+    function computeLayeredLayout(automatonDef) {
+      const states = automatonDef.states;
+      const start = automatonDef.start_state;
+      const adj = new Map();
+      states.forEach(s => adj.set(s, new Set()));
+
+      for (const [src, row] of Object.entries(automatonDef.transitions || {})) {
+        if (!adj.has(src)) continue;
+        for (const dests of Object.values(row || {})) {
+          const list = Array.isArray(dests) ? dests : [dests];
+          for (const d of list) {
+            if (adj.has(d) && d !== src) adj.get(src).add(d);
+          }
+        }
+      }
+
+      const rankMap = new Map();
+      if (start && states.includes(start)) {
+        rankMap.set(start, 0);
+        const q = [start];
+        while (q.length > 0) {
+          const u = q.shift();
+          const r = rankMap.get(u);
+          for (const v of adj.get(u) || []) {
+            if (v === "Trap") continue;
+            if (!rankMap.has(v)) {
+              rankMap.set(v, r + 1);
+              q.push(v);
+            }
+          }
+        }
+      }
+
+      let maxRank = 0;
+      for (const r of rankMap.values()) if (r > maxRank) maxRank = r;
+
+      for (const st of states) {
+        if (st !== "Trap" && !rankMap.has(st)) {
+          maxRank += 1;
+          rankMap.set(st, maxRank);
+        }
+      }
+
+      if (states.includes("Trap")) {
+        rankMap.set("Trap", states.length > 1 ? maxRank + 1 : 0);
+      }
+
+      const layers = new Map();
+      for (const st of states) {
+        const r = rankMap.get(st) || 0;
+        if (!layers.has(r)) layers.set(r, []);
+        layers.get(r).push(st);
+      }
+
+      const sortedRanks = Array.from(layers.keys()).sort((a, b) => a - b);
+      const numCols = sortedRanks.length;
+      let maxRowsInCol = 1;
+      for (const col of layers.values()) {
+        if (col.length > maxRowsInCol) maxRowsInCol = col.length;
+      }
+
+      const colGap = 148;
+      const rowGap = 96;
+      const padX = 72;
+      const padY = 58;
+      const width = Math.max(390, padX * 2 + Math.max(0, numCols - 1) * colGap);
+      const height = Math.max(220, padY * 2 + Math.max(0, maxRowsInCol - 1) * rowGap + 24);
+
+      const coords = {};
+      sortedRanks.forEach((rk, colIdx) => {
+        const colStates = layers.get(rk);
+        const m = colStates.length;
+        const x = numCols === 1 ? width / 2 : padX + colIdx * ((width - padX * 2) / (numCols - 1));
+        colStates.forEach((st, rowIdx) => {
+          const totalSpan = (m - 1) * rowGap;
+          const startY = (height / 2) - (totalSpan / 2) + 8;
+          const stagger = (m === 1 && numCols >= 3 && colIdx % 2 === 1 && st !== "Trap") ? -14 : 0;
+          coords[st] = { x, y: startY + rowIdx * rowGap + stagger, col: colIdx, row: rowIdx };
+        });
+      });
+
+      return { coords, width, height };
+    }
+
     function renderAutomatonSvg(automatonDef, highlightedStates = [], activeEdge = null) {
       if (!automatonDef || !automatonDef.states || automatonDef.states.length === 0) {
-        return `<div class="text-xs text-slate-400 p-4">No states to display</div>`;
+        return `<div style="font-size:12px;color:#94a3b8;padding:16px;">No states to display</div>`;
       }
       const states = automatonDef.states;
-      const n = states.length;
       const acceptSet = new Set(automatonDef.accept_states || []);
       const highlightSet = new Set(highlightedStates || []);
-
-      const width = Math.max(380, n * 135);
-      const height = n <= 3 ? 210 : 250;
-      const coords = {};
-
-      if (n <= 4) {
-        const spacing = (width - 110) / Math.max(1, n - 1);
-        states.forEach((st, i) => {
-          coords[st] = {
-            x: n === 1 ? width / 2 : 65 + i * spacing,
-            y: (n >= 3 && i % 2 === 1) ? height * 0.36 : height * 0.62
-          };
-        });
-      } else {
-        const cx = width / 2, cy = height / 2;
-        const rx = (width - 130) / 2, ry = (height - 95) / 2;
-        states.forEach((st, i) => {
-          const angle = Math.PI + (2 * Math.PI * i) / n;
-          coords[st] = { x: cx + rx * Math.cos(angle), y: cy + ry * Math.sin(angle) };
-        });
-      }
+      const { coords, width, height } = computeLayeredLayout(automatonDef);
 
       const edgeGroups = new Map();
       for (const [src, row] of Object.entries(automatonDef.transitions || {})) {
@@ -717,8 +1322,8 @@
         }
       }
 
-      const uid = "m" + Math.random().toString(36).slice(2, 8);
-      let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" class="w-full h-auto max-h-[260px]">
+      const uid = "g" + Math.random().toString(36).slice(2, 8);
+      let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" style="width:100%;height:auto;max-height:280px;">
         <defs>
           <marker id="arrow-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b"/>
@@ -731,45 +1336,57 @@
           </marker>
         </defs>`;
 
+      const R = 24;
       const startPos = coords[automatonDef.start_state];
       if (startPos) {
-        svg += `<line x1="${startPos.x - 48}" y1="${startPos.y}" x2="${startPos.x - 27}" y2="${startPos.y}" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arrow-start-${uid})" />`;
+        svg += `<line x1="${startPos.x - 50}" y1="${startPos.y}" x2="${startPos.x - (R + 3)}" y2="${startPos.y}" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arrow-start-${uid})" />`;
       }
 
-      const R = 24;
       for (const [key, syms] of edgeGroups.entries()) {
         const [src, dest] = key.split("|||");
         const p1 = coords[src], p2 = coords[dest];
         const isHit = activeEdge && activeEdge.src === src && activeEdge.dest === dest && syms.includes(activeEdge.symbol);
         const strokeColor = isHit ? "#dc2626" : "#64748b";
-        const strokeWidth = isHit ? "2.8" : "1.4";
+        const strokeWidth = isHit ? "2.8" : "1.45";
         const marker = isHit ? `url(#arrow-active-${uid})` : `url(#arrow-${uid})`;
         const label = syms.map(s => s === "e" ? "ε" : s).join(", ");
+        const safeLabel = escapeHtml(label);
 
         if (src === dest) {
           const lx = p1.x, ly = p1.y - R;
           svg += `<path d="M ${lx - 10} ${ly + 2} C ${lx - 24} ${ly - 38}, ${lx + 24} ${ly - 38}, ${lx + 10} ${ly + 2}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
-          svg += `<text x="${lx}" y="${ly - 32}" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="600" fill="${isHit ? '#dc2626' : '#1e293b'}">${label}</text>`;
+          svg += `<rect x="${lx - (label.length * 3.8 + 5)}" y="${ly - 43}" width="${label.length * 7.6 + 10}" height="15" rx="3" fill="white" fill-opacity="0.92" />`;
+          svg += `<text x="${lx}" y="${ly - 32}" text-anchor="middle" font-size="11" font-family="monospace" font-weight="700" fill="${isHit ? '#dc2626' : '#1e293b'}">${safeLabel}</text>`;
         } else {
           const hasReverse = edgeGroups.has(`${dest}|||${src}`);
+          const colSpan = Math.abs((p2.col || 0) - (p1.col || 0));
+          const isBackEdge = (p2.col || 0) < (p1.col || 0);
           const dx = p2.x - p1.x, dy = p2.y - p1.y;
           const dist = Math.hypot(dx, dy) || 1;
           const ux = dx / dist, uy = dy / dist;
           const nx = -uy, ny = ux;
-          const curveOffset = hasReverse ? 22 : 0;
 
-          const sx = p1.x + ux * R + nx * (curveOffset * 0.25);
-          const sy = p1.y + uy * R + ny * (curveOffset * 0.25);
-          const ex = p2.x - ux * (R + 3) + nx * (curveOffset * 0.25);
-          const ey = p2.y - uy * (R + 3) + ny * (curveOffset * 0.25);
+          let curveOffset = 0;
+          if (hasReverse) {
+            curveOffset = 24;
+          } else if (colSpan > 1) {
+            curveOffset = isBackEdge ? 38 : -34;
+          } else if (isBackEdge) {
+            curveOffset = 30;
+          }
+
+          const sx = p1.x + ux * R + nx * (curveOffset * 0.22);
+          const sy = p1.y + uy * R + ny * (curveOffset * 0.22);
+          const ex = p2.x - ux * (R + 3) + nx * (curveOffset * 0.22);
+          const ey = p2.y - uy * (R + 3) + ny * (curveOffset * 0.22);
           const cx = (p1.x + p2.x) / 2 + nx * curveOffset;
           const cy = (p1.y + p2.y) / 2 + ny * curveOffset;
 
           svg += `<path d="M ${sx} ${sy} Q ${cx} ${cy} ${ex} ${ey}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
-          const tx = (p1.x + p2.x) / 2 + nx * (curveOffset * 0.75 + (curveOffset >= 0 ? -9 : 9));
-          const ty = (p1.y + p2.y) / 2 + ny * (curveOffset * 0.75 + (curveOffset >= 0 ? -9 : 9));
-          svg += `<rect x="${tx - (label.length * 3.8 + 4)}" y="${ty - 9}" width="${label.length * 7.6 + 8}" height="15" rx="3" fill="white" fill-opacity="0.88" />`;
-          svg += `<text x="${tx}" y="${ty + 2}" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="600" fill="${isHit ? '#dc2626' : '#0f172a'}">${label}</text>`;
+          const tx = 0.25 * sx + 0.5 * cx + 0.25 * ex;
+          const ty = 0.25 * sy + 0.5 * cy + 0.25 * ey;
+          svg += `<rect x="${tx - (label.length * 3.8 + 5)}" y="${ty - 9}" width="${label.length * 7.6 + 10}" height="16" rx="4" fill="white" fill-opacity="0.92" stroke="#e2e8f0" stroke-width="0.6" />`;
+          svg += `<text x="${tx}" y="${ty + 3}" text-anchor="middle" font-size="11" font-family="monospace" font-weight="700" fill="${isHit ? '#dc2626' : '#0f172a'}">${safeLabel}</text>`;
         }
       }
 
@@ -777,7 +1394,7 @@
         const { x, y } = coords[st];
         let fill = "#ffffff", stroke = "#64748b", sw = "1.5";
         if (highlightSet.has(st)) {
-          fill = "#86efac"; stroke = "#15803d"; sw = "3.2";
+          fill = "#86efac"; stroke = "#15803d"; sw = "3.3";
         } else if (st === automatonDef.start_state) {
           fill = "#dbeafe"; stroke = "#1d4ed8"; sw = "2.2";
         } else if (st === "Trap") {
@@ -786,10 +1403,10 @@
 
         svg += `<circle cx="${x}" cy="${y}" r="${R}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" />`;
         if (acceptSet.has(st)) {
-          svg += `<circle cx="${x}" cy="${y}" r="${R - 4}" fill="none" stroke="${stroke}" stroke-width="1.4" />`;
+          svg += `<circle cx="${x}" cy="${y}" r="${R - 4.2}" fill="none" stroke="${stroke}" stroke-width="1.4" />`;
         }
-        const fontSize = st.length > 6 ? 9.5 : 11.5;
-        svg += `<text x="${x}" y="${y + 4}" text-anchor="middle" font-size="${fontSize}" font-family="JetBrains Mono, monospace" font-weight="700" fill="#0f172a">${st}</text>`;
+        const fontSize = st.length > 8 ? 8.8 : (st.length > 5 ? 9.8 : 11.5);
+        svg += `<text x="${x}" y="${y + 4}" text-anchor="middle" font-size="${fontSize}" font-family="monospace" font-weight="700" fill="#0f172a">${escapeHtml(st)}</text>`;
       }
 
       svg += `</svg>`;
@@ -808,11 +1425,20 @@
         appState.startState = p.start;
         appState.acceptStates = [...p.accept];
         appState.transitions = JSON.parse(JSON.stringify(p.transitions));
+        appState.openBuilderStates = new Set(appState.states);
         document.getElementById("stepperStringInput").value = p.sampleStr || "0101";
         descBox.textContent = `ℹ️ Scenario Note: ${p.description}`;
-        descBox.classList.remove("hidden");
       } else {
-        descBox.textContent = "ℹ️ Custom mode: Edit states, alphabet, and toggle transition targets below.";
+        appState.states = ["q0", "q1", "q2"];
+        appState.alphabet = ["0", "1", "e"];
+        appState.startState = "q0";
+        appState.acceptStates = ["q2"];
+        appState.transitions = { "q0": {}, "q1": {}, "q2": {} };
+        appState.openBuilderStates = new Set();
+        document.getElementById("statesInput").value = "q0, q1, q2";
+        document.getElementById("alphabetInput").value = "0, 1, e";
+        document.getElementById("stepperStringInput").value = "0101";
+        descBox.textContent = "ℹ️ Custom Mode: Edit states, alphabet, and transition rules below.";
       }
       appState.simStepIndex = 0;
       rebuildSidebarControls();
@@ -836,9 +1462,7 @@
         const isAcc = appState.acceptStates.includes(st);
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = `px-2 py-0.5 rounded text-xs font-mono font-semibold border transition ${
-          isAcc ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-600 border-slate-300 hover:bg-slate-100"
-        }`;
+        btn.className = `chip-btn ${isAcc ? "active-blue" : ""}`;
         btn.textContent = st;
         btn.addEventListener("click", () => {
           if (appState.acceptStates.includes(st)) {
@@ -857,32 +1481,42 @@
       transBuilder.innerHTML = "";
       appState.states.forEach(st => {
         if (!appState.transitions[st]) appState.transitions[st] = {};
-        const card = document.createElement("div");
-        card.className = "p-2.5 rounded-xl border border-slate-200 bg-slate-50 space-y-2";
-        const title = document.createElement("div");
-        title.className = "text-xs font-bold text-slate-800 font-mono";
-        title.textContent = `Transitions from '${st}':`;
-        card.appendChild(title);
+        const det = document.createElement("details");
+        det.className = "state-expander";
+        if (appState.openBuilderStates.has(st)) det.open = true;
+        det.addEventListener("toggle", () => {
+          if (det.open) appState.openBuilderStates.add(st);
+          else appState.openBuilderStates.delete(st);
+        });
+
+        const sum = document.createElement("summary");
+        sum.textContent = `Transitions from state: '${st}'`;
+        det.appendChild(sum);
+
+        const body = document.createElement("div");
+        body.className = "expander-body";
 
         appState.alphabet.forEach(sym => {
           const row = document.createElement("div");
-          row.className = "flex items-center justify-between gap-2 text-xs";
+          row.className = "trans-row";
           const lbl = document.createElement("span");
-          lbl.className = "font-mono text-slate-600 whitespace-nowrap";
-          lbl.textContent = `Read '${sym === "e" ? "ε (e)" : sym}' ➔`;
+          lbl.className = "mono";
+          lbl.style.color = "#475569";
+          lbl.textContent = `Read '${sym === "e" ? "ε (e)" : sym}' ➔ Go to:`;
           row.appendChild(lbl);
 
           const targetsWrap = document.createElement("div");
-          targetsWrap.className = "flex flex-wrap gap-1 justify-end";
+          targetsWrap.style.display = "flex";
+          targetsWrap.style.flexWrap = "wrap";
+          targetsWrap.style.gap = "4px";
+          targetsWrap.style.justifyContent = "flex-end";
           const currentTargets = appState.transitions[st][sym] || [];
 
           appState.states.forEach(targetSt => {
             const active = currentTargets.includes(targetSt);
             const chip = document.createElement("button");
             chip.type = "button";
-            chip.className = `px-1.5 py-0.5 rounded font-mono text-[11px] border transition ${
-              active ? "bg-emerald-600 text-white border-emerald-600 font-semibold" : "bg-white text-slate-600 border-slate-300 hover:bg-slate-100"
-            }`;
+            chip.className = `chip-btn ${active ? "active-emerald" : ""}`;
             chip.textContent = targetSt;
             chip.addEventListener("click", () => {
               const arr = appState.transitions[st][sym] || [];
@@ -899,9 +1533,11 @@
           });
 
           row.appendChild(targetsWrap);
-          card.appendChild(row);
+          body.appendChild(row);
         });
-        transBuilder.appendChild(card);
+
+        det.appendChild(body);
+        transBuilder.appendChild(det);
       });
     }
 
@@ -930,29 +1566,26 @@
       document.getElementById("dfaGraphContainer").innerHTML = renderAutomatonSvg(dfaDef);
       document.getElementById("minDfaGraphContainer").innerHTML = renderAutomatonSvg(minDfa);
 
-      const eBody = document.getElementById("eClosureTableBody");
-      eBody.innerHTML = Object.entries(stepData.e_sets).map(([st, eset]) => `
-        <tr class="hover:bg-slate-50">
-          <td class="py-1.5 px-3 font-semibold text-slate-800">${st}</td>
-          <td class="py-1.5 px-3 text-blue-700 font-semibold">${eset}</td>
+      document.getElementById("eClosureTableBody").innerHTML = Object.entries(stepData.e_sets).map(([st, eset]) => `
+        <tr>
+          <td style="font-weight:700;color:#0f172a;">${escapeHtml(st)}</td>
+          <td style="font-weight:700;color:#1d4ed8;">${escapeHtml(eset)}</td>
         </tr>
       `).join("");
 
-      const subBody = document.getElementById("subsetTableBody");
-      subBody.innerHTML = stepData.transitions_log.map(row => `
-        <tr class="hover:bg-slate-50">
-          <td class="py-1.5 px-2.5 font-semibold text-slate-800">${row.current}</td>
-          <td class="py-1.5 px-2 text-slate-600">${row.symbol}</td>
-          <td class="py-1.5 px-2.5 text-slate-600">${row.move}</td>
-          <td class="py-1.5 px-2.5 font-semibold ${row.target === 'Trap' ? 'text-rose-600' : 'text-emerald-700'}">${row.target}</td>
+      document.getElementById("subsetTableBody").innerHTML = stepData.transitions_log.map(row => `
+        <tr>
+          <td style="font-weight:700;color:#0f172a;">${escapeHtml(row.current)}</td>
+          <td style="color:#475569;">${escapeHtml(row.symbol)}</td>
+          <td style="color:#475569;">${escapeHtml(row.move)}</td>
+          <td style="font-weight:700;color:${row.target === 'Trap' ? '#e11d48' : '#059669'};">${escapeHtml(row.target)}</td>
         </tr>
       `).join("");
 
-      const minBody = document.getElementById("minMapTableBody");
-      minBody.innerHTML = mapping.map(row => `
-        <tr class="hover:bg-slate-50">
-          <td class="py-1.5 px-3 font-bold text-emerald-700">${row.group}</td>
-          <td class="py-1.5 px-3 text-slate-700">${row.members}</td>
+      document.getElementById("minMapTableBody").innerHTML = mapping.map(row => `
+        <tr>
+          <td style="font-weight:700;color:#059669;">${escapeHtml(row.group)}</td>
+          <td style="color:#334155;">${escapeHtml(row.members)}</td>
         </tr>
       `).join("");
 
@@ -970,7 +1603,7 @@
       const banner = document.getElementById("stepperResultBanner");
 
       if (msg !== "Success") {
-        banner.className = "p-4 rounded-xl text-sm font-medium bg-amber-50 text-amber-900 border border-amber-300";
+        banner.className = "banner-warn";
         banner.textContent = `⚠️ Simulation Alert: ${msg}`;
         banner.classList.remove("hidden");
         return;
@@ -987,15 +1620,13 @@
 
       const tape = document.getElementById("stepperTapeContainer");
       if (targetStr.length === 0) {
-        tape.innerHTML = `<span class="text-xs text-slate-400 italic">ε (empty string)</span>`;
+        tape.innerHTML = `<span style="font-size:12px;color:#94a3b8;font-style:italic;">ε (empty string)</span>`;
       } else {
         tape.innerHTML = targetStr.split("").map((ch, i) => {
-          if (i < currIdx) {
-            return `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold border border-emerald-300">${ch}</span>`;
-          } else if (i === currIdx) {
-            return `<span class="px-2 py-0.5 rounded bg-amber-200 text-slate-900 font-bold border border-amber-400">${ch}</span>`;
-          }
-          return `<span class="px-2 py-0.5 rounded bg-white text-slate-400 border border-slate-200">${ch}</span>`;
+          const safeCh = escapeHtml(ch);
+          if (i < currIdx) return `<span class="cell-done">${safeCh}</span>`;
+          if (i === currIdx) return `<span class="cell-curr">${safeCh}</span>`;
+          return `<span class="cell-wait">${safeCh}</span>`;
         }).join("");
       }
 
@@ -1012,11 +1643,11 @@
       if (currIdx === maxSteps) {
         banner.classList.remove("hidden");
         if (isAccepted) {
-          banner.className = "p-4 rounded-xl text-sm font-semibold bg-emerald-50 text-emerald-900 border border-emerald-300";
-          banner.innerHTML = `🎉 Simulation Complete: The string <code>'${targetStr}'</code> is <strong>ACCEPTED</strong> (Ended in accepting state <code>${currState}</code>).`;
+          banner.className = "banner-acc";
+          banner.innerHTML = `🎉 Simulation Complete: The string <code>'${escapeHtml(targetStr)}'</code> is <strong>ACCEPTED</strong> (Ended in accepting state <code>${escapeHtml(currState)}</code>).`;
         } else {
-          banner.className = "p-4 rounded-xl text-sm font-semibold bg-rose-50 text-rose-900 border border-rose-300";
-          banner.innerHTML = `🛑 Simulation Complete: The string <code>'${targetStr}'</code> is <strong>REJECTED</strong> (Ended in non-accept state <code>${currState}</code>).`;
+          banner.className = "banner-rej";
+          banner.innerHTML = `🛑 Simulation Complete: The string <code>'${escapeHtml(targetStr)}'</code> is <strong>REJECTED</strong> (Ended in non-accept state <code>${escapeHtml(currState)}</code>).`;
         }
       } else {
         banner.classList.add("hidden");
@@ -1042,14 +1673,15 @@
     function switchTab(tabName) {
       const tabs = ["pipeline", "stepper", "telemetry"];
       tabs.forEach(t => {
-        const panel = document.getElementById(`tabPanel${t.charAt(0).toUpperCase() + t.slice(1)}`);
-        const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const cap = t.charAt(0).toUpperCase() + t.slice(1);
+        const panel = document.getElementById(`tabPanel${cap}`);
+        const btn = document.getElementById(`tabBtn${cap}`);
         if (t === tabName) {
           panel.classList.remove("hidden");
-          btn.className = "flex-1 min-w-[180px] py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-blue-600 text-white shadow-xs";
+          btn.className = "tab-btn active";
         } else {
           panel.classList.add("hidden");
-          btn.className = "flex-1 min-w-[180px] py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100";
+          btn.className = "tab-btn";
         }
       });
       logAction("switch_tab", tabName);
@@ -1069,16 +1701,41 @@
         recent_actions: appState.userActionsLog.slice(-10)
       };
       document.getElementById("telemetryJsonPre").textContent = JSON.stringify(payload, null, 2);
+
+      const showDetailed = document.getElementById("chkDetailedEventLog")?.checked;
+      const logContainer = document.getElementById("detailedEventLogContainer");
+      const logBody = document.getElementById("detailedEventLogBody");
+      if (showDetailed) {
+        logContainer.classList.remove("hidden");
+        if (appState.userActionsLog.length === 0) {
+          logBody.innerHTML = `<tr><td colspan="4" style="color:#64748b;text-align:center;">No interaction events recorded yet in this session.</td></tr>`;
+        } else {
+          logBody.innerHTML = appState.userActionsLog.map((ev, i) => `
+            <tr>
+              <td style="color:#64748b;">${i + 1}</td>
+              <td>${ev.timestamp_sec}</td>
+              <td style="font-weight:700;color:#1d4ed8;">${escapeHtml(ev.action)}</td>
+              <td style="color:#334155;">${escapeHtml(ev.details || "")}</td>
+            </tr>
+          `).join("");
+        }
+      } else {
+        logContainer.classList.add("hidden");
+      }
     }
 
     function copyTelemetryJson() {
       const text = document.getElementById("telemetryJsonPre").textContent;
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
       const btn = document.getElementById("btnCopyTelemetry");
       btn.textContent = "Copied!";
       setTimeout(() => { btn.textContent = "Copy JSON"; }, 2000);
@@ -1091,11 +1748,12 @@
       });
 
       document.getElementById("statesInput").addEventListener("change", (e) => {
-        const list = e.target.value.split(",").map(s => s.trim()).filter(Boolean);
+        const list = Array.from(new Set(e.target.value.split(",").map(s => s.trim()).filter(Boolean)));
         if (list.length > 0) {
-          appState.states = Array.from(new Set(list));
+          appState.states = list;
           if (!appState.states.includes(appState.startState)) appState.startState = appState.states[0];
           appState.acceptStates = appState.acceptStates.filter(s => appState.states.includes(s));
+          list.forEach(s => appState.openBuilderStates.add(s));
           logAction("edit_states", appState.states.join(","));
           rebuildSidebarControls();
           recomputeAndRenderAll();
@@ -1103,9 +1761,9 @@
       });
 
       document.getElementById("alphabetInput").addEventListener("change", (e) => {
-        const list = e.target.value.split(",").map(s => s.trim()).filter(Boolean);
+        const list = Array.from(new Set(e.target.value.split(",").map(s => s.trim()).filter(Boolean)));
         if (list.length > 0) {
-          appState.alphabet = Array.from(new Set(list));
+          appState.alphabet = list;
           logAction("edit_alphabet", appState.alphabet.join(","));
           rebuildSidebarControls();
           recomputeAndRenderAll();
@@ -1132,7 +1790,6 @@
       });
 
       document.getElementById("participantIdInput").addEventListener("input", updateTelemetryView);
-
       loadPreset(DEFAULT_PRESET_NAME);
     });
   </script>

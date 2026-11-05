@@ -2,60 +2,41 @@
 AUTOMATA STUDIO - QUICK START & HOW TO RUN GUIDE
 ========================================================================
 
-This repository contains two versions of Automata Studio:
-1. Web Version (index.html) - Runs directly in any web browser. No installation needed.
-2. Python Streamlit Version (streamlit_source/NFA.py) - Runs locally or on Streamlit Cloud.
+This package provides two 100% synchronized versions of Automata Studio:
+1. Double-Click Python Streamlit App (Start_Automata_Studio.bat / .command)
+2. Zero-Install Offline/Online Web App (index.html)
 
 ------------------------------------------------------------------------
-OPTION 1: RUN THE WEB VERSION (EASIEST - NO INSTALLATION)
+OPTION 1: UNZIP & DOUBLE-CLICK STREAMLIT APP (RECOMMENDED FOR PYTHON)
+------------------------------------------------------------------------
+Prerequisite: Python 3.9 or newer installed (https://www.python.org/downloads/
+— on Windows, ensure "Add python.exe to PATH" is checked during installation).
+Note: Separate Graphviz system software is NOT required; graphs render directly
+in your browser!
+
+Step 1: Extract (Unzip) the downloaded ZIP folder completely (do not double-click
+        inside the compressed ZIP preview without extracting first).
+Step 2: Launch with a double-click:
+  - Windows : Double-click "Start_Automata_Studio.bat"
+  - macOS   : Double-click "Start_Automata_Studio.command" (Right-click -> Open on first run)
+  - Linux   : Run "./start_automata_studio.sh"
+
+On the first run, the launcher automatically builds a local ".venv" folder and
+installs Streamlit, Graphviz, and Pandas. On all future runs, double-clicking
+opens http://localhost:8501 in your browser within seconds!
+
+------------------------------------------------------------------------
+OPTION 2: RUN THE STANDALONE WEB VERSION (ZERO INSTALLATION, 100% OFFLINE)
 ------------------------------------------------------------------------
 1. Online via GitHub Pages:
-   Simply open the published GitHub Pages link in your browser:
    https://lamthai2711-afk.github.io/automata-studio/
 
-2. Offline on your computer:
-   Double-click the "index.html" file to open it in Chrome, Edge, Firefox, or Safari.
-
-Key Features in Web Version:
-- Select any built-in scenario from "Scenarios & Presets" on the left sidebar.
-- Click "Reset to Default" (top header or sidebar) at any time to restore the original default automaton.
-- Click "Reset Preset" to undo custom transition changes within the current scenario.
-- Use Tab 1 ("Visual Pipeline") to compare the Original NFA, Converted DFA, and Minimized DFA side by side.
-- Use Tab 2 ("Step-by-Step String Stepper") to trace an input string one character at a time.
+2. Offline on any computer (even without internet or Python):
+   Simply double-click "index.html" to open it in Chrome, Edge, Firefox, or Safari.
 
 ------------------------------------------------------------------------
-OPTION 2: RUN THE PYTHON VERSION (NFA.py) ON YOUR COMPUTER
+OPTION 3: DEPLOY ONLINE ON STREAMLIT COMMUNITY CLOUD
 ------------------------------------------------------------------------
-Step 1: Install Python
-Make sure you have Python 3.9 or newer installed (https://www.python.org/).
-
-Step 2: Install the Graphviz System Software (Required for drawing graphs)
-- Windows: Download and install Graphviz from https://graphviz.org/download/
-  (During installation, check the box "Add Graphviz to the system PATH for all users").
-- macOS: Open Terminal and run:
-  brew install graphviz
-- Ubuntu / Debian Linux: Open Terminal and run:
-  sudo apt-get update && sudo apt-get install -y graphviz
-
-Step 3: Install Required Python Libraries
-Open your terminal (or Command Prompt) inside the "streamlit_source" folder and run:
-  pip install -r requirements.txt
-
-(Or install them directly with: pip install streamlit graphviz pandas)
-
-Step 4: Start the Application
-Run the following command in your terminal:
-  streamlit run NFA.py
-
-Your browser will automatically open at http://localhost:8501.
-To reset all settings to the initial state while using the app, click the "Reset to Default" button in the left sidebar.
-
-------------------------------------------------------------------------
-OPTION 3: DEPLOY THE PYTHON VERSION ONLINE (STREAMLIT COMMUNITY CLOUD)
-------------------------------------------------------------------------
-1. Go to https://share.streamlit.io/ and sign in with your GitHub account.
-2. Click "Create app" -> "Deploy a public or private app from GitHub".
-3. Select Repository: lamthai2711-afk/automata-studio
-4. Branch: main
-5. Main file path: streamlit_source/NFA.py
-6. Click "Deploy!". Streamlit Cloud will automatically read "requirements.txt" and "packages.txt" and launch your app online.
+1. Sign in at https://share.streamlit.io/ with your GitHub account.
+2. Select Repository: lamthai2711-afk/automata-studio | Branch: main
+3. Main file path: streamlit_source/NFA.py -> Click "Deploy!".
