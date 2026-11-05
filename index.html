@@ -1001,9 +1001,6 @@
       flashResetToast("✓ Preset Restored");
     }
 
-    // ==========================================
-    // FORMAL ALGORITHM ENGINES (1:1 WITH NFA.py)
-    // ==========================================
     function getEmptyClosure(stateArray, transitions) {
       const closure = new Set(stateArray);
       const stack = [...stateArray];
@@ -1104,7 +1101,8 @@
         dfaDef: {
           states: finalStatesList,
           alphabet,
-          start_state: formatStateName(initialClosure),\n          accept_states: Array.from(dfaAccept),
+          start_state: formatStateName(initialClosure),
+          accept_states: Array.from(dfaAccept),
           transitions: dfaTransitions
         },
         stepData
