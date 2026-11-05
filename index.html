@@ -6,676 +6,804 @@
   <title>Automata Studio: Cognitive Learning Lab</title>
   <style>
     :root {
-      --bg-page: #f8fafc;
-      --bg-card: #ffffff;
-      --bg-subtle: #f1f5f9;
-      --bg-dark: #0f172a;
-      --bg-dark-2: #1e293b;
-      --border: #e2e8f0;
-      --border-strong: #cbd5e1;
-      --text-main: #0f172a;
-      --text-body: #334155;
-      --text-muted: #64748b;
-      --blue: #2563eb;
-      --blue-hover: #1d4ed8;
-      --blue-soft: #eff6ff;
-      --blue-border: #bfdbfe;
-      --emerald: #059669;
-      --emerald-soft: #ecfdf5;
-      --emerald-border: #a7f3d0;
-      --rose: #e11d48;
-      --rose-soft: #fff1f2;
-      --rose-border: #fecdd3;
-      --amber-soft: #fefce8;
-      --amber-border: #fde047;
-      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      /* Authentic Streamlit Light Wide Palette */
+      --st-bg: #ffffff;
+      --st-sidebar-bg: #f0f2f6;
+      --st-surface: #f8f9fb;
+      --st-text: #31333F;
+      --st-heading: #0e1117;
+      --st-muted: #555867;
+      --st-border: rgba(49, 51, 63, 0.2);
+      --st-border-soft: #e6eaf1;
+      --st-primary: #ff4b4b;
+      --st-primary-hover: #e03c3c;
+      --st-blue: #0068c9;
+      --st-info-bg: #e8f2fc;
+      --st-info-text: #004280;
+      --st-success-bg: #e6f6ed;
+      --st-success-text: #0f5132;
+      --st-error-bg: #fde8e8;
+      --st-error-text: #842029;
+      --st-warn-bg: #fff8e6;
+      --st-warn-text: #664d03;
+      --mono: "Source Code Pro", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --diagram-scale: 1;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
+    html, body {
       font-family: var(--sans);
-      background: var(--bg-page);
-      color: var(--text-main);
+      font-size: 16px;
+      background: var(--st-bg);
+      color: var(--st-text);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      line-height: 1.5;
+      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
     }
     code, pre, .mono { font-family: var(--mono); }
 
-    /* Top Header */
-    .top-header {
-      background: var(--bg-dark);
-      color: #ffffff;
-      border-bottom: 1px solid var(--bg-dark-2);
-      padding: 14px 22px;
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+    /* Streamlit Top 3px Decoration Ribbon */
+    .st-top-ribbon {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #ff4b4b 0%, #ffbb00 50%, #ff4b4b 100%);
+      z-index: 100;
     }
-    .header-inner {
-      max-width: 1620px;
-      margin: 0 auto;
+
+    /* Streamlit App Shell (Edge-to-Edge Wide Mode) */
+    .st-app-shell {
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      min-height: 100vh;
+      width: 100%;
+      padding-top: 3px;
     }
-    .brand-row { display: flex; align-items: center; gap: 12px; }
-    .brand-icon { font-size: 26px; line-height: 1; }
-    .brand-title { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
-    .brand-sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
-    .header-badges { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; }
-    .btn-header {
-      background: var(--bg-dark-2);
-      color: #e2e8f0;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 12px;
-      font-weight: 600;
+
+    /* Streamlit Collapsible Left Sidebar */
+    .st-sidebar {
+      width: 368px;
+      min-width: 368px;
+      max-width: 368px;
+      background: var(--st-sidebar-bg);
+      border-right: 1px solid rgba(49, 51, 63, 0.12);
+      padding: 1.6rem 1.4rem 3rem;
+      height: calc(100vh - 3px);
+      position: sticky;
+      top: 3px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+      transition: margin-left 0.22s ease, opacity 0.18s ease;
+      z-index: 40;
+    }
+    body.sidebar-collapsed .st-sidebar {
+      margin-left: -368px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .sidebar-collapse-btn {
+      align-self: flex-end;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      color: var(--st-muted);
+      font-size: 18px;
+      line-height: 1;
+      padding: 4px 8px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.15s;
+      margin-bottom: -10px;
     }
-    .btn-header:hover { background: #334155; }
-    .pill-blue {
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(59, 130, 246, 0.18);
-      color: #93c5fd;
-      border: 1px solid rgba(96, 165, 250, 0.32);
-      font-family: var(--mono);
-    }
-    .pill-emerald {
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(16, 185, 129, 0.18);
-      color: #6ee7b7;
-      border: 1px solid rgba(52, 211, 153, 0.32);
-      font-family: var(--mono);
+    .sidebar-collapse-btn:hover {
+      background: rgba(49, 51, 63, 0.08);
+      color: var(--st-heading);
     }
 
-    /* Main Workspace Grid */
-    .workspace {
-      max-width: 1620px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 20px;
-      display: grid;
-      grid-template-columns: 330px minmax(0, 1fr);
-      gap: 20px;
-      flex: 1;
-      align-items: start;
-    }
-    @media (max-width: 1060px) {
-      .workspace { grid-template-columns: 1fr; }
-    }
-
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-    }
-
-    /* Sidebar */
-    .sidebar { display: flex; flex-direction: column; gap: 16px; }
-    .sec-title {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-body);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .field-label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: #475569;
-      margin-bottom: 5px;
-    }
-    .input-text, .select-box {
-      width: 100%;
-      padding: 7px 10px;
-      font-size: 12px;
-      border: 1px solid var(--border-strong);
+    .sidebar-open-fab {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 60;
+      background: var(--st-sidebar-bg);
+      border: 1px solid var(--st-border);
       border-radius: 8px;
+      padding: 7px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--st-heading);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    body.sidebar-collapsed .sidebar-open-fab { display: inline-flex; }
+    .sidebar-open-fab:hover { background: #e2e6ee; }
+
+    /* Streamlit Sidebar Typography & Widgets */
+    .st-sidebar h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--st-heading);
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+    }
+    .st-sidebar h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--st-heading);
+      margin-top: 0.15rem;
+    }
+    .st-sidebar h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--st-heading);
+    }
+    .st-divider {
+      border: 0;
+      border-top: 1px solid rgba(49, 51, 63, 0.16);
+      margin: 0.25rem 0;
+    }
+    .st-label {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--st-text);
+      margin-bottom: 0.35rem;
+    }
+    .st-input, .st-select {
+      width: 100%;
+      min-height: 42px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid var(--st-border);
+      border-radius: 0.5rem;
       background: #ffffff;
-      color: var(--text-main);
+      color: var(--st-heading);
       outline: none;
       transition: border-color 0.15s, box-shadow 0.15s;
     }
-    .input-text:focus, .select-box:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    .st-input:focus, .st-select:focus {
+      border-color: var(--st-primary);
+      box-shadow: 0 0 0 2px rgba(255, 75, 75, 0.2);
     }
-    .divider { border: 0; border-top: 1px solid var(--border); }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-    .btn-reset-default {
-      width: 100%;
-      padding: 7px 10px;
-      border-radius: 8px;
-      background: var(--rose-soft);
-      color: #be123c;
-      border: 1px solid var(--rose-border);
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-reset-default:hover { background: #ffe4e6; }
-    .btn-reset-preset {
-      width: 100%;
-      padding: 7px 10px;
-      border-radius: 8px;
-      background: var(--bg-subtle);
-      color: var(--text-body);
-      border: 1px solid var(--border);
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-reset-preset:hover { background: #e2e8f0; }
-
-    .info-note {
-      padding: 10px 12px;
-      border-radius: 9px;
-      background: var(--blue-soft);
-      border: 1px solid var(--blue-border);
-      color: #1e3a8a;
-      font-size: 12px;
-      line-height: 1.45;
-    }
-    .toast-inline { font-size: 11px; font-weight: 600; color: var(--emerald); }
-    .hidden { display: none !important; }
-
-    .chips-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      padding: 6px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: #f8fafc;
-      min-height: 34px;
-      align-items: center;
-    }
-    .chip-btn {
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-family: var(--mono);
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid var(--border-strong);
+    .st-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; }
+    .st-btn {
+      min-height: 40px;
+      padding: 0.45rem 0.85rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--st-border);
       background: #ffffff;
-      color: #475569;
-      transition: all 0.12s;
-    }
-    .chip-btn:hover { background: var(--bg-subtle); }
-    .chip-btn.active-blue { background: var(--blue); color: #ffffff; border-color: var(--blue); }
-    .chip-btn.active-emerald { background: var(--emerald); color: #ffffff; border-color: var(--emerald); }
-
-    /* Per-State Accordion Expanders (matches NFA.py st.expander) */
-    .builder-stack { display: flex; flex-direction: column; gap: 8px; }
-    details.state-expander {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #f8fafc;
-      overflow: hidden;
-    }
-    details.state-expander > summary {
-      padding: 8px 11px;
-      font-size: 12px;
-      font-weight: 700;
-      font-family: var(--mono);
-      color: var(--text-main);
+      color: var(--st-heading);
+      font-size: 0.92rem;
+      font-weight: 500;
       cursor: pointer;
-      user-select: none;
-      list-style: none;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
-      background: #f1f5f9;
+      justify-content: center;
+      gap: 0.35rem;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
     }
-    details.state-expander > summary::-webkit-details-marker { display: none; }
-    details.state-expander > summary::after {
-      content: "▸";
-      font-size: 12px;
-      color: var(--text-muted);
-      transition: transform 0.15s;
+    .st-btn:hover {
+      border-color: var(--st-primary);
+      color: var(--st-primary);
+      background: #fffafa;
     }
-    details.state-expander[open] > summary::after { transform: rotate(90deg); }
-    .expander-body { padding: 9px 11px; display: flex; flex-direction: column; gap: 7px; background: #ffffff; }
-    .trans-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 12px;
-      padding-bottom: 5px;
-      border-bottom: 1px dashed #f1f5f9;
+    .st-btn-primary {
+      background: var(--st-primary);
+      border-color: var(--st-primary);
+      color: #ffffff;
+      font-weight: 600;
     }
-    .trans-row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .st-btn-primary:hover {
+      background: var(--st-primary-hover);
+      border-color: var(--st-primary-hover);
+      color: #ffffff;
+    }
 
-    /* Main Tabs */
-    .main-area { display: flex; flex-direction: column; gap: 16px; }
-    .tab-bar {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 6px;
+    .st-info-box {
+      padding: 0.85rem 1rem;
+      border-radius: 0.5rem;
+      background: var(--st-info-bg);
+      color: var(--st-info-text);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    /* Streamlit Multiselect Tag Widget Style */
+    .st-multiselect-box {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
+      padding: 7px 9px;
+      min-height: 42px;
+      border-radius: 0.5rem;
+      border: 1px solid var(--st-border);
+      background: #ffffff;
+      align-items: center;
     }
-    .tab-btn {
-      flex: 1;
-      min-width: 190px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 0;
-      font-size: 13px;
+    .st-tag {
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-family: var(--mono);
       font-weight: 600;
       cursor: pointer;
-      background: transparent;
+      border: 1px solid rgba(49, 51, 63, 0.22);
+      background: #f0f2f6;
       color: #475569;
-      transition: all 0.15s;
+      transition: all 0.12s;
     }
-    .tab-btn:hover { background: var(--bg-subtle); }
-    .tab-btn.active {
-      background: var(--blue);
+    .st-tag:hover { border-color: var(--st-primary); color: var(--st-heading); }
+    .st-tag.selected {
+      background: var(--st-primary);
+      border-color: var(--st-primary);
       color: #ffffff;
-      box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
     }
 
-    /* Pipeline Grid */
-    .pipeline-top {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-    .legend-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; font-size: 12px; color: var(--text-body); }
-    .legend-dot {
-      width: 12px; height: 12px; border-radius: 999px; display: inline-block; vertical-align: middle; margin-right: 5px;
-    }
-    .expand-toggle-bar {
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12.5px;
-      color: var(--text-body);
-      font-weight: 500;
-    }
-    .pipeline-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-    }
-    @media (max-width: 1280px) {
-      .pipeline-grid { grid-template-columns: 1fr; }
-    }
-    .stage-card {
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      background: #f8fafc;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .stage-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .stage-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
-    .stat-badge {
-      font-family: var(--mono);
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-weight: 600;
-    }
-    .graph-box {
+    /* Sidebar State Expanders (st.expander) */
+    .st-expander-stack { display: flex; flex-direction: column; gap: 0.6rem; }
+    details.st-expander {
+      border: 1px solid var(--st-border);
+      border-radius: 0.5rem;
       background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px;
-      min-height: 235px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow-x: auto;
-    }
-
-    /* Step Table Expanders */
-    details.step-expander {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 10px;
       overflow: hidden;
     }
-    details.step-expander > summary {
-      background: var(--bg-dark-2);
-      color: #ffffff;
-      padding: 8px 12px;
-      font-size: 12px;
+    details.st-expander > summary {
+      padding: 0.7rem 0.95rem;
+      font-size: 0.95rem;
       font-weight: 600;
+      color: var(--st-heading);
       cursor: pointer;
       user-select: none;
       list-style: none;
       display: flex;
       align-items: center;
+      gap: 0.55rem;
+      background: #ffffff;
+    }
+    details.st-expander > summary:hover { color: var(--st-primary); }
+    details.st-expander > summary::-webkit-details-marker { display: none; }
+    details.st-expander > summary::before {
+      content: "▸";
+      font-size: 1rem;
+      color: var(--st-muted);
+      transition: transform 0.15s;
+      display: inline-block;
+    }
+    details.st-expander[open] > summary::before { transform: rotate(90deg); }
+    details.st-expander[open] > summary { border-bottom: 1px solid var(--st-border-soft); }
+    .st-expander-content {
+      padding: 0.8rem 0.95rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .trans-rule-block { display: flex; flex-direction: column; gap: 0.3rem; }
+    .trans-rule-lbl { font-size: 0.88rem; color: var(--st-muted); font-family: var(--mono); font-weight: 600; }
+
+    /* Main Content Canvas (Streamlit Wide Container) */
+    .st-main {
+      flex: 1;
+      min-width: 0;
+      padding: 2.4rem 3rem 4rem;
+      background: #ffffff;
+    }
+    @media (max-width: 980px) {
+      .st-app-shell { flex-direction: column; }
+      .st-sidebar {
+        width: 100%; min-width: 100%; max-width: 100%;
+        height: auto; position: relative; top: 0;
+      }
+      body.sidebar-collapsed .st-sidebar { margin-left: 0; display: none; }
+      .st-main { padding: 1.5rem 1.2rem 3rem; }
+    }
+
+    .st-hero-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
       justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
     }
-    details.step-expander > summary::-webkit-details-marker { display: none; }
-    .sum-right { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: #cbd5e1; }
-    details.step-expander > summary .caret::before { content: "▸ Show"; font-size: 11px; color: #93c5fd; }
-    details.step-expander[open] > summary .caret::before { content: "▾ Hide"; color: #6ee7b7; }
-
-    .table-wrap { overflow-x: auto; max-height: 250px; overflow-y: auto; }
-    table.data-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
-    table.data-table th {
-      background: var(--bg-subtle);
-      color: #475569;
-      font-weight: 600;
-      padding: 7px 10px;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
+    .st-title {
+      font-size: 2.35rem;
+      font-weight: 700;
+      color: var(--st-heading);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
     }
-    table.data-table td {
-      padding: 6px 10px;
-      border-bottom: 1px solid #f1f5f9;
+    .st-lead {
+      font-size: 1.05rem;
+      color: var(--st-text);
+      margin-bottom: 1.5rem;
+    }
+    .st-top-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .st-badge-pill {
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      background: var(--st-sidebar-bg);
+      border: 1px solid var(--st-border-soft);
+      font-size: 0.85rem;
       font-family: var(--mono);
+      font-weight: 600;
+      color: var(--st-heading);
     }
-    table.data-table tr:hover td { background: #f8fafc; }
 
-    /* Stepper */
-    .stepper-inputs {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 16px;
-      align-items: end;
-      margin-top: 14px;
+    /* Native Streamlit Underline Tabs (st.tabs) */
+    .st-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.8rem;
+      border-bottom: 1px solid var(--st-border-soft);
+      margin-bottom: 1.6rem;
     }
-    @media (max-width: 780px) { .stepper-inputs { grid-template-columns: 1fr; } }
-    .radio-card {
+    .st-tab {
+      background: transparent;
+      border: 0;
+      border-bottom: 3px solid transparent;
+      padding: 0.65rem 0.15rem 0.75rem;
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--st-muted);
+      cursor: pointer;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .st-tab:hover { color: var(--st-primary); }
+    .st-tab.active {
+      color: var(--st-primary);
+      border-bottom-color: var(--st-primary);
+    }
+
+    /* Section Headings */
+    .st-h3 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--st-heading);
+      letter-spacing: -0.01em;
+      margin-bottom: 0.25rem;
+    }
+    .st-caption {
+      font-size: 0.94rem;
+      color: var(--st-muted);
+      margin-bottom: 1rem;
+    }
+
+    /* Toolbar Row (Expand All + Zoom + Legend) */
+    .st-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.65rem 0;
+      margin-bottom: 1.1rem;
+    }
+    .st-checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 0.96rem;
+      font-weight: 500;
+      color: var(--st-heading);
+      cursor: pointer;
+      user-select: none;
+    }
+    .st-checkbox-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--st-primary);
+      cursor: pointer;
+    }
+    .legend-and-zoom {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.1rem;
+      font-size: 0.9rem;
+      color: var(--st-text);
+    }
+    .legend-dot {
+      width: 14px; height: 14px; border-radius: 999px; display: inline-block; vertical-align: middle; margin-right: 5px;
+    }
+    .zoom-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--st-sidebar-bg);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--st-border-soft);
+    }
+    .zoom-btn {
+      border: 0;
+      background: transparent;
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--st-muted);
+    }
+    .zoom-btn.active { background: #ffffff; color: var(--st-heading); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+
+    /* 3-Column Streamlit Pipeline (st.columns(3)) */
+    .st-cols-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.75rem;
+      align-items: start;
+    }
+    @media (max-width: 1240px) {
+      .st-cols-3 { grid-template-columns: 1fr; }
+    }
+    .st-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.95rem;
+      min-width: 0;
+    }
+    .st-h4 {
+      font-size: 1.22rem;
+      font-weight: 700;
+      color: var(--st-heading);
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+    .state-count-code {
+      font-family: var(--mono);
+      font-size: 0.86rem;
+      font-weight: 600;
+      padding: 0.15rem 0.55rem;
+      border-radius: 6px;
+      background: var(--st-sidebar-bg);
+      color: #0068c9;
+    }
+
+    /* High-Visibility Graph Canvas */
+    .st-graph-frame {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid var(--st-border-soft);
+      border-radius: 0.65rem;
+      padding: 1rem 0.85rem;
+      min-height: 290px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      padding: 8px 10px;
-      border: 1px solid var(--border-strong);
-      border-radius: 10px;
-      font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-      background: #ffffff;
-    }
-    .stepper-controls {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 10px;
-      margin-top: 14px;
-    }
-    .btn-step {
-      padding: 8px 14px;
-      border-radius: 10px;
-      border: 1px solid var(--border-strong);
-      background: #ffffff;
-      color: var(--text-body);
-      font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-step:hover { background: var(--bg-subtle); }
-    .btn-step-primary {
-      padding: 8px 16px;
-      border-radius: 10px;
-      border: 1px solid var(--blue);
-      background: var(--blue);
-      color: #ffffff;
-      font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-step-primary:hover { background: var(--blue-hover); }
-    .step-status-pill {
-      margin-left: auto;
-      background: var(--bg-subtle);
-      border: 1px solid var(--border);
-      padding: 7px 13px;
-      border-radius: 10px;
-      font-family: var(--mono);
-      font-size: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 10px;
-    }
-    .tape-bar {
-      margin-top: 14px;
-      padding: 12px 14px;
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .tape-cells { display: inline-flex; flex-wrap: wrap; gap: 5px; align-items: center; font-family: var(--mono); }
-    .cell-done { padding: 2px 8px; border-radius: 6px; background: #dcfce7; color: #166534; font-weight: 700; border: 1px solid #86efac; }
-    .cell-curr { padding: 2px 8px; border-radius: 6px; background: #fde047; color: #0f172a; font-weight: 700; border: 1px solid #eab308; }
-    .cell-wait { padding: 2px 8px; border-radius: 6px; background: #ffffff; color: #94a3b8; border: 1px solid var(--border); }
-
-    .banner-acc {
-      margin-top: 14px;
-      padding: 13px 16px;
-      border-radius: 12px;
-      background: var(--emerald-soft);
-      border: 1px solid var(--emerald-border);
-      color: #065f46;
-      font-size: 13.5px;
-      font-weight: 600;
-    }
-    .banner-rej {
-      margin-top: 14px;
-      padding: 13px 16px;
-      border-radius: 12px;
-      background: var(--rose-soft);
-      border: 1px solid var(--rose-border);
-      color: #9f1239;
-      font-size: 13.5px;
-      font-weight: 600;
-    }
-    .banner-warn {
-      margin-top: 14px;
-      padding: 13px 16px;
-      border-radius: 12px;
-      background: var(--amber-soft);
-      border: 1px solid var(--amber-border);
-      color: #854d0e;
-      font-size: 13.5px;
-      font-weight: 600;
-    }
-
-    /* Telemetry */
-    .kpi-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
-    @media (max-width: 640px) { .kpi-grid { grid-template-columns: 1fr; } }
-    .kpi-card {
-      padding: 15px;
-      border-radius: 12px;
-      background: #f8fafc;
-      border: 1px solid var(--border);
-    }
-    .kpi-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-    .kpi-val { font-size: 24px; font-weight: 700; margin-top: 4px; }
-    .code-pre {
-      margin-top: 8px;
-      padding: 14px;
-      border-radius: 12px;
-      background: var(--bg-dark);
-      color: #6ee7b7;
-      font-size: 12px;
       overflow-x: auto;
     }
+    .st-graph-frame svg {
+      width: calc(100% * var(--diagram-scale));
+      max-width: none;
+      height: auto;
+      min-height: 190px;
+      max-height: calc(370px * var(--diagram-scale));
+      display: block;
+    }
+    #stepperGraphContainer {
+      min-height: 270px;
+      padding: 1.15rem;
+    }
+    #stepperGraphContainer svg {
+      width: auto;
+      max-width: 100%;
+      height: calc(255px * var(--diagram-scale));
+      min-height: 210px;
+      max-height: calc(360px * var(--diagram-scale));
+    }
+
+    /* Streamlit Dataframe Tables */
+    .st-table-wrap {
+      overflow-x: auto;
+      max-height: 320px;
+      overflow-y: auto;
+      border: 1px solid var(--st-border-soft);
+      border-radius: 0.45rem;
+    }
+    table.st-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+    table.st-table th {
+      background: var(--st-surface);
+      color: var(--st-muted);
+      font-weight: 600;
+      padding: 0.5rem 0.45rem;
+      border-bottom: 1px solid var(--st-border-soft);
+      position: sticky;
+      top: 0;
+      white-space: nowrap;
+    }
+    table.st-table td {
+      padding: 0.48rem 0.45rem;
+      border-bottom: 1px solid #f1f3f8;
+      font-family: var(--mono);
+      color: var(--st-heading);
+    }
+    table.st-table tr:hover td { background: #fafbfd; }
+
+    /* Stepper Layout */
+    .stepper-top-grid {
+      display: grid;
+      grid-template-columns: 2fr 1.1fr;
+      gap: 1.5rem;
+      align-items: end;
+      margin-top: 1rem;
+    }
+    @media (max-width: 820px) { .stepper-top-grid { grid-template-columns: 1fr; } }
+    .st-radio-row {
+      display: flex;
+      gap: 1.25rem;
+      min-height: 42px;
+      align-items: center;
+      font-size: 0.96rem;
+      font-weight: 500;
+    }
+    .st-radio-row label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      cursor: pointer;
+    }
+    .st-radio-row input[type="radio"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--st-primary);
+    }
+    .stepper-btn-bar {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(150px, 195px)) 1fr;
+      gap: 0.75rem;
+      align-items: center;
+      margin-top: 1.15rem;
+    }
+    @media (max-width: 900px) { .stepper-btn-bar { grid-template-columns: 1fr 1fr; } }
+
+    .stepper-status-line {
+      margin-top: 1.15rem;
+      font-size: 1.04rem;
+      color: var(--st-heading);
+    }
+    .inline-code {
+      font-family: var(--mono);
+      background: var(--st-sidebar-bg);
+      color: #09ab3b;
+      padding: 0.15rem 0.5rem;
+      border-radius: 5px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .tape-line {
+      margin-top: 0.85rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 1rem;
+    }
+    .tape-char-done {
+      background: #dcfce7; color: #166534; padding: 4px 11px; border-radius: 6px;
+      font-family: var(--mono); font-size: 1.05rem; font-weight: 700; border: 1px solid #86efac;
+    }
+    .tape-char-curr {
+      background: #fde047; color: #0f172a; padding: 4px 11px; border-radius: 6px;
+      font-family: var(--mono); font-size: 1.05rem; font-weight: 700; border: 1px solid #eab308;
+    }
+    .tape-char-wait {
+      background: #f8fafc; color: #94a3b8; padding: 4px 11px; border-radius: 6px;
+      font-family: var(--mono); font-size: 1.05rem; border: 1px solid var(--st-border-soft);
+    }
+
+    .st-alert-success {
+      margin-top: 1.15rem;
+      padding: 1rem 1.2rem;
+      border-radius: 0.5rem;
+      background: var(--st-success-bg);
+      color: var(--st-success-text);
+      font-size: 1rem;
+    }
+    .st-alert-error {
+      margin-top: 1.15rem;
+      padding: 1rem 1.2rem;
+      border-radius: 0.5rem;
+      background: var(--st-error-bg);
+      color: var(--st-error-text);
+      font-size: 1rem;
+    }
+    .st-alert-warn {
+      margin-top: 1.15rem;
+      padding: 1rem 1.2rem;
+      border-radius: 0.5rem;
+      background: var(--st-warn-bg);
+      color: var(--st-warn-text);
+      font-size: 1rem;
+    }
+
+    /* Telemetry Metrics (st.metric) */
+    .st-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem;
+      margin: 1.1rem 0 1.6rem;
+    }
+    .st-metric-box {
+      padding: 1.1rem 1.25rem;
+      border-radius: 0.6rem;
+      border: 1px solid var(--st-border-soft);
+      background: var(--st-surface);
+    }
+    .st-metric-lbl { font-size: 0.94rem; color: var(--st-muted); font-weight: 500; }
+    .st-metric-val { font-size: 2.15rem; font-weight: 700; color: var(--st-heading); line-height: 1.2; margin-top: 0.25rem; }
+
+    .st-code-block {
+      margin-top: 0.6rem;
+      padding: 1.1rem 1.25rem;
+      border-radius: 0.55rem;
+      background: #f8f9fb;
+      border: 1px solid var(--st-border-soft);
+      color: var(--st-heading);
+      font-size: 0.92rem;
+      overflow-x: auto;
+    }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
+  <div class="st-top-ribbon"></div>
 
-  <!-- Top Header -->
-  <header class="top-header">
-    <div class="header-inner">
-      <div class="brand-row">
-        <span class="brand-icon">🧠</span>
-        <div>
-          <h1 class="brand-title">Automata Studio: Interactive Learning Laboratory</h1>
-          <p class="brand-sub">Explore state transformation algorithms through Dynamic Visual Pipelines, Step-by-Step Mathematical Decomposition, and Interactive String Execution Tracing.</p>
-        </div>
-      </div>
-      <div class="header-badges">
-        <button type="button" id="btnHeaderReset" onclick="resetToDefault()" class="btn-header">
-          <span>🔄</span> <span>Reset to Default</span>
-        </button>
-        <span class="pill-blue" id="headerSessionBadge">Actions: 0</span>
-        <span class="pill-emerald">SZE Formal Languages Lab</span>
-      </div>
-    </div>
-  </header>
+  <button type="button" class="sidebar-open-fab" onclick="toggleSidebar(false)" title="Expand Sidebar">
+    <span>»</span> <span>Controls</span>
+  </button>
 
-  <!-- Main Workspace -->
-  <div class="workspace">
-
-    <!-- Sidebar Configuration -->
-    <aside class="card sidebar">
-      <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <h2 class="sec-title"><span>⚙️</span> <span>Experiment Controls</span></h2>
-          <span id="resetStatusToast" class="toast-inline hidden">✓ Reset complete</span>
-        </div>
-        <label class="field-label" style="margin-top:10px;" for="participantIdInput">Participant ID (Optional)</label>
-        <input id="participantIdInput" type="text" placeholder="e.g., SZE-XXXXXX" class="input-text mono" />
-        <div class="grid-2" style="margin-top:10px;">
-          <button type="button" id="btnSidebarResetDefault" onclick="resetToDefault()" class="btn-reset-default">🔄 Reset Default</button>
-          <button type="button" id="btnSidebarResetPreset" onclick="resetCurrentPreset()" class="btn-reset-preset">↺ Reset Preset</button>
-        </div>
-      </div>
-
-      <hr class="divider" />
-
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <h2 class="sec-title"><span>📚</span> <span>Scenarios &amp; Presets</span></h2>
-        <label class="field-label" for="presetSelect">Select Scenario Preset:</label>
-        <select id="presetSelect" class="select-box">
-          <option value="Contains Empty Transition (ε)">Contains Empty Transition (ε)</option>
-          <option value="Ends with '01'">Ends with '01'</option>
-          <option value="Even number of 1s">Even number of 1s</option>
-          <option value="Post-Survey Context 1 (A, B, C)">Post-Survey Context 1 (A, B, C)</option>
-          <option value="Post-Survey Context 2 (1, 2, 3)">Post-Survey Context 2 (1, 2, 3)</option>
-          <option value="Custom Automaton">Custom Automaton</option>
-        </select>
-        <div id="scenarioDescriptionBox" class="info-note"></div>
-      </div>
-
-      <hr class="divider" />
-
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <h3 class="sec-title">NFA Formal Specification</h3>
-        <div>
-          <label class="field-label" for="statesInput">States (comma-separated)</label>
-          <input id="statesInput" type="text" value="A, B, C" class="input-text mono" />
-        </div>
-        <div>
-          <label class="field-label" for="alphabetInput">Alphabet (comma-separated, 'e' for ε)</label>
-          <input id="alphabetInput" type="text" value="0, 1, e" class="input-text mono" />
-        </div>
-        <div class="grid-2">
-          <div>
-            <label class="field-label" for="startStateSelect">Start State (q0)</label>
-            <select id="startStateSelect" class="select-box mono"></select>
-          </div>
-          <div>
-            <label class="field-label">Accept States (F)</label>
-            <div id="acceptStatesContainer" class="chips-box"></div>
-          </div>
-        </div>
-      </div>
-
-      <hr class="divider" />
+  <div class="st-app-shell">
+    <!-- Authentic Streamlit Left Sidebar -->
+    <aside class="st-sidebar" id="stSidebar">
+      <button type="button" class="sidebar-collapse-btn" onclick="toggleSidebar(true)" title="Collapse Sidebar">«</button>
 
       <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <h3 class="sec-title">Transition Table Builder</h3>
-          <span style="font-size:11px;color:var(--text-muted);">Click state to expand</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.65rem;">
+          <h2>⚙️ Experiment Controls</h2>
+          <span id="resetStatusToast" class="hidden" style="font-size:0.82rem;font-weight:700;color:#059669;">✓ Reset</span>
         </div>
-        <div id="transitionsBuilderContainer" class="builder-stack"></div>
+        <label class="st-label" for="participantIdInput">Participant ID (Optional)</label>
+        <input id="participantIdInput" type="text" placeholder="e.g., SZE-XXXXXX" class="st-input mono" />
+        <div class="st-btn-row" style="margin-top:0.75rem;">
+          <button type="button" id="btnSidebarResetDefault" onclick="resetToDefault()" class="st-btn">🔄 Reset Default</button>
+          <button type="button" id="btnSidebarResetPreset" onclick="resetCurrentPreset()" class="st-btn">↺ Reset Preset</button>
+        </div>
+      </div>
+
+      <hr class="st-divider" />
+
+      <div style="display:flex;flex-direction:column;gap:0.65rem;">
+        <h2>📚 Scenarios &amp; Presets</h2>
+        <div>
+          <label class="st-label" for="presetSelect">Select Scenario Preset:</label>
+          <select id="presetSelect" class="st-select">
+            <option value="Contains Empty Transition (ε)">Contains Empty Transition (ε)</option>
+            <option value="Ends with '01'">Ends with '01'</option>
+            <option value="Even number of 1s">Even number of 1s</option>
+            <option value="Post-Survey Context 1 (A, B, C)">Post-Survey Context 1 (A, B, C)</option>
+            <option value="Post-Survey Context 2 (1, 2, 3)">Post-Survey Context 2 (1, 2, 3)</option>
+            <option value="Custom Automaton">Custom Automaton</option>
+          </select>
+        </div>
+        <div id="scenarioDescriptionBox" class="st-info-box"></div>
+      </div>
+
+      <hr class="st-divider" />
+
+      <div style="display:flex;flex-direction:column;gap:0.85rem;">
+        <h3>NFA Formal Specification</h3>
+        <div>
+          <label class="st-label" for="statesInput">States (comma-separated)</label>
+          <input id="statesInput" type="text" value="A, B, C" class="st-input mono" />
+        </div>
+        <div>
+          <label class="st-label" for="alphabetInput">Alphabet (comma-separated, 'e' for ε)</label>
+          <input id="alphabetInput" type="text" value="0, 1, e" class="st-input mono" />
+        </div>
+        <div>
+          <label class="st-label" for="startStateSelect">Start State (q0)</label>
+          <select id="startStateSelect" class="st-select mono"></select>
+        </div>
+        <div>
+          <label class="st-label">Accept States (F)</label>
+          <div id="acceptStatesContainer" class="st-multiselect-box"></div>
+        </div>
+      </div>
+
+      <hr class="st-divider" />
+
+      <div style="display:flex;flex-direction:column;gap:0.6rem;">
+        <h4>Transition Table Builder</h4>
+        <div id="transitionsBuilderContainer" class="st-expander-stack"></div>
       </div>
     </aside>
 
-    <!-- Main Content Tabs -->
-    <main class="main-area">
+    <!-- Authentic Streamlit Wide Main Canvas -->
+    <main class="st-main">
+      <div class="st-hero-row">
+        <h1 class="st-title">🧠 Automata Studio: Interactive Learning Laboratory</h1>
+        <div class="st-top-meta">
+          <span class="st-badge-pill" id="headerSessionBadge">Actions: 0</span>
+          <button type="button" onclick="resetToDefault()" class="st-btn" style="min-height:34px;padding:0.3rem 0.75rem;font-size:0.86rem;">
+            🔄 Reset to Default
+          </button>
+        </div>
+      </div>
+      <p class="st-lead">
+        Explore state transformation algorithms through <strong>Dynamic Visual Pipelines</strong>,
+        <strong>Step-by-Step Mathematical Decomposition</strong>, and <strong>Interactive String Execution Tracing</strong>.
+      </p>
 
-      <!-- Tab Navigation -->
-      <div class="tab-bar">
-        <button type="button" id="tabBtnPipeline" onclick="switchTab('pipeline')" class="tab-btn active">
+      <!-- Streamlit Underline Tabs -->
+      <nav class="st-tabs">
+        <button type="button" id="tabBtnPipeline" onclick="switchTab('pipeline')" class="st-tab active">
           📊 1. Visual Pipeline (NFA ➔ DFA ➔ Min DFA)
         </button>
-        <button type="button" id="tabBtnStepper" onclick="switchTab('stepper')" class="tab-btn">
+        <button type="button" id="tabBtnStepper" onclick="switchTab('stepper')" class="st-tab">
           ⏯️ 2. Step-by-Step String Stepper
         </button>
-        <button type="button" id="tabBtnTelemetry" onclick="switchTab('telemetry')" class="tab-btn">
+        <button type="button" id="tabBtnTelemetry" onclick="switchTab('telemetry')" class="st-tab">
           📋 3. Research Telemetry &amp; Activity Log
         </button>
-      </div>
+      </nav>
 
       <!-- TAB 1: VISUAL PIPELINE -->
       <section id="tabPanelPipeline">
-        <div class="card">
-          <div class="pipeline-top">
-            <div>
-              <h2 style="font-size:17px;font-weight:700;">Comparative Automata Transformation Pipeline</h2>
-              <p style="font-size:12.5px;color:var(--text-muted);">Visualizing the topological progression from NFA to Deterministic Machine to Minimal Canonical Form.</p>
-            </div>
-            <div class="legend-row">
-              <span><span class="legend-dot" style="background:#dbeafe;border:2px solid #1d4ed8;"></span>Start State</span>
-              <span><span class="legend-dot" style="background:#ffffff;border:3px double #334155;"></span>Accept State (Double Circle)</span>
-              <span><span class="legend-dot" style="background:#fee2e2;border:2px solid #b91c1c;"></span>Trap (Dead) State</span>
-            </div>
-          </div>
+        <h3 class="st-h3">Comparative Automata Transformation Pipeline</h3>
+        <p class="st-caption">
+          Visualizing the topological progression from NFA to Deterministic Machine to Minimal Canonical Form.
+        </p>
 
-          <label class="expand-toggle-bar" style="cursor:pointer;user-select:none;">
+        <div class="st-toolbar">
+          <label class="st-checkbox-label">
             <input type="checkbox" id="chkExpandAllTables" onchange="toggleAllStepTables(this.checked)" />
             <span>Expand all mathematical derivation tables</span>
           </label>
 
-          <div class="pipeline-grid">
-            <!-- Column 1: Original NFA -->
-            <div class="stage-card">
-              <div class="stage-head">
-                <h3 class="stage-title">1. Original NFA</h3>
-                <span class="stat-badge" style="background:#e2e8f0;color:#334155;" id="nfaStatsBadge"></span>
-              </div>
-              <div id="nfaGraphContainer" class="graph-box"></div>
-              <details class="step-expander" id="expEClosure">
-                <summary>
-                  <span>Show E-Closure (E-sets)</span>
-                  <span class="sum-right"><span>E-set(q)</span><span class="caret"></span></span>
-                </summary>
-                <div class="table-wrap">
-                  <table class="data-table">
+          <div class="legend-and-zoom">
+            <span><span class="legend-dot" style="background:#dbeafe;border:2px solid #1d4ed8;"></span>Start State</span>
+            <span><span class="legend-dot" style="background:#ffffff;border:3px double #334155;"></span>Accept State</span>
+            <span><span class="legend-dot" style="background:#fee2e2;border:2px solid #b91c1c;"></span>Trap State</span>
+            <div class="zoom-group" title="Adjust diagram magnification for laptops or classroom projectors">
+              <span style="font-size:0.8rem;padding:0 6px;color:var(--st-muted);">🔍 Scale:</span>
+              <button type="button" class="zoom-btn active" onclick="setDiagramScale(1, this)">100%</button>
+              <button type="button" class="zoom-btn" onclick="setDiagramScale(1.2, this)">120%</button>
+              <button type="button" class="zoom-btn" onclick="setDiagramScale(1.4, this)">140%</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="st-cols-3">
+          <!-- Column 1: Original NFA -->
+          <div class="st-col">
+            <h4 class="st-h4">
+              <span>1. Original NFA</span>
+              <span class="state-count-code" id="nfaStatsBadge"></span>
+            </h4>
+            <div id="nfaGraphContainer" class="st-graph-frame"></div>
+            <details class="st-expander" id="expEClosure">
+              <summary>Show E-Closure (E-sets)</summary>
+              <div class="st-expander-content">
+                <div class="st-table-wrap">
+                  <table class="st-table">
                     <thead>
                       <tr>
                         <th>NFA State</th>
@@ -685,51 +813,49 @@
                     <tbody id="eClosureTableBody"></tbody>
                   </table>
                 </div>
-              </details>
-            </div>
-
-            <!-- Column 2: Converted DFA -->
-            <div class="stage-card">
-              <div class="stage-head">
-                <h3 class="stage-title">2. Converted DFA (Subset Construction)</h3>
-                <span class="stat-badge" style="background:#dbeafe;color:#1e40af;" id="dfaStatsBadge"></span>
               </div>
-              <div id="dfaGraphContainer" class="graph-box"></div>
-              <details class="step-expander" id="expSubset">
-                <summary>
-                  <span>Subset Construction Transition Table</span>
-                  <span class="sum-right"><span>E-set(Move(S, σ))</span><span class="caret"></span></span>
-                </summary>
-                <div class="table-wrap">
-                  <table class="data-table">
+            </details>
+          </div>
+
+          <!-- Column 2: Converted DFA -->
+          <div class="st-col">
+            <h4 class="st-h4">
+              <span>2. Converted DFA</span>
+              <span class="state-count-code" id="dfaStatsBadge"></span>
+            </h4>
+            <div id="dfaGraphContainer" class="st-graph-frame"></div>
+            <details class="st-expander" id="expSubset">
+              <summary>Subset Construction Transition Table</summary>
+              <div class="st-expander-content">
+                <div class="st-table-wrap">
+                  <table class="st-table">
                     <thead>
                       <tr>
-                        <th>Current State S</th>
+                        <th>State S</th>
                         <th>Symbol σ</th>
                         <th>Move(S, σ)</th>
-                        <th>E-set(Move) -> Target</th>
+                        <th>E-set(Move) ➔ Target</th>
                       </tr>
                     </thead>
                     <tbody id="subsetTableBody"></tbody>
                   </table>
                 </div>
-              </details>
-            </div>
-
-            <!-- Column 3: Minimized DFA -->
-            <div class="stage-card">
-              <div class="stage-head">
-                <h3 class="stage-title">3. Minimized DFA (Equivalence Partitions)</h3>
-                <span class="stat-badge" style="background:#d1fae5;color:#065f46;" id="minDfaStatsBadge"></span>
               </div>
-              <div id="minDfaGraphContainer" class="graph-box"></div>
-              <details class="step-expander" id="expMinMap">
-                <summary>
-                  <span>State Collapsing Equivalence Map</span>
-                  <span class="sum-right"><span>Moore Partitioning</span><span class="caret"></span></span>
-                </summary>
-                <div class="table-wrap">
-                  <table class="data-table">
+            </details>
+          </div>
+
+          <!-- Column 3: Minimized DFA -->
+          <div class="st-col">
+            <h4 class="st-h4">
+              <span>3. Minimized DFA</span>
+              <span class="state-count-code" id="minDfaStatsBadge"></span>
+            </h4>
+            <div id="minDfaGraphContainer" class="st-graph-frame"></div>
+            <details class="st-expander" id="expMinMap">
+              <summary>State Collapsing Equivalence Map</summary>
+              <div class="st-expander-content">
+                <div class="st-table-wrap">
+                  <table class="st-table">
                     <thead>
                       <tr>
                         <th>Minimized Group</th>
@@ -739,119 +865,108 @@
                     <tbody id="minMapTableBody"></tbody>
                   </table>
                 </div>
-              </details>
-            </div>
+              </div>
+            </details>
           </div>
         </div>
       </section>
 
       <!-- TAB 2: STEP-BY-STEP STRING STEPPER -->
       <section id="tabPanelStepper" class="hidden">
-        <div class="card">
+        <h3 class="st-h3">Interactive Step-by-Step String Stepper</h3>
+        <p class="st-caption">Avoid information overload by navigating character transitions one click at a time.</p>
+
+        <div class="stepper-top-grid">
           <div>
-            <h2 style="font-size:17px;font-weight:700;">Interactive Step-by-Step String Stepper</h2>
-            <p style="font-size:12.5px;color:var(--text-muted);">Avoid information overload by navigating character transitions one click at a time.</p>
+            <label class="st-label" for="stepperStringInput">Input String to Trace:</label>
+            <input id="stepperStringInput" type="text" value="0101" class="st-input mono" style="font-size:1.05rem;" />
           </div>
-
-          <div class="stepper-inputs">
-            <div>
-              <label class="field-label" for="stepperStringInput">Input String to Trace:</label>
-              <input id="stepperStringInput" type="text" value="0101" class="input-text mono" style="font-size:13.5px;padding:8px 12px;" />
-            </div>
-            <div>
-              <span class="field-label">Select Target Automaton:</span>
-              <div class="grid-2">
-                <label class="radio-card">
-                  <input type="radio" name="stepperTargetMachine" value="Minimized DFA" checked />
-                  <span>Minimized DFA</span>
-                </label>
-                <label class="radio-card">
-                  <input type="radio" name="stepperTargetMachine" value="Standard DFA" />
-                  <span>Standard DFA</span>
-                </label>
-              </div>
+          <div>
+            <span class="st-label">Select Target Automaton:</span>
+            <div class="st-radio-row">
+              <label>
+                <input type="radio" name="stepperTargetMachine" value="Minimized DFA" checked />
+                <span>Minimized DFA</span>
+              </label>
+              <label>
+                <input type="radio" name="stepperTargetMachine" value="Standard DFA" />
+                <span>Standard DFA</span>
+              </label>
             </div>
           </div>
-
-          <div class="stepper-controls">
-            <button type="button" id="btnStepReset" onclick="stepperAction('reset')" class="btn-step">⏮️ Reset Stepper</button>
-            <button type="button" id="btnStepPrev" onclick="stepperAction('prev')" class="btn-step">◀️ Prev Step</button>
-            <button type="button" id="btnStepNext" onclick="stepperAction('next')" class="btn-step-primary">Next Step ▶️</button>
-            <div class="step-status-pill">
-              <span id="stepperProgressLabel">Step 0 of 4</span>
-              <span>|</span>
-              <span>Active State: <strong id="stepperActiveStateBadge" style="color:var(--emerald);">M0</strong></span>
-            </div>
-          </div>
-
-          <div class="tape-bar">
-            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:#475569;">
-              <span>String Progress:</span>
-              <div id="stepperTapeContainer" class="tape-cells"></div>
-            </div>
-            <div id="stepperTraceSequence" class="mono" style="font-size:12px;color:#475569;"></div>
-          </div>
-
-          <div id="stepperGraphContainer" class="graph-box" style="margin-top:14px;min-height:280px;"></div>
-          <div id="stepperResultBanner" class="hidden"></div>
         </div>
+
+        <div class="stepper-btn-bar">
+          <button type="button" id="btnStepReset" onclick="stepperAction('reset')" class="st-btn">⏮️ Reset Stepper</button>
+          <button type="button" id="btnStepPrev" onclick="stepperAction('prev')" class="st-btn">◀️ Prev Step</button>
+          <button type="button" id="btnStepNext" onclick="stepperAction('next')" class="st-btn st-btn-primary">Next Step ▶️</button>
+          <div></div>
+        </div>
+
+        <div class="stepper-status-line">
+          <strong id="stepperProgressLabel">Step 0 of 4</strong>
+          <span> &nbsp;|&nbsp; Active State: </span>
+          <span class="inline-code" id="stepperActiveStateBadge">M0</span>
+          <span> &nbsp;|&nbsp; Path: </span>
+          <span class="inline-code" id="stepperTraceSequence" style="color:#0068c9;">M0</span>
+        </div>
+
+        <div class="tape-line">
+          <strong>String Progress:</strong>
+          <div id="stepperTapeContainer" style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;"></div>
+        </div>
+
+        <div id="stepperGraphContainer" class="st-graph-frame" style="margin-top:1.15rem;"></div>
+        <div id="stepperResultBanner" class="hidden"></div>
       </section>
 
       <!-- TAB 3: RESEARCH TELEMETRY & ACTIVITY LOG -->
       <section id="tabPanelTelemetry" class="hidden">
-        <div class="card">
-          <div>
-            <h2 style="font-size:17px;font-weight:700;">📋 Educational Interaction Telemetry</h2>
-            <p style="font-size:12.5px;color:var(--text-muted);">Verifiable interaction log recorded during this learning session. Useful for research validation.</p>
-          </div>
+        <h3 class="st-h3">📋 Educational Interaction Telemetry</h3>
+        <p class="st-caption">Verifiable interaction log recorded during this learning session. Useful for research validation.</p>
 
-          <div class="kpi-grid">
-            <div class="kpi-card">
-              <div class="kpi-label">Active Session Time</div>
-              <div id="metricSessionTime" class="kpi-val">0.0 mins</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-label">Total User Actions</div>
-              <div id="metricTotalActions" class="kpi-val" style="color:var(--blue);">0 events</div>
-            </div>
+        <div class="st-metrics-grid">
+          <div class="st-metric-box">
+            <div class="st-metric-lbl">Active Session Time</div>
+            <div id="metricSessionTime" class="st-metric-val">0.0 mins</div>
           </div>
-
-          <div style="margin-top:18px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-              <div>
-                <h3 style="font-size:13.5px;font-weight:700;">Session Verification Code</h3>
-                <p style="font-size:12px;color:var(--text-muted);">You can copy this JSON string as proof of active participation if requested by your instructor:</p>
-              </div>
-              <button type="button" id="btnCopyTelemetry" onclick="copyTelemetryJson()" class="btn-header" style="background:var(--bg-dark);color:#fff;">
-                Copy JSON
-              </button>
-            </div>
-            <pre id="telemetryJsonPre" class="code-pre"></pre>
+          <div class="st-metric-box">
+            <div class="st-metric-lbl">Total User Actions</div>
+            <div id="metricTotalActions" class="st-metric-val">0 events</div>
           </div>
+        </div>
 
-          <!-- Restored from canonical NFA.py: Detailed Action Event Log -->
-          <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
-            <label style="display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;cursor:pointer;user-select:none;">
-              <input type="checkbox" id="chkDetailedEventLog" onchange="updateTelemetryView()" />
-              <span>Show Detailed Action Event Log</span>
-            </label>
-            <div id="detailedEventLogContainer" class="table-wrap hidden" style="margin-top:10px;border:1px solid var(--border);border-radius:10px;max-height:300px;">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>timestamp_sec</th>
-                    <th>action</th>
-                    <th>details</th>
-                  </tr>
-                </thead>
-                <tbody id="detailedEventLogBody"></tbody>
-              </table>
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+            <div>
+              <h4 class="st-h4">Session Verification Code</h4>
+              <p class="st-caption" style="margin-bottom:0.4rem;">You can copy this JSON string as proof of active participation if requested by your instructor:</p>
             </div>
+            <button type="button" id="btnCopyTelemetry" onclick="copyTelemetryJson()" class="st-btn">📋 Copy JSON</button>
+          </div>
+          <pre id="telemetryJsonPre" class="st-code-block"></pre>
+        </div>
+
+        <div style="margin-top:1.5rem;">
+          <label class="st-checkbox-label">
+            <input type="checkbox" id="chkDetailedEventLog" onchange="updateTelemetryView()" />
+            <span>Show Detailed Action Event Log</span>
+          </label>
+          <div id="detailedEventLogContainer" class="st-table-wrap hidden" style="margin-top:0.85rem;">
+            <table class="st-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>timestamp_sec</th>
+                  <th>action</th>
+                  <th>details</th>
+                </tr>
+              </thead>
+              <tbody id="detailedEventLogBody"></tbody>
+            </table>
           </div>
         </div>
       </section>
-
     </main>
   </div>
 
@@ -958,6 +1073,17 @@
         .replace(/"/g, "&quot;");
     }
 
+    function toggleSidebar(collapse) {
+      document.body.classList.toggle("sidebar-collapsed", collapse);
+    }
+
+    function setDiagramScale(scale, btnEl) {
+      document.documentElement.style.setProperty("--diagram-scale", String(scale));
+      document.querySelectorAll(".zoom-btn").forEach(b => b.classList.remove("active"));
+      if (btnEl) btnEl.classList.add("active");
+      logAction("zoom_diagram", `${Math.round(scale * 100)}%`);
+    }
+
     function logAction(actionType, details = "") {
       const elapsed = Number(((Date.now() - appState.sessionStartTime) / 1000).toFixed(1));
       appState.userActionsLog.push({ timestamp_sec: elapsed, action: actionType, details });
@@ -965,12 +1091,12 @@
       updateTelemetryView();
     }
 
-    function flashResetToast(msg = "✓ Reset to Default") {
+    function flashResetToast(msg = "✓ Reset") {
       const toast = document.getElementById("resetStatusToast");
       if (!toast) return;
       toast.textContent = msg;
       toast.classList.remove("hidden");
-      setTimeout(() => toast.classList.add("hidden"), 2200);
+      setTimeout(() => toast.classList.add("hidden"), 2000);
     }
 
     function toggleAllStepTables(expand) {
@@ -987,7 +1113,7 @@
       if (minRadio) minRadio.checked = true;
       logAction("reset_to_default", DEFAULT_PRESET_NAME);
       loadPreset(DEFAULT_PRESET_NAME);
-      flashResetToast("✓ Reset to Default");
+      flashResetToast("✓ Default");
     }
 
     function resetCurrentPreset() {
@@ -998,7 +1124,7 @@
       }
       logAction("reset_current_preset", current);
       loadPreset(current);
-      flashResetToast("✓ Preset Restored");
+      flashResetToast("✓ Restored");
     }
 
     function getEmptyClosure(stateArray, transitions) {
@@ -1269,43 +1395,32 @@
       }
 
       const sortedRanks = Array.from(layers.keys()).sort((a, b) => a - b);
-      const numCols = sortedRanks.length;
-      let maxRowsInCol = 1;
-      for (const col of layers.values()) {
-        if (col.length > maxRowsInCol) maxRowsInCol = col.length;
-      }
-
-      const colGap = 148;
-      const rowGap = 96;
-      const padX = 72;
-      const padY = 58;
-      const width = Math.max(390, padX * 2 + Math.max(0, numCols - 1) * colGap);
-      const height = Math.max(220, padY * 2 + Math.max(0, maxRowsInCol - 1) * rowGap + 24);
+      const colGap = 132;
+      const rowGap = 104;
 
       const coords = {};
       sortedRanks.forEach((rk, colIdx) => {
         const colStates = layers.get(rk);
         const m = colStates.length;
-        const x = numCols === 1 ? width / 2 : padX + colIdx * ((width - padX * 2) / (numCols - 1));
+        const x = colIdx * colGap;
         colStates.forEach((st, rowIdx) => {
-          const totalSpan = (m - 1) * rowGap;
-          const startY = (height / 2) - (totalSpan / 2) + 8;
-          const stagger = (m === 1 && numCols >= 3 && colIdx % 2 === 1 && st !== "Trap") ? -14 : 0;
+          const startY = -((m - 1) * rowGap) / 2;
+          const stagger = (m === 1 && sortedRanks.length >= 3 && colIdx % 2 === 1 && st !== "Trap") ? -16 : 0;
           coords[st] = { x, y: startY + rowIdx * rowGap + stagger, col: colIdx, row: rowIdx };
         });
       });
 
-      return { coords, width, height };
+      return coords;
     }
 
     function renderAutomatonSvg(automatonDef, highlightedStates = [], activeEdge = null) {
       if (!automatonDef || !automatonDef.states || automatonDef.states.length === 0) {
-        return `<div style="font-size:12px;color:#94a3b8;padding:16px;">No states to display</div>`;
+        return `<div style="font-size:0.95rem;color:#94a3b8;padding:16px;">No states to display</div>`;
       }
       const states = automatonDef.states;
       const acceptSet = new Set(automatonDef.accept_states || []);
       const highlightSet = new Set(highlightedStates || []);
-      const { coords, width, height } = computeLayeredLayout(automatonDef);
+      const coords = computeLayeredLayout(automatonDef);
 
       const edgeGroups = new Map();
       for (const [src, row] of Object.entries(automatonDef.transitions || {})) {
@@ -1320,41 +1435,47 @@
         }
       }
 
-      const uid = "g" + Math.random().toString(36).slice(2, 8);
-      let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" style="width:100%;height:auto;max-height:280px;">
-        <defs>
-          <marker id="arrow-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
-            <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b"/>
-          </marker>
-          <marker id="arrow-active-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
-          </marker>
-          <marker id="arrow-start-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
-            <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
-          </marker>
-        </defs>`;
+      const R = 31;
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      function expandBounds(x, y, pad = 0) {
+        if (x - pad < minX) minX = x - pad;
+        if (x + pad > maxX) maxX = x + pad;
+        if (y - pad < minY) minY = y - pad;
+        if (y + pad > maxY) maxY = y + pad;
+      }
 
-      const R = 24;
+      for (const st of states) {
+        expandBounds(coords[st].x, coords[st].y, R + 4);
+      }
+
+      const uid = "g" + Math.random().toString(36).slice(2, 8);
+      let bodySvg = "";
+
       const startPos = coords[automatonDef.start_state];
       if (startPos) {
-        svg += `<line x1="${startPos.x - 50}" y1="${startPos.y}" x2="${startPos.x - (R + 3)}" y2="${startPos.y}" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arrow-start-${uid})" />`;
+        const sx1 = startPos.x - (R + 34);
+        const sx2 = startPos.x - (R + 3);
+        expandBounds(sx1, startPos.y, 4);
+        bodySvg += `<line x1="${sx1}" y1="${startPos.y}" x2="${sx2}" y2="${startPos.y}" stroke="#2563eb" stroke-width="2.6" marker-end="url(#arrow-start-${uid})" />`;
       }
 
       for (const [key, syms] of edgeGroups.entries()) {
         const [src, dest] = key.split("|||");
         const p1 = coords[src], p2 = coords[dest];
         const isHit = activeEdge && activeEdge.src === src && activeEdge.dest === dest && syms.includes(activeEdge.symbol);
-        const strokeColor = isHit ? "#dc2626" : "#64748b";
-        const strokeWidth = isHit ? "2.8" : "1.45";
+        const strokeColor = isHit ? "#dc2626" : "#475569";
+        const strokeWidth = isHit ? "3.2" : "1.8";
         const marker = isHit ? `url(#arrow-active-${uid})` : `url(#arrow-${uid})`;
         const label = syms.map(s => s === "e" ? "ε" : s).join(", ");
         const safeLabel = escapeHtml(label);
+        const pillW = Math.max(20, label.length * 8.6 + 12);
 
         if (src === dest) {
           const lx = p1.x, ly = p1.y - R;
-          svg += `<path d="M ${lx - 10} ${ly + 2} C ${lx - 24} ${ly - 38}, ${lx + 24} ${ly - 38}, ${lx + 10} ${ly + 2}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
-          svg += `<rect x="${lx - (label.length * 3.8 + 5)}" y="${ly - 43}" width="${label.length * 7.6 + 10}" height="15" rx="3" fill="white" fill-opacity="0.92" />`;
-          svg += `<text x="${lx}" y="${ly - 32}" text-anchor="middle" font-size="11" font-family="monospace" font-weight="700" fill="${isHit ? '#dc2626' : '#1e293b'}">${safeLabel}</text>`;
+          expandBounds(lx, ly - 48, pillW / 2 + 4);
+          bodySvg += `<path d="M ${lx - 12} ${ly + 2} C ${lx - 28} ${ly - 44}, ${lx + 28} ${ly - 44}, ${lx + 12} ${ly + 2}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
+          bodySvg += `<rect x="${lx - pillW / 2}" y="${ly - 50}" width="${pillW}" height="18" rx="4" fill="white" fill-opacity="0.95" />`;
+          bodySvg += `<text x="${lx}" y="${ly - 37}" text-anchor="middle" font-size="13.5" font-family="Arial, sans-serif" font-weight="700" fill="${isHit ? '#dc2626' : '#0f172a'}">${safeLabel}</text>`;
         } else {
           const hasReverse = edgeGroups.has(`${dest}|||${src}`);
           const colSpan = Math.abs((p2.col || 0) - (p1.col || 0));
@@ -1366,11 +1487,11 @@
 
           let curveOffset = 0;
           if (hasReverse) {
-            curveOffset = 24;
+            curveOffset = 28;
           } else if (colSpan > 1) {
-            curveOffset = isBackEdge ? 38 : -34;
+            curveOffset = isBackEdge ? 44 : -38;
           } else if (isBackEdge) {
-            curveOffset = 30;
+            curveOffset = 34;
           }
 
           const sx = p1.x + ux * R + nx * (curveOffset * 0.22);
@@ -1380,35 +1501,55 @@
           const cx = (p1.x + p2.x) / 2 + nx * curveOffset;
           const cy = (p1.y + p2.y) / 2 + ny * curveOffset;
 
-          svg += `<path d="M ${sx} ${sy} Q ${cx} ${cy} ${ex} ${ey}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
           const tx = 0.25 * sx + 0.5 * cx + 0.25 * ex;
           const ty = 0.25 * sy + 0.5 * cy + 0.25 * ey;
-          svg += `<rect x="${tx - (label.length * 3.8 + 5)}" y="${ty - 9}" width="${label.length * 7.6 + 10}" height="16" rx="4" fill="white" fill-opacity="0.92" stroke="#e2e8f0" stroke-width="0.6" />`;
-          svg += `<text x="${tx}" y="${ty + 3}" text-anchor="middle" font-size="11" font-family="monospace" font-weight="700" fill="${isHit ? '#dc2626' : '#0f172a'}">${safeLabel}</text>`;
+          expandBounds(tx, ty, Math.max(14, pillW / 2));
+
+          bodySvg += `<path d="M ${sx} ${sy} Q ${cx} ${cy} ${ex} ${ey}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
+          bodySvg += `<rect x="${tx - pillW / 2}" y="${ty - 10}" width="${pillW}" height="19" rx="4" fill="white" fill-opacity="0.95" stroke="#e2e8f0" stroke-width="0.8" />`;
+          bodySvg += `<text x="${tx}" y="${ty + 4}" text-anchor="middle" font-size="13.5" font-family="Arial, sans-serif" font-weight="700" fill="${isHit ? '#dc2626' : '#0f172a'}">${safeLabel}</text>`;
         }
       }
 
       for (const st of states) {
         const { x, y } = coords[st];
-        let fill = "#ffffff", stroke = "#64748b", sw = "1.5";
+        let fill = "#ffffff", stroke = "#64748b", sw = "1.8";
         if (highlightSet.has(st)) {
-          fill = "#86efac"; stroke = "#15803d"; sw = "3.3";
+          fill = "#86efac"; stroke = "#15803d"; sw = "3.6";
         } else if (st === automatonDef.start_state) {
-          fill = "#dbeafe"; stroke = "#1d4ed8"; sw = "2.2";
+          fill = "#dbeafe"; stroke = "#1d4ed8"; sw = "2.5";
         } else if (st === "Trap") {
-          fill = "#fee2e2"; stroke = "#b91c1c"; sw = "1.8";
+          fill = "#fee2e2"; stroke = "#b91c1c"; sw = "2.0";
         }
 
-        svg += `<circle cx="${x}" cy="${y}" r="${R}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" />`;
+        bodySvg += `<circle cx="${x}" cy="${y}" r="${R}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" />`;
         if (acceptSet.has(st)) {
-          svg += `<circle cx="${x}" cy="${y}" r="${R - 4.2}" fill="none" stroke="${stroke}" stroke-width="1.4" />`;
+          bodySvg += `<circle cx="${x}" cy="${y}" r="${R - 5}" fill="none" stroke="${stroke}" stroke-width="1.7" />`;
         }
-        const fontSize = st.length > 8 ? 8.8 : (st.length > 5 ? 9.8 : 11.5);
-        svg += `<text x="${x}" y="${y + 4}" text-anchor="middle" font-size="${fontSize}" font-family="monospace" font-weight="700" fill="#0f172a">${escapeHtml(st)}</text>`;
+        const fontSize = st.length > 9 ? 10.5 : (st.length > 5 ? 12.2 : 14.8);
+        bodySvg += `<text x="${x}" y="${y + 5}" text-anchor="middle" font-size="${fontSize}" font-family="Arial, sans-serif" font-weight="700" fill="#0f172a">${escapeHtml(st)}</text>`;
       }
 
-      svg += `</svg>`;
-      return svg;
+      const margin = 12;
+      const vbX = Math.floor(minX - margin);
+      const vbY = Math.floor(minY - margin);
+      const vbW = Math.max(160, Math.ceil((maxX - minX) + margin * 2));
+      const vbH = Math.max(115, Math.ceil((maxY - minY) + margin * 2));
+
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vbX} ${vbY} ${vbW} ${vbH}">
+        <defs>
+          <marker id="arrow-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+          </marker>
+          <marker id="arrow-active-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+          </marker>
+          <marker id="arrow-start-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+          </marker>
+        </defs>
+        ${bodySvg}
+      </svg>`;
     }
 
     function loadPreset(presetName) {
@@ -1425,7 +1566,7 @@
         appState.transitions = JSON.parse(JSON.stringify(p.transitions));
         appState.openBuilderStates = new Set(appState.states);
         document.getElementById("stepperStringInput").value = p.sampleStr || "0101";
-        descBox.textContent = `ℹ️ Scenario Note: ${p.description}`;
+        descBox.innerHTML = `ℹ️ <strong>Scenario Note:</strong> ${escapeHtml(p.description)}`;
       } else {
         appState.states = ["q0", "q1", "q2"];
         appState.alphabet = ["0", "1", "e"];
@@ -1436,7 +1577,7 @@
         document.getElementById("statesInput").value = "q0, q1, q2";
         document.getElementById("alphabetInput").value = "0, 1, e";
         document.getElementById("stepperStringInput").value = "0101";
-        descBox.textContent = "ℹ️ Custom Mode: Edit states, alphabet, and transition rules below.";
+        descBox.innerHTML = `ℹ️ <strong>Custom Mode:</strong> Edit states, alphabet, and transition rules below.`;
       }
       appState.simStepIndex = 0;
       rebuildSidebarControls();
@@ -1460,8 +1601,8 @@
         const isAcc = appState.acceptStates.includes(st);
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = `chip-btn ${isAcc ? "active-blue" : ""}`;
-        btn.textContent = st;
+        btn.className = `st-tag ${isAcc ? "selected" : ""}`;
+        btn.textContent = isAcc ? `${st} ×` : `+ ${st}`;
         btn.addEventListener("click", () => {
           if (appState.acceptStates.includes(st)) {
             appState.acceptStates = appState.acceptStates.filter(x => x !== st);
@@ -1480,7 +1621,7 @@
       appState.states.forEach(st => {
         if (!appState.transitions[st]) appState.transitions[st] = {};
         const det = document.createElement("details");
-        det.className = "state-expander";
+        det.className = "st-expander";
         if (appState.openBuilderStates.has(st)) det.open = true;
         det.addEventListener("toggle", () => {
           if (det.open) appState.openBuilderStates.add(st);
@@ -1492,30 +1633,26 @@
         det.appendChild(sum);
 
         const body = document.createElement("div");
-        body.className = "expander-body";
+        body.className = "st-expander-content";
 
         appState.alphabet.forEach(sym => {
-          const row = document.createElement("div");
-          row.className = "trans-row";
-          const lbl = document.createElement("span");
-          lbl.className = "mono";
-          lbl.style.color = "#475569";
+          const blk = document.createElement("div");
+          blk.className = "trans-rule-block";
+          const lbl = document.createElement("div");
+          lbl.className = "trans-rule-lbl";
           lbl.textContent = `Read '${sym === "e" ? "ε (e)" : sym}' ➔ Go to:`;
-          row.appendChild(lbl);
+          blk.appendChild(lbl);
 
           const targetsWrap = document.createElement("div");
-          targetsWrap.style.display = "flex";
-          targetsWrap.style.flexWrap = "wrap";
-          targetsWrap.style.gap = "4px";
-          targetsWrap.style.justifyContent = "flex-end";
+          targetsWrap.className = "st-multiselect-box";
           const currentTargets = appState.transitions[st][sym] || [];
 
           appState.states.forEach(targetSt => {
             const active = currentTargets.includes(targetSt);
             const chip = document.createElement("button");
             chip.type = "button";
-            chip.className = `chip-btn ${active ? "active-emerald" : ""}`;
-            chip.textContent = targetSt;
+            chip.className = `st-tag ${active ? "selected" : ""}`;
+            chip.textContent = active ? `${targetSt} ×` : `+ ${targetSt}`;
             chip.addEventListener("click", () => {
               const arr = appState.transitions[st][sym] || [];
               if (arr.includes(targetSt)) {
@@ -1530,8 +1667,8 @@
             targetsWrap.appendChild(chip);
           });
 
-          row.appendChild(targetsWrap);
-          body.appendChild(row);
+          blk.appendChild(targetsWrap);
+          body.appendChild(blk);
         });
 
         det.appendChild(body);
@@ -1566,16 +1703,16 @@
 
       document.getElementById("eClosureTableBody").innerHTML = Object.entries(stepData.e_sets).map(([st, eset]) => `
         <tr>
-          <td style="font-weight:700;color:#0f172a;">${escapeHtml(st)}</td>
-          <td style="font-weight:700;color:#1d4ed8;">${escapeHtml(eset)}</td>
+          <td style="font-weight:700;">${escapeHtml(st)}</td>
+          <td style="font-weight:700;color:#0068c9;">${escapeHtml(eset)}</td>
         </tr>
       `).join("");
 
       document.getElementById("subsetTableBody").innerHTML = stepData.transitions_log.map(row => `
         <tr>
-          <td style="font-weight:700;color:#0f172a;">${escapeHtml(row.current)}</td>
-          <td style="color:#475569;">${escapeHtml(row.symbol)}</td>
-          <td style="color:#475569;">${escapeHtml(row.move)}</td>
+          <td style="font-weight:700;">${escapeHtml(row.current)}</td>
+          <td>${escapeHtml(row.symbol)}</td>
+          <td>${escapeHtml(row.move)}</td>
           <td style="font-weight:700;color:${row.target === 'Trap' ? '#e11d48' : '#059669'};">${escapeHtml(row.target)}</td>
         </tr>
       `).join("");
@@ -1583,7 +1720,7 @@
       document.getElementById("minMapTableBody").innerHTML = mapping.map(row => `
         <tr>
           <td style="font-weight:700;color:#059669;">${escapeHtml(row.group)}</td>
-          <td style="color:#334155;">${escapeHtml(row.members)}</td>
+          <td>${escapeHtml(row.members)}</td>
         </tr>
       `).join("");
 
@@ -1601,7 +1738,7 @@
       const banner = document.getElementById("stepperResultBanner");
 
       if (msg !== "Success") {
-        banner.className = "banner-warn";
+        banner.className = "st-alert-warn";
         banner.textContent = `⚠️ Simulation Alert: ${msg}`;
         banner.classList.remove("hidden");
         return;
@@ -1618,18 +1755,18 @@
 
       const tape = document.getElementById("stepperTapeContainer");
       if (targetStr.length === 0) {
-        tape.innerHTML = `<span style="font-size:12px;color:#94a3b8;font-style:italic;">ε (empty string)</span>`;
+        tape.innerHTML = `<span style="color:#64748b;font-style:italic;">ε (empty string)</span>`;
       } else {
         tape.innerHTML = targetStr.split("").map((ch, i) => {
           const safeCh = escapeHtml(ch);
-          if (i < currIdx) return `<span class="cell-done">${safeCh}</span>`;
-          if (i === currIdx) return `<span class="cell-curr">${safeCh}</span>`;
-          return `<span class="cell-wait">${safeCh}</span>`;
+          if (i < currIdx) return `<span class="tape-char-done">${safeCh}</span>`;
+          if (i === currIdx) return `<span class="tape-char-curr">${safeCh}</span>`;
+          return `<span class="tape-char-wait">${safeCh}</span>`;
         }).join("");
       }
 
       const visitedTrace = path.slice(0, currIdx + 1).map(p => p.state).join(" ➔ ");
-      document.getElementById("stepperTraceSequence").textContent = `Path: ${visitedTrace}`;
+      document.getElementById("stepperTraceSequence").textContent = visitedTrace;
 
       let activeEdge = null;
       if (currIdx > 0) {
@@ -1641,10 +1778,10 @@
       if (currIdx === maxSteps) {
         banner.classList.remove("hidden");
         if (isAccepted) {
-          banner.className = "banner-acc";
+          banner.className = "st-alert-success";
           banner.innerHTML = `🎉 Simulation Complete: The string <code>'${escapeHtml(targetStr)}'</code> is <strong>ACCEPTED</strong> (Ended in accepting state <code>${escapeHtml(currState)}</code>).`;
         } else {
-          banner.className = "banner-rej";
+          banner.className = "st-alert-error";
           banner.innerHTML = `🛑 Simulation Complete: The string <code>'${escapeHtml(targetStr)}'</code> is <strong>REJECTED</strong> (Ended in non-accept state <code>${escapeHtml(currState)}</code>).`;
         }
       } else {
@@ -1676,10 +1813,10 @@
         const btn = document.getElementById(`tabBtn${cap}`);
         if (t === tabName) {
           panel.classList.remove("hidden");
-          btn.className = "tab-btn active";
+          btn.className = "st-tab active";
         } else {
           panel.classList.add("hidden");
-          btn.className = "tab-btn";
+          btn.className = "st-tab";
         }
       });
       logAction("switch_tab", tabName);
@@ -1712,8 +1849,8 @@
             <tr>
               <td style="color:#64748b;">${i + 1}</td>
               <td>${ev.timestamp_sec}</td>
-              <td style="font-weight:700;color:#1d4ed8;">${escapeHtml(ev.action)}</td>
-              <td style="color:#334155;">${escapeHtml(ev.details || "")}</td>
+              <td style="font-weight:700;color:#0068c9;">${escapeHtml(ev.action)}</td>
+              <td>${escapeHtml(ev.details || "")}</td>
             </tr>
           `).join("");
         }
@@ -1735,8 +1872,8 @@
         document.body.removeChild(ta);
       }
       const btn = document.getElementById("btnCopyTelemetry");
-      btn.textContent = "Copied!";
-      setTimeout(() => { btn.textContent = "Copy JSON"; }, 2000);
+      btn.textContent = "✓ Copied!";
+      setTimeout(() => { btn.textContent = "📋 Copy JSON"; }, 2000);
     }
 
     document.addEventListener("DOMContentLoaded", () => {

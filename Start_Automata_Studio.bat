@@ -57,17 +57,20 @@ echo ========================================================================
 echo   AUTOMATA STUDIO: INTERACTIVE LEARNING LABORATORY (STREAMLIT EDITION)
 echo ========================================================================
 
-if not exist ".venv\Scripts\python.exe" (
+set "RUN_PY=.venv\Scripts\python.exe"
+if not exist ".venv\Scripts\pip.exe" (
+    if exist ".venv" rmdir /s /q ".venv"
     echo [1/2] Creating isolated local Python environment (.venv)...
     %PY_CMD% -m venv ".venv"
     if %ERRORLEVEL% NEQ 0 (
-        echo [ERROR] Failed to create virtual environment.
-        pause
-        exit /b 1
+        if exist ".venv" rmdir /s /q ".venv"
+        echo [INFO] Falling back to user-level Python environment...
+        set "RUN_PY=%PY_CMD%"
+        goto :user_pip_setup
     )
 )
 
-if not exist ".venv\.deps_installed_v2" (
+if not exist ".venv\.deps_installed_v3" (
     echo [2/2] Installing Streamlit, Graphviz, and Pandas (first-time setup)...
     ".venv\Scripts\python.exe" -m pip install --disable-pip-version-check -r "requirements.txt"
     if %ERRORLEVEL% NEQ 0 (
@@ -75,11 +78,25 @@ if not exist ".venv\.deps_installed_v2" (
         pause
         exit /b 1
     )
-    echo ok > ".venv\.deps_installed_v2"
+    echo ok > ".venv\.deps_installed_v3"
+)
+goto :launch_app
+
+:user_pip_setup
+%PY_CMD% -c "import streamlit, graphviz, pandas" >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo [2/2] Installing Streamlit, Graphviz, and Pandas into user environment...
+    %PY_CMD% -m pip install --user --disable-pip-version-check -r "requirements.txt"
+    if %ERRORLEVEL% NEQ 0 (
+        echo [ERROR] Package installation failed. Check your internet connection for first-time setup.
+        pause
+        exit /b 1
+    )
 )
 
+:launch_app
 echo Launching Automata Studio in your default web browser (http://localhost:8501)...
 echo (Close this window or press Ctrl+C at any time to stop the server.)
 echo.
-".venv\Scripts\python.exe" -m streamlit run "NFA.py" --browser.gatherUsageStats false --server.headless false
+%RUN_PY% -m streamlit run "NFA.py" --browser.gatherUsageStats false --server.headless false
 if %ERRORLEVEL% NEQ 0 pause
