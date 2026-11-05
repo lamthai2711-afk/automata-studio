@@ -2,7 +2,9 @@
 AUTOMATA STUDIO - QUICK START & HOW TO RUN GUIDE
 ========================================================================
 
-This package provides two 100% synchronized versions of Automata Studio:
+This package provides two 100% synchronized versions of Automata Studio
+(Lecture 5 Slide 99-132 Edition: Custom Automaton Default + Examples 1-5
++ Dynamic 4/5-Step Slide 100 Conversion Pipeline):
 1. Double-Click Python Streamlit App (Start_Automata_Studio.bat / .command)
 2. Zero-Install Offline/Online Web App (index.html)
 
@@ -10,7 +12,7 @@ This package provides two 100% synchronized versions of Automata Studio:
 OPTION 1: UNZIP & DOUBLE-CLICK STREAMLIT APP (RECOMMENDED FOR PYTHON)
 ------------------------------------------------------------------------
 Prerequisite: Python 3.9 or newer installed (https://www.python.org/downloads/
-— on Windows, ensure "Add python.exe to PATH" is checked during installation).
+-- on Windows, ensure "Add python.exe to PATH" is checked during installation).
 Note: Separate Graphviz system software is NOT required; graphs render directly
 in your browser!
 

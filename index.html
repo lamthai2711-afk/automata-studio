@@ -6,7 +6,6 @@
   <title>Automata Studio: Cognitive Learning Lab</title>
   <style>
     :root {
-      /* Authentic Streamlit Light Wide Palette */
       --st-bg: #ffffff;
       --st-sidebar-bg: #f0f2f6;
       --st-surface: #f8f9fb;
@@ -43,7 +42,6 @@
     }
     code, pre, .mono { font-family: var(--mono); }
 
-    /* Streamlit Top 3px Decoration Ribbon */
     .st-top-ribbon {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -52,7 +50,6 @@
       z-index: 100;
     }
 
-    /* Streamlit App Shell (Edge-to-Edge Wide Mode) */
     .st-app-shell {
       display: flex;
       min-height: 100vh;
@@ -60,26 +57,25 @@
       padding-top: 3px;
     }
 
-    /* Streamlit Collapsible Left Sidebar */
     .st-sidebar {
-      width: 368px;
-      min-width: 368px;
-      max-width: 368px;
+      width: 376px;
+      min-width: 376px;
+      max-width: 376px;
       background: var(--st-sidebar-bg);
       border-right: 1px solid rgba(49, 51, 63, 0.12);
-      padding: 1.6rem 1.4rem 3rem;
+      padding: 1.5rem 1.35rem 3rem;
       height: calc(100vh - 3px);
       position: sticky;
       top: 3px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 1.15rem;
+      gap: 1.05rem;
       transition: margin-left 0.22s ease, opacity 0.18s ease;
       z-index: 40;
     }
     body.sidebar-collapsed .st-sidebar {
-      margin-left: -368px;
+      margin-left: -376px;
       opacity: 0;
       pointer-events: none;
     }
@@ -122,42 +118,41 @@
     body.sidebar-collapsed .sidebar-open-fab { display: inline-flex; }
     .sidebar-open-fab:hover { background: #e2e6ee; }
 
-    /* Streamlit Sidebar Typography & Widgets */
     .st-sidebar h2 {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--st-heading);
       letter-spacing: -0.01em;
       line-height: 1.3;
     }
     .st-sidebar h3 {
-      font-size: 1.1rem;
+      font-size: 1.08rem;
       font-weight: 700;
       color: var(--st-heading);
-      margin-top: 0.15rem;
+      margin-top: 0.1rem;
     }
     .st-sidebar h4 {
-      font-size: 1rem;
+      font-size: 0.98rem;
       font-weight: 700;
       color: var(--st-heading);
     }
     .st-divider {
       border: 0;
       border-top: 1px solid rgba(49, 51, 63, 0.16);
-      margin: 0.25rem 0;
+      margin: 0.2rem 0;
     }
     .st-label {
       display: block;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 500;
       color: var(--st-text);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.3rem;
     }
     .st-input, .st-select {
       width: 100%;
-      min-height: 42px;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.95rem;
+      min-height: 40px;
+      padding: 0.45rem 0.7rem;
+      font-size: 0.93rem;
       border: 1px solid var(--st-border);
       border-radius: 0.5rem;
       background: #ffffff;
@@ -170,7 +165,7 @@
       box-shadow: 0 0 0 2px rgba(255, 75, 75, 0.2);
     }
 
-    .st-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; }
+    .st-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
     .st-btn {
       min-height: 40px;
       padding: 0.45rem 0.85rem;
@@ -178,7 +173,7 @@
       border: 1px solid var(--st-border);
       background: #ffffff;
       color: var(--st-heading);
-      font-size: 0.92rem;
+      font-size: 0.91rem;
       font-weight: 500;
       cursor: pointer;
       display: inline-flex;
@@ -187,10 +182,14 @@
       gap: 0.35rem;
       transition: border-color 0.15s, color 0.15s, background 0.15s;
     }
-    .st-btn:hover {
+    .st-btn:hover:not(:disabled) {
       border-color: var(--st-primary);
       color: var(--st-primary);
       background: #fffafa;
+    }
+    .st-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
     }
     .st-btn-primary {
       background: var(--st-primary);
@@ -198,28 +197,27 @@
       color: #ffffff;
       font-weight: 600;
     }
-    .st-btn-primary:hover {
+    .st-btn-primary:hover:not(:disabled) {
       background: var(--st-primary-hover);
       border-color: var(--st-primary-hover);
       color: #ffffff;
     }
 
     .st-info-box {
-      padding: 0.85rem 1rem;
+      padding: 0.8rem 0.95rem;
       border-radius: 0.5rem;
       background: var(--st-info-bg);
       color: var(--st-info-text);
-      font-size: 0.92rem;
-      line-height: 1.5;
+      font-size: 0.9rem;
+      line-height: 1.48;
     }
 
-    /* Streamlit Multiselect Tag Widget Style */
     .st-multiselect-box {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
       padding: 7px 9px;
-      min-height: 42px;
+      min-height: 40px;
       border-radius: 0.5rem;
       border: 1px solid var(--st-border);
       background: #ffffff;
@@ -228,7 +226,7 @@
     .st-tag {
       padding: 3px 10px;
       border-radius: 6px;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-family: var(--mono);
       font-weight: 600;
       cursor: pointer;
@@ -244,8 +242,7 @@
       color: #ffffff;
     }
 
-    /* Sidebar State Expanders (st.expander) */
-    .st-expander-stack { display: flex; flex-direction: column; gap: 0.6rem; }
+    .st-expander-stack { display: flex; flex-direction: column; gap: 0.55rem; }
     details.st-expander {
       border: 1px solid var(--st-border);
       border-radius: 0.5rem;
@@ -253,8 +250,8 @@
       overflow: hidden;
     }
     details.st-expander > summary {
-      padding: 0.7rem 0.95rem;
-      font-size: 0.95rem;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.93rem;
       font-weight: 600;
       color: var(--st-heading);
       cursor: pointer;
@@ -262,14 +259,14 @@
       list-style: none;
       display: flex;
       align-items: center;
-      gap: 0.55rem;
+      gap: 0.5rem;
       background: #ffffff;
     }
     details.st-expander > summary:hover { color: var(--st-primary); }
     details.st-expander > summary::-webkit-details-marker { display: none; }
     details.st-expander > summary::before {
       content: "▸";
-      font-size: 1rem;
+      font-size: 0.95rem;
       color: var(--st-muted);
       transition: transform 0.15s;
       display: inline-block;
@@ -277,19 +274,56 @@
     details.st-expander[open] > summary::before { transform: rotate(90deg); }
     details.st-expander[open] > summary { border-bottom: 1px solid var(--st-border-soft); }
     .st-expander-content {
-      padding: 0.8rem 0.95rem;
+      padding: 0.75rem 0.9rem;
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
+      gap: 0.6rem;
     }
-    .trans-rule-block { display: flex; flex-direction: column; gap: 0.3rem; }
-    .trans-rule-lbl { font-size: 0.88rem; color: var(--st-muted); font-family: var(--mono); font-weight: 600; }
+    .trans-rule-block { display: flex; flex-direction: column; gap: 0.25rem; }
+    .trans-rule-lbl { font-size: 0.85rem; color: var(--st-muted); font-family: var(--mono); font-weight: 600; }
 
-    /* Main Content Canvas (Streamlit Wide Container) */
+    /* String Transitions Sidebar Widget */
+    .str-rules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .str-rule-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.4rem 0.65rem;
+      border-radius: 0.45rem;
+      background: #ffffff;
+      border: 1px solid var(--st-border-soft);
+      font-family: var(--mono);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--st-heading);
+    }
+    .str-rule-del {
+      border: 0;
+      background: #fee2e2;
+      color: #b91c1c;
+      border-radius: 5px;
+      padding: 2px 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .str-rule-del:hover { background: #fecaca; }
+    .str-add-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      gap: 0.4rem;
+      align-items: end;
+    }
+
+    /* Main Content Canvas */
     .st-main {
       flex: 1;
       min-width: 0;
-      padding: 2.4rem 3rem 4rem;
+      padding: 1.45rem 2.5rem 3rem;
       background: #ffffff;
     }
     @media (max-width: 980px) {
@@ -299,7 +333,7 @@
         height: auto; position: relative; top: 0;
       }
       body.sidebar-collapsed .st-sidebar { margin-left: 0; display: none; }
-      .st-main { padding: 1.5rem 1.2rem 3rem; }
+      .st-main { padding: 1.4rem 1.1rem 3rem; }
     }
 
     .st-hero-row {
@@ -308,19 +342,19 @@
       align-items: flex-start;
       justify-content: space-between;
       gap: 1rem;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.45rem;
     }
     .st-title {
-      font-size: 2.35rem;
+      font-size: 2.28rem;
       font-weight: 700;
       color: var(--st-heading);
       letter-spacing: -0.02em;
       line-height: 1.2;
     }
     .st-lead {
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       color: var(--st-text);
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.85rem;
     }
     .st-top-meta {
       display: flex;
@@ -339,20 +373,19 @@
       color: var(--st-heading);
     }
 
-    /* Native Streamlit Underline Tabs (st.tabs) */
     .st-tabs {
       display: flex;
       flex-wrap: wrap;
-      gap: 1.8rem;
+      gap: 1.7rem;
       border-bottom: 1px solid var(--st-border-soft);
-      margin-bottom: 1.6rem;
+      margin-bottom: 0.95rem;
     }
     .st-tab {
       background: transparent;
       border: 0;
       border-bottom: 3px solid transparent;
-      padding: 0.65rem 0.15rem 0.75rem;
-      font-size: 1.02rem;
+      padding: 0.6rem 0.15rem 0.7rem;
+      font-size: 1rem;
       font-weight: 600;
       color: var(--st-muted);
       cursor: pointer;
@@ -365,43 +398,62 @@
       border-bottom-color: var(--st-primary);
     }
 
-    /* Section Headings */
     .st-h3 {
-      font-size: 1.6rem;
+      font-size: 1.52rem;
       font-weight: 700;
       color: var(--st-heading);
       letter-spacing: -0.01em;
       margin-bottom: 0.25rem;
     }
+    .st-h4 {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--st-heading);
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
     .st-caption {
-      font-size: 0.94rem;
+      font-size: 0.92rem;
       color: var(--st-muted);
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
     }
 
-    /* Toolbar Row (Expand All + Zoom + Legend) */
+    .st-banner {
+      padding: 0.85rem 1.05rem;
+      border-radius: 0.55rem;
+      font-size: 0.94rem;
+      margin-bottom: 0.85rem;
+      line-height: 1.5;
+    }
+    .st-banner-info { background: var(--st-info-bg); color: var(--st-info-text); border: 1px solid #cbe2fa; }
+    .st-banner-success { background: var(--st-success-bg); color: var(--st-success-text); border: 1px solid #b8e6cc; }
+    .st-banner-warn { background: var(--st-warn-bg); color: var(--st-warn-text); border: 1px solid #f5dfa3; }
+    .st-banner-error { background: var(--st-error-bg); color: var(--st-error-text); border: 1px solid #f7c2c7; }
+
     .st-toolbar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      padding: 0.65rem 0;
-      margin-bottom: 1.1rem;
+      padding: 0.55rem 0;
+      margin-bottom: 0.85rem;
     }
     .st-checkbox-label {
       display: inline-flex;
       align-items: center;
-      gap: 0.55rem;
-      font-size: 0.96rem;
+      gap: 0.5rem;
+      font-size: 0.94rem;
       font-weight: 500;
       color: var(--st-heading);
       cursor: pointer;
       user-select: none;
     }
     .st-checkbox-label input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
+      width: 17px;
+      height: 17px;
       accent-color: var(--st-primary);
       cursor: pointer;
     }
@@ -409,12 +461,12 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 1.1rem;
-      font-size: 0.9rem;
+      gap: 0.95rem;
+      font-size: 0.88rem;
       color: var(--st-text);
     }
     .legend-dot {
-      width: 14px; height: 14px; border-radius: 999px; display: inline-block; vertical-align: middle; margin-right: 5px;
+      width: 13px; height: 13px; border-radius: 999px; display: inline-block; vertical-align: middle; margin-right: 4px;
     }
     .zoom-group {
       display: inline-flex;
@@ -437,34 +489,72 @@
     }
     .zoom-btn.active { background: #ffffff; color: var(--st-heading); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 
-    /* 3-Column Streamlit Pipeline (st.columns(3)) */
-    .st-cols-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1.75rem;
-      align-items: start;
-    }
-    @media (max-width: 1240px) {
-      .st-cols-3 { grid-template-columns: 1fr; }
-    }
-    .st-col {
+    /* Interactive Conversion Stepper Pill Bar */
+    .conv-nav-bar {
       display: flex;
-      flex-direction: column;
-      gap: 0.95rem;
-      min-width: 0;
-    }
-    .st-h4 {
-      font-size: 1.22rem;
-      font-weight: 700;
-      color: var(--st-heading);
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
       flex-wrap: wrap;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 0.85rem;
     }
+    .conv-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 1.15rem;
+    }
+    .conv-pill {
+      border: 1px solid var(--st-border-soft);
+      background: var(--st-surface);
+      color: var(--st-muted);
+      border-radius: 999px;
+      padding: 0.32rem 0.85rem;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .conv-pill:hover { border-color: var(--st-primary); color: var(--st-heading); }
+    .conv-pill.active {
+      background: var(--st-primary);
+      border-color: var(--st-primary);
+      color: #ffffff;
+    }
+
+    .conv-split-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 1.22fr;
+      gap: 1.5rem;
+      align-items: start;
+      margin-top: 0.6rem;
+    }
+    .conv-two-equal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+      margin-top: 0.6rem;
+    }
+    @media (max-width: 1180px) {
+      .conv-split-grid, .conv-two-equal { grid-template-columns: 1fr; }
+    }
+
+    .overview-grid {
+      display: grid;
+      gap: 1.4rem;
+      align-items: start;
+      margin-bottom: 1.5rem;
+    }
+    .overview-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .overview-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .overview-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (max-width: 1200px) {
+      .overview-cols-2, .overview-cols-3, .overview-cols-4 { grid-template-columns: 1fr; }
+    }
+
     .state-count-code {
       font-family: var(--mono);
-      font-size: 0.86rem;
+      font-size: 0.84rem;
       font-weight: 600;
       padding: 0.15rem 0.55rem;
       border-radius: 6px;
@@ -472,43 +562,52 @@
       color: #0068c9;
     }
 
-    /* High-Visibility Graph Canvas */
     .st-graph-frame {
       width: 100%;
       background: #ffffff;
       border: 1px solid var(--st-border-soft);
       border-radius: 0.65rem;
       padding: 1rem 0.85rem;
-      min-height: 290px;
+      min-height: 225px;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow-x: auto;
     }
     .st-graph-frame svg {
-      width: calc(100% * var(--diagram-scale));
-      max-width: none;
+      width: auto;
+      max-width: calc(100% * var(--diagram-scale));
       height: auto;
-      min-height: 190px;
-      max-height: calc(370px * var(--diagram-scale));
+      min-height: 185px;
+      max-height: calc(280px * var(--diagram-scale));
       display: block;
     }
     #stepperGraphContainer {
-      min-height: 270px;
+      min-height: 275px;
       padding: 1.15rem;
     }
     #stepperGraphContainer svg {
       width: auto;
       max-width: 100%;
-      height: calc(255px * var(--diagram-scale));
+      height: calc(270px * var(--diagram-scale));
       min-height: 210px;
-      max-height: calc(360px * var(--diagram-scale));
+      max-height: calc(390px * var(--diagram-scale));
     }
 
-    /* Streamlit Dataframe Tables */
+    .formula-card {
+      padding: 1rem 1.2rem;
+      border-radius: 0.55rem;
+      background: var(--st-surface);
+      border-left: 4px solid var(--st-blue);
+      font-family: var(--mono);
+      font-size: 0.96rem;
+      color: var(--st-heading);
+      line-height: 1.65;
+    }
+
     .st-table-wrap {
       overflow-x: auto;
-      max-height: 320px;
+      max-height: 360px;
       overflow-y: auto;
       border: 1px solid var(--st-border-soft);
       border-radius: 0.45rem;
@@ -523,35 +622,35 @@
       background: var(--st-surface);
       color: var(--st-muted);
       font-weight: 600;
-      padding: 0.5rem 0.45rem;
+      padding: 0.52rem 0.55rem;
       border-bottom: 1px solid var(--st-border-soft);
       position: sticky;
       top: 0;
       white-space: nowrap;
     }
     table.st-table td {
-      padding: 0.48rem 0.45rem;
+      padding: 0.5rem 0.55rem;
       border-bottom: 1px solid #f1f3f8;
       font-family: var(--mono);
       color: var(--st-heading);
     }
     table.st-table tr:hover td { background: #fafbfd; }
 
-    /* Stepper Layout */
     .stepper-top-grid {
       display: grid;
       grid-template-columns: 2fr 1.1fr;
       gap: 1.5rem;
       align-items: end;
-      margin-top: 1rem;
+      margin-top: 0.85rem;
     }
     @media (max-width: 820px) { .stepper-top-grid { grid-template-columns: 1fr; } }
     .st-radio-row {
       display: flex;
-      gap: 1.25rem;
-      min-height: 42px;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      min-height: 40px;
       align-items: center;
-      font-size: 0.96rem;
+      font-size: 0.95rem;
       font-weight: 500;
     }
     .st-radio-row label {
@@ -567,16 +666,16 @@
     }
     .stepper-btn-bar {
       display: grid;
-      grid-template-columns: repeat(3, minmax(150px, 195px)) 1fr;
+      grid-template-columns: repeat(3, minmax(145px, 190px)) 1fr;
       gap: 0.75rem;
       align-items: center;
-      margin-top: 1.15rem;
+      margin-top: 1.1rem;
     }
     @media (max-width: 900px) { .stepper-btn-bar { grid-template-columns: 1fr 1fr; } }
 
     .stepper-status-line {
-      margin-top: 1.15rem;
-      font-size: 1.04rem;
+      margin-top: 1.1rem;
+      font-size: 1.02rem;
       color: var(--st-heading);
     }
     .inline-code {
@@ -585,11 +684,11 @@
       color: #09ab3b;
       padding: 0.15rem 0.5rem;
       border-radius: 5px;
-      font-size: 0.95rem;
+      font-size: 0.93rem;
       font-weight: 600;
     }
     .tape-line {
-      margin-top: 0.85rem;
+      margin-top: 0.8rem;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -598,43 +697,42 @@
     }
     .tape-char-done {
       background: #dcfce7; color: #166534; padding: 4px 11px; border-radius: 6px;
-      font-family: var(--mono); font-size: 1.05rem; font-weight: 700; border: 1px solid #86efac;
+      font-family: var(--mono); font-size: 1.02rem; font-weight: 700; border: 1px solid #86efac;
     }
     .tape-char-curr {
       background: #fde047; color: #0f172a; padding: 4px 11px; border-radius: 6px;
-      font-family: var(--mono); font-size: 1.05rem; font-weight: 700; border: 1px solid #eab308;
+      font-family: var(--mono); font-size: 1.02rem; font-weight: 700; border: 1px solid #eab308;
     }
     .tape-char-wait {
       background: #f8fafc; color: #94a3b8; padding: 4px 11px; border-radius: 6px;
-      font-family: var(--mono); font-size: 1.05rem; border: 1px solid var(--st-border-soft);
+      font-family: var(--mono); font-size: 1.02rem; border: 1px solid var(--st-border-soft);
     }
 
     .st-alert-success {
-      margin-top: 1.15rem;
-      padding: 1rem 1.2rem;
+      margin-top: 1.1rem;
+      padding: 0.95rem 1.15rem;
       border-radius: 0.5rem;
       background: var(--st-success-bg);
       color: var(--st-success-text);
-      font-size: 1rem;
+      font-size: 0.98rem;
     }
     .st-alert-error {
-      margin-top: 1.15rem;
-      padding: 1rem 1.2rem;
+      margin-top: 1.1rem;
+      padding: 0.95rem 1.15rem;
       border-radius: 0.5rem;
       background: var(--st-error-bg);
       color: var(--st-error-text);
-      font-size: 1rem;
+      font-size: 0.98rem;
     }
     .st-alert-warn {
-      margin-top: 1.15rem;
-      padding: 1rem 1.2rem;
+      margin-top: 1.1rem;
+      padding: 0.95rem 1.15rem;
       border-radius: 0.5rem;
       background: var(--st-warn-bg);
       color: var(--st-warn-text);
-      font-size: 1rem;
+      font-size: 0.98rem;
     }
 
-    /* Telemetry Metrics (st.metric) */
     .st-metrics-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -671,18 +769,18 @@
   </button>
 
   <div class="st-app-shell">
-    <!-- Authentic Streamlit Left Sidebar -->
+    <!-- Left Sidebar -->
     <aside class="st-sidebar" id="stSidebar">
       <button type="button" class="sidebar-collapse-btn" onclick="toggleSidebar(true)" title="Collapse Sidebar">«</button>
 
       <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.65rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.55rem;">
           <h2>⚙️ Experiment Controls</h2>
           <span id="resetStatusToast" class="hidden" style="font-size:0.82rem;font-weight:700;color:#059669;">✓ Reset</span>
         </div>
         <label class="st-label" for="participantIdInput">Participant ID (Optional)</label>
         <input id="participantIdInput" type="text" placeholder="e.g., SZE-XXXXXX" class="st-input mono" />
-        <div class="st-btn-row" style="margin-top:0.75rem;">
+        <div class="st-btn-row" style="margin-top:0.65rem;">
           <button type="button" id="btnSidebarResetDefault" onclick="resetToDefault()" class="st-btn">🔄 Reset Default</button>
           <button type="button" id="btnSidebarResetPreset" onclick="resetCurrentPreset()" class="st-btn">↺ Reset Preset</button>
         </div>
@@ -690,17 +788,17 @@
 
       <hr class="st-divider" />
 
-      <div style="display:flex;flex-direction:column;gap:0.65rem;">
+      <div style="display:flex;flex-direction:column;gap:0.6rem;">
         <h2>📚 Scenarios &amp; Presets</h2>
         <div>
           <label class="st-label" for="presetSelect">Select Scenario Preset:</label>
           <select id="presetSelect" class="st-select">
-            <option value="Contains Empty Transition (ε)">Contains Empty Transition (ε)</option>
-            <option value="Ends with '01'">Ends with '01'</option>
-            <option value="Even number of 1s">Even number of 1s</option>
-            <option value="Post-Survey Context 1 (A, B, C)">Post-Survey Context 1 (A, B, C)</option>
-            <option value="Post-Survey Context 2 (1, 2, 3)">Post-Survey Context 2 (1, 2, 3)</option>
             <option value="Custom Automaton">Custom Automaton</option>
+            <option value="NFA → DFA: Example 1">NFA → DFA: Example 1</option>
+            <option value="NFA → DFA: Example 2">NFA → DFA: Example 2</option>
+            <option value="NFA → DFA: Example 3">NFA → DFA: Example 3</option>
+            <option value="NFA → DFA: Example 4">NFA → DFA: Example 4</option>
+            <option value="NFA → DFA: Example 5">NFA → DFA: Example 5</option>
           </select>
         </div>
         <div id="scenarioDescriptionBox" class="st-info-box"></div>
@@ -708,35 +806,63 @@
 
       <hr class="st-divider" />
 
-      <div style="display:flex;flex-direction:column;gap:0.85rem;">
+      <div style="display:flex;flex-direction:column;gap:0.75rem;">
         <h3>NFA Formal Specification</h3>
         <div>
-          <label class="st-label" for="statesInput">States (comma-separated)</label>
-          <input id="statesInput" type="text" value="A, B, C" class="st-input mono" />
+          <label class="st-label" for="statesInput">States K (comma-separated)</label>
+          <input id="statesInput" type="text" value="q1, q2, q3" class="st-input mono" />
         </div>
         <div>
-          <label class="st-label" for="alphabetInput">Alphabet (comma-separated, 'e' for ε)</label>
-          <input id="alphabetInput" type="text" value="0, 1, e" class="st-input mono" />
+          <label class="st-label" for="alphabetInput">Alphabet Σ (single symbols, 'e' for ε)</label>
+          <input id="alphabetInput" type="text" value="a, b, e" class="st-input mono" />
         </div>
         <div>
-          <label class="st-label" for="startStateSelect">Start State (q0)</label>
+          <label class="st-label" for="startStateSelect">Initial State (s)</label>
           <select id="startStateSelect" class="st-select mono"></select>
         </div>
         <div>
-          <label class="st-label">Accept States (F)</label>
+          <label class="st-label">Final States (F)</label>
           <div id="acceptStatesContainer" class="st-multiselect-box"></div>
         </div>
       </div>
 
       <hr class="st-divider" />
 
-      <div style="display:flex;flex-direction:column;gap:0.6rem;">
-        <h4>Transition Table Builder</h4>
+      <div style="display:flex;flex-direction:column;gap:0.55rem;">
+        <h4>Single-Symbol &amp; ε Transitions</h4>
         <div id="transitionsBuilderContainer" class="st-expander-stack"></div>
+      </div>
+
+      <hr class="st-divider" />
+
+      <div style="display:flex;flex-direction:column;gap:0.55rem;">
+        <h4>Multi-Symbol / String Transitions</h4>
+        <p style="font-size:0.82rem;color:var(--st-muted);line-height:1.4;">
+          Add string edges (length ≥ 2, e.g., <code>ab</code>, <code>aa</code>, <code>ba</code>, <code>bb</code>) to trigger Step 1 string splitting.
+        </p>
+        <div id="stringRulesListContainer" class="str-rules-list"></div>
+        <div class="str-add-grid">
+          <div>
+            <label class="st-label" for="strFromSelect" style="font-size:0.8rem;">From</label>
+            <select id="strFromSelect" class="st-select mono" style="padding:0.35rem 0.45rem;"></select>
+          </div>
+          <div>
+            <label class="st-label" for="strLabelInput" style="font-size:0.8rem;">String</label>
+            <input id="strLabelInput" type="text" placeholder="ab" class="st-input mono" style="padding:0.35rem 0.5rem;" />
+          </div>
+          <div>
+            <label class="st-label" for="strToSelect" style="font-size:0.8rem;">To</label>
+            <select id="strToSelect" class="st-select mono" style="padding:0.35rem 0.45rem;"></select>
+          </div>
+        </div>
+        <button type="button" id="btnAddStringTransition" onclick="addStringTransitionRule()" class="st-btn" style="width:100%;">
+          ➕ Add String Transition
+        </button>
+        <div id="stringRuleErrorBox" class="st-banner st-banner-error hidden" style="margin-bottom:0;font-size:0.84rem;padding:0.55rem 0.75rem;"></div>
       </div>
     </aside>
 
-    <!-- Authentic Streamlit Wide Main Canvas -->
+    <!-- Main Content -->
     <main class="st-main">
       <div class="st-hero-row">
         <h1 class="st-title">🧠 Automata Studio: Interactive Learning Laboratory</h1>
@@ -748,14 +874,14 @@
         </div>
       </div>
       <p class="st-lead">
-        Explore state transformation algorithms through <strong>Dynamic Visual Pipelines</strong>,
-        <strong>Step-by-Step Mathematical Decomposition</strong>, and <strong>Interactive String Execution Tracing</strong>.
+        Master <strong>NFA → DFA Conversion</strong> through <strong>Auto-Detected Lecture 5 Steps (Slide 100)</strong>,
+        <strong>Multi-Symbol String Transition Splitting</strong>, <strong>E-Set Union Derivations</strong>, and <strong>Step-by-Step String Tracing</strong>.
       </p>
 
-      <!-- Streamlit Underline Tabs -->
+      <!-- Tabs (Strictly 3 Tabs) -->
       <nav class="st-tabs">
         <button type="button" id="tabBtnPipeline" onclick="switchTab('pipeline')" class="st-tab active">
-          📊 1. Visual Pipeline (NFA ➔ DFA ➔ Min DFA)
+          📊 1. NFA ➔ DFA Step-by-Step Conversion
         </button>
         <button type="button" id="tabBtnStepper" onclick="switchTab('stepper')" class="st-tab">
           ⏯️ 2. Step-by-Step String Stepper
@@ -765,24 +891,42 @@
         </button>
       </nav>
 
-      <!-- TAB 1: VISUAL PIPELINE -->
+      <div id="globalValidationErrorBanner" class="st-banner st-banner-error hidden"></div>
+
+      <!-- TAB 1: CONVERSION PIPELINE -->
       <section id="tabPanelPipeline">
-        <h3 class="st-h3">Comparative Automata Transformation Pipeline</h3>
-        <p class="st-caption">
-          Visualizing the topological progression from NFA to Deterministic Machine to Minimal Canonical Form.
-        </p>
+        <div id="blankCustomOnboardingBanner" class="st-banner st-banner-info hidden">
+          📝 <strong>Blank Custom Automaton Ready for Practice:</strong> Add single-symbol transitions or multi-symbol string transitions (e.g., <code>ab</code>, <code>ba</code>) in the left sidebar — or select a <strong>Lecture 5 Example (Slides 101–132)</strong> preset — to build your NFA and step through the conversion.
+        </div>
+
+        <div id="stepDetectionBanner" class="st-banner st-banner-info"></div>
 
         <div class="st-toolbar">
-          <label class="st-checkbox-label">
-            <input type="checkbox" id="chkExpandAllTables" onchange="toggleAllStepTables(this.checked)" />
-            <span>Expand all mathematical derivation tables</span>
-          </label>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem;">
+            <div class="st-radio-row">
+              <strong style="font-size:0.92rem;color:var(--st-muted);">Mode:</strong>
+              <label>
+                <input type="radio" name="pipelineViewMode" value="interactive" checked onchange="setPipelineViewMode(this.value)" />
+                <span>Interactive Step-by-Step Walkthrough</span>
+              </label>
+              <label>
+                <input type="radio" name="pipelineViewMode" value="overview" onchange="setPipelineViewMode(this.value)" />
+                <span>Full Pipeline Overview</span>
+              </label>
+            </div>
+
+            <label class="st-checkbox-label">
+              <input type="checkbox" id="chkOptionalMinDfa" onchange="toggleOptionalMinDfa(this.checked)" />
+              <span>Show Optional Bonus Stage: Minimized DFA</span>
+            </label>
+          </div>
 
           <div class="legend-and-zoom">
-            <span><span class="legend-dot" style="background:#dbeafe;border:2px solid #1d4ed8;"></span>Start State</span>
-            <span><span class="legend-dot" style="background:#ffffff;border:3px double #334155;"></span>Accept State</span>
-            <span><span class="legend-dot" style="background:#fee2e2;border:2px solid #b91c1c;"></span>Trap State</span>
-            <div class="zoom-group" title="Adjust diagram magnification for laptops or classroom projectors">
+            <span><span class="legend-dot" style="background:#dbeafe;border:2px solid #1d4ed8;"></span>Initial State</span>
+            <span><span class="legend-dot" style="background:#86efac;border:2px solid #15803d;"></span>Introduced / Highlighted</span>
+            <span><span class="legend-dot" style="background:#ffffff;border:3px double #334155;"></span>Final State</span>
+            <span><span class="legend-dot" style="background:#fee2e2;border:2px solid #b91c1c;"></span>Ø (Empty / Trap)</span>
+            <div class="zoom-group" title="Adjust diagram magnification">
               <span style="font-size:0.8rem;padding:0 6px;color:var(--st-muted);">🔍 Scale:</span>
               <button type="button" class="zoom-btn active" onclick="setDiagramScale(1, this)">100%</button>
               <button type="button" class="zoom-btn" onclick="setDiagramScale(1.2, this)">120%</button>
@@ -791,133 +935,79 @@
           </div>
         </div>
 
-        <div class="st-cols-3">
-          <!-- Column 1: Original NFA -->
-          <div class="st-col">
-            <h4 class="st-h4">
-              <span>1. Original NFA</span>
-              <span class="state-count-code" id="nfaStatsBadge"></span>
-            </h4>
-            <div id="nfaGraphContainer" class="st-graph-frame"></div>
-            <details class="st-expander" id="expEClosure">
-              <summary>Show E-Closure (E-sets)</summary>
-              <div class="st-expander-content">
-                <div class="st-table-wrap">
-                  <table class="st-table">
-                    <thead>
-                      <tr>
-                        <th>NFA State</th>
-                        <th>E-set (Epsilon Closure)</th>
-                      </tr>
-                    </thead>
-                    <tbody id="eClosureTableBody"></tbody>
-                  </table>
-                </div>
-              </div>
-            </details>
+        <!-- Mode A: Interactive Step-by-Step Walkthrough -->
+        <div id="interactiveWalkthroughWrap">
+          <div class="conv-nav-bar">
+            <button type="button" id="btnConvGiven" onclick="convStepAction('reset')" class="st-btn">⏮️ Given NFA</button>
+            <button type="button" id="btnConvPrev" onclick="convStepAction('prev')" class="st-btn">◀️ Prev Step</button>
+            <button type="button" id="btnConvNext" onclick="convStepAction('next')" class="st-btn st-btn-primary">Next Step ▶️</button>
+            <span id="convCurrentStageLabel" style="font-weight:700;color:var(--st-heading);margin-left:0.4rem;"></span>
           </div>
+          <div id="convStagePillsContainer" class="conv-pills-row"></div>
+          <div id="convActiveStageContent"></div>
+        </div>
 
-          <!-- Column 2: Converted DFA -->
-          <div class="st-col">
-            <h4 class="st-h4">
-              <span>2. Converted DFA</span>
-              <span class="state-count-code" id="dfaStatsBadge"></span>
-            </h4>
-            <div id="dfaGraphContainer" class="st-graph-frame"></div>
-            <details class="st-expander" id="expSubset">
-              <summary>Subset Construction Transition Table</summary>
-              <div class="st-expander-content">
-                <div class="st-table-wrap">
-                  <table class="st-table">
-                    <thead>
-                      <tr>
-                        <th>State S</th>
-                        <th>Symbol σ</th>
-                        <th>Move(S, σ)</th>
-                        <th>E-set(Move) ➔ Target</th>
-                      </tr>
-                    </thead>
-                    <tbody id="subsetTableBody"></tbody>
-                  </table>
-                </div>
-              </div>
-            </details>
-          </div>
-
-          <!-- Column 3: Minimized DFA -->
-          <div class="st-col">
-            <h4 class="st-h4">
-              <span>3. Minimized DFA</span>
-              <span class="state-count-code" id="minDfaStatsBadge"></span>
-            </h4>
-            <div id="minDfaGraphContainer" class="st-graph-frame"></div>
-            <details class="st-expander" id="expMinMap">
-              <summary>State Collapsing Equivalence Map</summary>
-              <div class="st-expander-content">
-                <div class="st-table-wrap">
-                  <table class="st-table">
-                    <thead>
-                      <tr>
-                        <th>Minimized Group</th>
-                        <th>Original Component States</th>
-                      </tr>
-                    </thead>
-                    <tbody id="minMapTableBody"></tbody>
-                  </table>
-                </div>
-              </div>
-            </details>
-          </div>
+        <!-- Mode B: Full Pipeline Overview -->
+        <div id="fullOverviewWrap" class="hidden">
+          <div id="overviewGraphsGrid" class="overview-grid overview-cols-2"></div>
+          <h4 class="st-h4" style="margin-bottom:0.75rem;">Complete Step-by-Step Mathematical Derivations (Slide 100)</h4>
+          <div id="overviewStepsStack" class="st-expander-stack"></div>
         </div>
       </section>
 
       <!-- TAB 2: STEP-BY-STEP STRING STEPPER -->
       <section id="tabPanelStepper" class="hidden">
         <h3 class="st-h3">Interactive Step-by-Step String Stepper</h3>
-        <p class="st-caption">Avoid information overload by navigating character transitions one click at a time.</p>
+        <p class="st-caption">Trace character-by-character transitions on the Converted DFA one click at a time.</p>
 
         <div class="stepper-top-grid">
           <div>
             <label class="st-label" for="stepperStringInput">Input String to Trace:</label>
-            <input id="stepperStringInput" type="text" value="0101" class="st-input mono" style="font-size:1.05rem;" />
+            <input id="stepperStringInput" type="text" value="" placeholder="Enter a string over Σ (e.g., abba)..." class="st-input mono" style="font-size:1.05rem;" />
           </div>
           <div>
-            <span class="st-label">Select Target Automaton:</span>
-            <div class="st-radio-row">
+            <span class="st-label">Target Automaton:</span>
+            <div id="stepperTargetRadioWrap" class="st-radio-row">
               <label>
-                <input type="radio" name="stepperTargetMachine" value="Minimized DFA" checked />
-                <span>Minimized DFA</span>
+                <input type="radio" name="stepperTargetMachine" value="Converted DFA" checked />
+                <span>Converted DFA (M')</span>
               </label>
-              <label>
-                <input type="radio" name="stepperTargetMachine" value="Standard DFA" />
-                <span>Standard DFA</span>
+              <label id="lblStepperMinDfaOption" class="hidden">
+                <input type="radio" name="stepperTargetMachine" value="Minimized DFA" />
+                <span>Minimized DFA</span>
               </label>
             </div>
           </div>
         </div>
 
-        <div class="stepper-btn-bar">
-          <button type="button" id="btnStepReset" onclick="stepperAction('reset')" class="st-btn">⏮️ Reset Stepper</button>
-          <button type="button" id="btnStepPrev" onclick="stepperAction('prev')" class="st-btn">◀️ Prev Step</button>
-          <button type="button" id="btnStepNext" onclick="stepperAction('next')" class="st-btn st-btn-primary">Next Step ▶️</button>
-          <div></div>
+        <div id="stepperBlankCustomPrompt" class="st-banner st-banner-info hidden" style="margin-top:1.1rem;">
+          ℹ️ Add transitions to your Custom Automaton in the sidebar and enter a test string above to trace step-by-step execution.
         </div>
 
-        <div class="stepper-status-line">
-          <strong id="stepperProgressLabel">Step 0 of 4</strong>
-          <span> &nbsp;|&nbsp; Active State: </span>
-          <span class="inline-code" id="stepperActiveStateBadge">M0</span>
-          <span> &nbsp;|&nbsp; Path: </span>
-          <span class="inline-code" id="stepperTraceSequence" style="color:#0068c9;">M0</span>
-        </div>
+        <div id="stepperExecutionArea">
+          <div class="stepper-btn-bar">
+            <button type="button" id="btnStepReset" onclick="stepperAction('reset')" class="st-btn">⏮️ Reset Stepper</button>
+            <button type="button" id="btnStepPrev" onclick="stepperAction('prev')" class="st-btn">◀️ Prev Step</button>
+            <button type="button" id="btnStepNext" onclick="stepperAction('next')" class="st-btn st-btn-primary">Next Step ▶️</button>
+            <div></div>
+          </div>
 
-        <div class="tape-line">
-          <strong>String Progress:</strong>
-          <div id="stepperTapeContainer" style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;"></div>
-        </div>
+          <div class="stepper-status-line">
+            <strong id="stepperProgressLabel">Step 0 of 0</strong>
+            <span> &nbsp;|&nbsp; Active State: </span>
+            <span class="inline-code" id="stepperActiveStateBadge">{q1}</span>
+            <span> &nbsp;|&nbsp; Path: </span>
+            <span class="inline-code" id="stepperTraceSequence" style="color:#0068c9;">{q1}</span>
+          </div>
 
-        <div id="stepperGraphContainer" class="st-graph-frame" style="margin-top:1.15rem;"></div>
-        <div id="stepperResultBanner" class="hidden"></div>
+          <div class="tape-line">
+            <strong>String Progress:</strong>
+            <div id="stepperTapeContainer" style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;"></div>
+          </div>
+
+          <div id="stepperGraphContainer" class="st-graph-frame" style="margin-top:1.1rem;"></div>
+          <div id="stepperResultBanner" class="hidden"></div>
+        </div>
       </section>
 
       <!-- TAB 3: RESEARCH TELEMETRY & ACTIVITY LOG -->
@@ -971,72 +1061,100 @@
   </div>
 
   <script>
-    const DEFAULT_PRESET_NAME = "Contains Empty Transition (ε)";
+    const DEFAULT_PRESET_NAME = "Custom Automaton";
 
     const PREBUILT_SCENARIOS = {
-      "Contains Empty Transition (ε)": {
-        states: "A, B, C",
-        alphabet: "0, 1, e",
-        start: "A",
-        accept: ["C"],
-        transitions: {
-          "A": { "0": ["A"], "e": ["B"] },
-          "B": { "1": ["B", "C"] },
-          "C": {}
-        },
-        sampleStr: "0101",
-        description: "Standard NFA featuring epsilon reachability E-set(A) = {A, B} and branch expansion."
-      },
-      "Ends with '01'": {
-        states: "q0, q1, q2",
-        alphabet: "0, 1",
-        start: "q0",
-        accept: ["q2"],
-        transitions: {
-          "q0": { "0": ["q0", "q1"], "1": ["q0"] },
-          "q1": { "1": ["q2"] },
-          "q2": {}
-        },
-        sampleStr: "001",
-        description: "Pattern matching automaton demonstrating non-deterministic path forks."
-      },
-      "Even number of 1s": {
-        states: "Even, Odd",
-        alphabet: "0, 1",
-        start: "Even",
-        accept: ["Even"],
-        transitions: {
-          "Even": { "0": ["Even"], "1": ["Odd"] },
-          "Odd": { "0": ["Odd"], "1": ["Even"] }
-        },
-        sampleStr: "1010",
-        description: "Parity checker automaton exhibiting symmetric cyclic equivalence."
-      },
-      "Post-Survey Context 1 (A, B, C)": {
-        states: "A, B, C",
-        alphabet: "0, 1, e",
-        start: "A",
-        accept: ["C"],
-        transitions: {
-          "A": { "0": ["A"], "e": ["B"] },
-          "B": { "1": ["C"] },
-          "C": { "0": ["C"] }
-        },
-        sampleStr: "010",
-        description: "Post-Survey Part B (Q5-Q8): Start A, Accept C, δ(A,0)={A}, δ(A,ε)={B}, δ(B,1)={C}, δ(C,0)={C}."
-      },
-      "Post-Survey Context 2 (1, 2, 3)": {
-        states: "1, 2, 3",
+      "NFA → DFA: Example 1": {
+        states: "q1, q2, q3, q4",
         alphabet: "a, b, e",
-        start: "1",
-        accept: ["3"],
+        start: "q1",
+        accept: ["q3"],
         transitions: {
-          "1": { "a": ["1"], "e": ["2"] },
-          "2": { "b": ["2", "3"] },
-          "3": { "a": ["3"] }
+          "q1": { "b": ["q2"] },
+          "q2": { "a": ["q3"] },
+          "q3": { "e": ["q2", "q4"] },
+          "q4": { "a": ["q2"] }
         },
-        sampleStr: "aba",
-        description: "Post-Survey Part D (Q11-Q13): Start 1, Accept 3, δ(1,a)={1}, δ(1,ε)={2}, δ(2,b)={2,3}, δ(3,a)={3}."
+        stringTransitions: [
+          { from: "q4", label: "ab", to: "q1" }
+        ],
+        sampleStr: "baabba",
+        description: "NFA → DFA: Example 1 (Slides 101–106)"
+      },
+      "NFA → DFA: Example 2": {
+        states: "q1, q2, q3",
+        alphabet: "a, b, e",
+        start: "q1",
+        accept: ["q3"],
+        transitions: {
+          "q1": { "b": ["q2"] },
+          "q2": { "b": ["q3"] },
+          "q3": { "e": ["q1"] }
+        },
+        stringTransitions: [
+          { from: "q1", label: "aa", to: "q2" },
+          { from: "q1", label: "ba", to: "q2" }
+        ],
+        sampleStr: "bab",
+        description: "NFA → DFA: Example 2 (Slides 107–112)"
+      },
+      "NFA → DFA: Example 3": {
+        states: "q1, q2, q3, q4, q5, q6, q7, q8",
+        alphabet: "a, b, e",
+        start: "q1",
+        accept: ["q8"],
+        transitions: {
+          "q1": { "a": ["q2"] },
+          "q2": { "e": ["q3", "q4"] },
+          "q3": { "a": ["q5"] },
+          "q4": { "b": ["q6"] },
+          "q5": { "e": ["q7"] },
+          "q6": { "e": ["q7"] },
+          "q7": { "b": ["q8"] },
+          "q8": {}
+        },
+        stringTransitions: [],
+        sampleStr: "aab",
+        description: "NFA → DFA: Example 3 (Slides 113–117)"
+      },
+      "NFA → DFA: Example 4": {
+        states: "q1, q2, q3, q4, q5, q6",
+        alphabet: "a, b, e",
+        start: "q1",
+        accept: ["q6"],
+        transitions: {
+          "q1": { "b": ["q2"] },
+          "q2": { "b": ["q3"] },
+          "q3": { "b": ["q6"] },
+          "q4": { "e": ["q3"] },
+          "q5": { "a": ["q1", "q4"] },
+          "q6": { "e": ["q4", "q5"] }
+        },
+        stringTransitions: [
+          { from: "q1", label: "ab", to: "q4" }
+        ],
+        sampleStr: "abb",
+        description: "NFA → DFA: Example 4 (Slides 118–124)"
+      },
+      "NFA → DFA: Example 5": {
+        states: "q1, q2, q3, q4, q5, q6, q7",
+        alphabet: "a, b, e",
+        start: "q1",
+        accept: ["q7"],
+        transitions: {
+          "q1": { "a": ["q2"], "e": ["q4"] },
+          "q2": { "b": ["q3"] },
+          "q3": { "a": ["q4"] },
+          "q4": { "e": ["q5", "q7"] },
+          "q5": { "a": ["q3"], "e": ["q6"] },
+          "q6": { "b": ["q3"], "a": ["q7"] },
+          "q7": {}
+        },
+        stringTransitions: [
+          { from: "q7", label: "bb", to: "q1" }
+        ],
+        sampleStr: "bba",
+        description: "NFA → DFA: Example 5 (Slides 125–132)"
       }
     };
 
@@ -1044,19 +1162,21 @@
       sessionStartTime: Date.now(),
       userActionsLog: [],
       simStepIndex: 0,
+      convStageIndex: 0,
+      pipelineViewMode: "interactive",
+      showOptionalMinDfa: false,
       presetName: DEFAULT_PRESET_NAME,
-      states: ["A", "B", "C"],
-      alphabet: ["0", "1", "e"],
-      startState: "A",
-      acceptStates: ["C"],
-      transitions: {
-        "A": { "0": ["A"], "e": ["B"] },
-        "B": { "1": ["B", "C"] },
-        "C": {}
-      },
-      openBuilderStates: new Set(["A", "B", "C"]),
+      states: ["q1", "q2", "q3"],
+      alphabet: ["a", "b", "e"],
+      startState: "q1",
+      acceptStates: ["q3"],
+      transitions: { "q1": {}, "q2": {}, "q3": {} },
+      stringTransitions: [],
+      openBuilderStates: new Set(),
+      originalNfa: null,
+      expandedNfa: null,
       dfaDef: null,
-      stepData: null,
+      pipelineData: null,
       minDfaDef: null,
       minMapping: []
     };
@@ -1099,18 +1219,30 @@
       setTimeout(() => toast.classList.add("hidden"), 2000);
     }
 
-    function toggleAllStepTables(expand) {
-      ["expEClosure", "expSubset", "expMinMap"].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.open = expand;
-      });
-      logAction("toggle_step_tables", expand ? "expand_all" : "collapse_all");
+    function setPipelineViewMode(mode) {
+      appState.pipelineViewMode = mode;
+      document.getElementById("interactiveWalkthroughWrap").classList.toggle("hidden", mode !== "interactive");
+      document.getElementById("fullOverviewWrap").classList.toggle("hidden", mode !== "overview");
+      logAction("pipeline_view_mode", mode);
+      recomputeAndRenderAll();
+    }
+
+    function toggleOptionalMinDfa(checked) {
+      appState.showOptionalMinDfa = checked;
+      const minOpt = document.getElementById("lblStepperMinDfaOption");
+      if (minOpt) minOpt.classList.toggle("hidden", !checked);
+      if (!checked) {
+        const convRadio = document.querySelector("input[name='stepperTargetMachine'][value='Converted DFA']");
+        if (convRadio) convRadio.checked = true;
+      }
+      logAction("toggle_optional_min_dfa", String(checked));
+      recomputeAndRenderAll();
     }
 
     function resetToDefault() {
       document.getElementById("presetSelect").value = DEFAULT_PRESET_NAME;
-      const minRadio = document.querySelector("input[name='stepperTargetMachine'][value='Minimized DFA']");
-      if (minRadio) minRadio.checked = true;
+      const convRadio = document.querySelector("input[name='stepperTargetMachine'][value='Converted DFA']");
+      if (convRadio) convRadio.checked = true;
       logAction("reset_to_default", DEFAULT_PRESET_NAME);
       loadPreset(DEFAULT_PRESET_NAME);
       flashResetToast("✓ Default");
@@ -1127,6 +1259,176 @@
       flashResetToast("✓ Restored");
     }
 
+    // ==========================================
+    // FORMAL ALGORITHM ENGINES (1:1 WITH NFA.py v4)
+    // ==========================================
+    function stateSortKey(stateName, stateOrderMap = null) {
+      if (stateOrderMap && Object.prototype.hasOwnProperty.call(stateOrderMap, stateName)) {
+        return { tier: 0, num: stateOrderMap[stateName], prefix: "" };
+      }
+      const m = /^([A-Za-z_]+)(\d+)$/.exec(stateName);
+      if (m) return { tier: 1, num: parseInt(m[2], 10), prefix: m[1] };
+      return { tier: 2, num: 0, prefix: stateName };
+    }
+
+    function sortStates(stateIterable, stateOrderMap = null) {
+      return Array.from(stateIterable).sort((a, b) => {
+        const ka = stateSortKey(a, stateOrderMap);
+        const kb = stateSortKey(b, stateOrderMap);
+        if (ka.tier !== kb.tier) return ka.tier - kb.tier;
+        if (ka.num !== kb.num) return ka.num - kb.num;
+        return asciiCompare(ka.prefix, kb.prefix);
+      });
+    }
+
+    function formatStateName(stateArray, stateOrderMap = null) {
+      if (!stateArray || stateArray.length === 0) return "Ø";
+      if (stateArray.length === 1 && stateArray[0] === "Ø") return "Ø";
+      return "{" + sortStates(stateArray, stateOrderMap).join(", ") + "}";
+    }
+
+    function validateAlphabetAndStrings(alphabetList, statesList, stringTransitions) {
+      const errors = [];
+      const atomicSymbols = alphabetList.filter(s => s !== "e");
+      const invalidAlpha = atomicSymbols.filter(s => s.length !== 1);
+      if (invalidAlpha.length > 0) {
+        errors.push(
+          `Formal Alphabet Error: Symbols [${invalidAlpha.join(", ")}] in Alphabet must be single characters (use 'Multi-Symbol / String Transitions' below for strings like 'ab').`
+        );
+      }
+      const validSigma = new Set(atomicSymbols.filter(s => s.length === 1));
+      const validStates = new Set(statesList);
+
+      stringTransitions.forEach((rule, idx) => {
+        const src = (rule.from || "").trim();
+        const lbl = (rule.label || "").trim();
+        const dst = (rule.to || "").trim();
+        if (!validStates.has(src) || !validStates.has(dst)) {
+          errors.push(`String Rule #${idx + 1}: State '${src}' or '${dst}' is not in declared States K.`);
+          return;
+        }
+        if (lbl.length < 2) {
+          errors.push(`String Rule #${idx + 1} ('${src} ──${lbl}──▶ ${dst}'): Multi-symbol string label must have length ≥ 2.`);
+          return;
+        }
+        if (lbl.includes("e") && !validSigma.has("e")) {
+          errors.push(`String Rule #${idx + 1} ('${src} ──${lbl}──▶ ${dst}'): Epsilon ('e') cannot be mixed inside a multi-symbol string.`);
+          return;
+        }
+        const unknown = Array.from(new Set(lbl.split("").filter(ch => !validSigma.has(ch)))).sort();
+        if (unknown.length > 0) {
+          const sigmaDisp = "{" + Array.from(validSigma).sort().join(", ") + "}";
+          errors.push(`String Rule #${idx + 1} ('${src} ──${lbl}──▶ ${dst}'): Character(s) [${unknown.join(", ")}] do not belong to declared Alphabet Σ = ${sigmaDisp}.`);
+        }
+      });
+      return errors;
+    }
+
+    function buildCombinedOriginalNfa(statesList, alphabetList, startState, acceptStates, singleTrans, stringTransitions) {
+      const combined = {};
+      statesList.forEach(s => { combined[s] = {}; });
+      for (const [s, row] of Object.entries(singleTrans || {})) {
+        if (!combined[s]) continue;
+        for (const [sym, targets] of Object.entries(row || {})) {
+          if (targets && targets.length > 0) combined[s][sym] = [...targets];
+        }
+      }
+      for (const rule of stringTransitions) {
+        const { from: src, label: lbl, to: dst } = rule;
+        if (combined[src] && statesList.includes(dst) && lbl) {
+          if (!combined[src][lbl]) combined[src][lbl] = [];
+          if (!combined[src][lbl].includes(dst)) combined[src][lbl].push(dst);
+        }
+      }
+      return {
+        states: [...statesList],
+        alphabet: [...alphabetList],
+        start_state: startState,
+        accept_states: [...acceptStates],
+        transitions: combined
+      };
+    }
+
+    function expandStringTransitions(statesList, alphabetList, startState, acceptStates, singleTrans, stringTransitions) {
+      const existing = new Set(statesList);
+      let maxQ = 0;
+      statesList.forEach(s => {
+        const m = /^q(\d+)$/.exec(s);
+        if (m) maxQ = Math.max(maxQ, parseInt(m[1], 10));
+      });
+      let nextQ = maxQ + 1;
+
+      function allocateNewState() {
+        while (existing.has(`q${nextQ}`)) nextQ += 1;
+        const name = `q${nextQ}`;
+        existing.add(name);
+        nextQ += 1;
+        return name;
+      }
+
+      const expandedStates = [...statesList];
+      const expandedTrans = {};
+      statesList.forEach(s => { expandedTrans[s] = {}; });
+
+      for (const [s, row] of Object.entries(singleTrans || {})) {
+        if (!expandedTrans[s]) continue;
+        for (const [sym, targets] of Object.entries(row || {})) {
+          for (const t of (targets || [])) {
+            if (!expandedTrans[s][sym]) expandedTrans[s][sym] = [];
+            if (!expandedTrans[s][sym].includes(t)) expandedTrans[s][sym].push(t);
+          }
+        }
+      }
+
+      const splitLog = [];
+      const introducedStates = [];
+      for (const srcState of statesList) {
+        const rules = stringTransitions.filter(r => r.from === srcState);
+        for (const rule of rules) {
+          const { from: src, label: lbl, to: dst } = rule;
+          if (!lbl || lbl.length < 2) continue;
+          let curr = src;
+          const chainParts = [src];
+          const ruleNewStates = [];
+          for (let i = 0; i < lbl.length; i++) {
+            const ch = lbl[i];
+            if (i < lbl.length - 1) {
+              const mid = allocateNewState();
+              expandedStates.push(mid);
+              expandedTrans[mid] = {};
+              introducedStates.push(mid);
+              ruleNewStates.push(mid);
+              if (!expandedTrans[curr][ch]) expandedTrans[curr][ch] = [];
+              expandedTrans[curr][ch].push(mid);
+              chainParts.push(`──${ch}──▶ ${mid}`);
+              curr = mid;
+            } else {
+              if (!expandedTrans[curr][ch]) expandedTrans[curr][ch] = [];
+              if (!expandedTrans[curr][ch].includes(dst)) expandedTrans[curr][ch].push(dst);
+              chainParts.push(`──${ch}──▶ ${dst}`);
+            }
+          }
+          splitLog.push({
+            original: `${src} ──${lbl}──▶ ${dst}`,
+            introduced: ruleNewStates.join(", "),
+            chain: chainParts.join(" ")
+          });
+        }
+      }
+
+      return {
+        expandedNfa: {
+          states: expandedStates,
+          alphabet: [...alphabetList],
+          start_state: startState,
+          accept_states: [...acceptStates],
+          transitions: expandedTrans
+        },
+        splitLog,
+        introducedStates
+      };
+    }
+
     function getEmptyClosure(stateArray, transitions) {
       const closure = new Set(stateArray);
       const stack = [...stateArray];
@@ -1140,7 +1442,7 @@
           }
         }
       }
-      return Array.from(closure).sort(asciiCompare);
+      return Array.from(closure);
     }
 
     function moveSet(stateArray, symbol, transitions) {
@@ -1149,89 +1451,132 @@
         const targets = (transitions[s] && transitions[s][symbol]) ? transitions[s][symbol] : [];
         for (const nxt of targets) reachable.add(nxt);
       }
-      return Array.from(reachable).sort(asciiCompare);
+      return Array.from(reachable);
     }
 
-    function formatStateName(stateArray) {
-      if (!stateArray || stateArray.length === 0) return "Trap";
-      if (stateArray.length === 1 && stateArray[0] === "Trap") return "Trap";
-      return "{" + [...stateArray].sort(asciiCompare).join(", ") + "}";
-    }
+    function nfaToDfaSlide100Pipeline(expandedNfa, splitLog, introducedStates) {
+      const alphabet = expandedNfa.alphabet.filter(s => s !== "e" && s.length === 1);
+      const nfaTrans = expandedNfa.transitions;
+      const startState = expandedNfa.start_state;
+      const nfaAccept = new Set(expandedNfa.accept_states);
+      const stateOrderMap = {};
+      expandedNfa.states.forEach((s, idx) => { stateOrderMap[s] = idx; });
 
-    function nfaToDfaWithSteps(nfaDef) {
-      const alphabet = nfaDef.alphabet.filter(s => s !== "e");
-      const nfaTrans = nfaDef.transitions;
-      const startState = nfaDef.start_state;
-      const nfaAccept = new Set(nfaDef.accept_states);
+      const hasStringSplits = splitLog.length > 0;
+      const totalSteps = hasStringSplits ? 5 : 4;
 
-      const stepData = { e_sets: {}, initial_state: null, transitions_log: [], final_states: [] };
-      if (!startState) return { dfaDef: null, stepData };
+      const pipelineData = {
+        hasStringSplits,
+        totalSteps,
+        splitLog,
+        introducedStates,
+        eSetsRows: [],
+        initialStateLabel: null,
+        initialStateMembers: [],
+        initialStateFormula: "",
+        qAliases: {},
+        transitionsLog: [],
+        finalStates: [],
+        finalStatesFormula: "",
+        steps: []
+      };
 
-      for (const st of nfaDef.states) {
-        stepData.e_sets[st] = formatStateName(getEmptyClosure([st], nfaTrans));
+      if (!startState) return { dfaDef: null, pipelineData };
+
+      for (const st of expandedNfa.states) {
+        const esetStr = formatStateName(getEmptyClosure([st], nfaTrans), stateOrderMap);
+        pipelineData.eSetsRows.push({ state: st, formula: `E(${st}) = ${esetStr}` });
       }
 
-      const initialClosure = getEmptyClosure([startState], nfaTrans);
-      stepData.initial_state = formatStateName(initialClosure);
+      const initialClosure = sortStates(getEmptyClosure([startState], nfaTrans), stateOrderMap);
+      const initialLabel = formatStateName(initialClosure, stateOrderMap);
+      pipelineData.initialStateMembers = initialClosure;
+      pipelineData.initialStateLabel = initialLabel;
+      pipelineData.qAliases[initialLabel] = "Q1";
+      pipelineData.initialStateFormula = `s' = E(${startState}) = ${initialLabel} = Q1`;
 
       const dfaTransitions = {};
-      const dfaAccept = new Set();
-      const dfaStates = [initialClosure];
-      const seenKeys = new Set([formatStateName(initialClosure)]);
+      const dfaClosures = [initialClosure];
+      const seenLabels = new Set([initialLabel]);
       const queue = [initialClosure];
 
       while (queue.length > 0) {
         const curr = queue.shift();
-        const stateLabel = formatStateName(curr);
-        dfaTransitions[stateLabel] = {};
-
-        if (curr.some(s => nfaAccept.has(s))) {
-          dfaAccept.add(stateLabel);
-          if (!stepData.final_states.includes(stateLabel)) stepData.final_states.push(stateLabel);
-        }
+        const currLabel = formatStateName(curr, stateOrderMap);
+        const currAlias = pipelineData.qAliases[currLabel];
+        dfaTransitions[currLabel] = {};
 
         for (const sym of alphabet) {
-          const m = moveSet(curr, sym, nfaTrans);
-          const c = m.length > 0 ? getEmptyClosure(m, nfaTrans) : ["Trap"];
-          const targetLabel = formatStateName(c);
-          dfaTransitions[stateLabel][sym] = targetLabel;
+          const mSorted = curr.length > 0 ? sortStates(moveSet(curr, sym, nfaTrans), stateOrderMap) : [];
+          let targetClosure = [];
+          let targetLabel = "Ø";
+          let unionExpr = "Ø";
 
-          stepData.transitions_log.push({
-            current: stateLabel,
-            symbol: sym,
-            move: m.length > 0 ? formatStateName(m) : "∅",
-            target: targetLabel
-          });
-
-          if (targetLabel !== "Trap" && !seenKeys.has(targetLabel)) {
-            seenKeys.add(targetLabel);
-            dfaStates.push(c);
-            queue.push(c);
+          if (mSorted.length > 0) {
+            targetClosure = sortStates(getEmptyClosure(mSorted, nfaTrans), stateOrderMap);
+            targetLabel = formatStateName(targetClosure, stateOrderMap);
+            unionExpr = mSorted.map(p => `E(${p})`).join(" ∪ ");
           }
+
+          if (!seenLabels.has(targetLabel)) {
+            seenLabels.add(targetLabel);
+            dfaClosures.push(targetClosure);
+            pipelineData.qAliases[targetLabel] = `Q${dfaClosures.length}`;
+            queue.push(targetClosure);
+          }
+
+          const targetAlias = pipelineData.qAliases[targetLabel];
+          dfaTransitions[currLabel][sym] = targetLabel;
+
+          const fullFormula = mSorted.length > 0
+            ? `δ(${currLabel}, ${sym}) = ${unionExpr} = ${targetLabel} = ${targetAlias}`
+            : `δ(${currLabel}, ${sym}) = Ø = ${targetAlias}`;
+
+          pipelineData.transitionsLog.push({
+            stateWithAlias: `${currLabel} (${currAlias})`,
+            symbol: sym,
+            unionExpr,
+            targetWithAlias: `${targetLabel} = ${targetAlias}`,
+            fullFormula
+          });
         }
       }
 
-      const needsTrap = Object.values(dfaTransitions).some(row => Object.values(row).includes("Trap"));
-      if (needsTrap && !dfaTransitions["Trap"]) {
-        dfaTransitions["Trap"] = {};
-        for (const sym of alphabet) {
-          dfaTransitions["Trap"][sym] = "Trap";
-          stepData.transitions_log.push({ current: "Trap", symbol: sym, move: "∅", target: "Trap" });
+      const dfaStateLabels = dfaClosures.map(c => formatStateName(c, stateOrderMap));
+      const dfaAcceptList = [];
+      for (const c of dfaClosures) {
+        if (c.some(s => nfaAccept.has(s))) {
+          dfaAcceptList.push(formatStateName(c, stateOrderMap));
         }
       }
+      pipelineData.finalStates = dfaAcceptList;
+      pipelineData.finalStatesFormula = dfaAcceptList.length > 0
+        ? `F' = {${dfaAcceptList.join(", ")}}`
+        : "F' = Ø";
 
-      const finalStatesList = dfaStates.map(formatStateName);
-      if (needsTrap) finalStatesList.push("Trap");
+      const steps = [];
+      if (hasStringSplits) {
+        steps.push({
+          key: "string_elim",
+          title: "Eliminating string transitions by introducing new states"
+        });
+      }
+      steps.push({ key: "e_sets", title: "Definition of E-sets" });
+      steps.push({ key: "initial_state", title: "Definition of new initial state" });
+      steps.push({ key: "transition_fn", title: "Definition of transition function" });
+      steps.push({ key: "final_states", title: "Definition of final states" });
+      steps.forEach((s, idx) => { s.stepNum = idx + 1; });
+      pipelineData.steps = steps;
 
       return {
         dfaDef: {
-          states: finalStatesList,
+          states: dfaStateLabels,
           alphabet,
-          start_state: formatStateName(initialClosure),
-          accept_states: Array.from(dfaAccept),
+          start_state: initialLabel,
+          accept_states: dfaAcceptList,
           transitions: dfaTransitions
         },
-        stepData
+        pipelineData
       };
     }
 
@@ -1254,7 +1599,7 @@
           const sigMap = new Map();
           for (const st of part) {
             const sig = alphabet.map(sym => {
-              const target = (transitions[st] && transitions[st][sym]) ? transitions[st][sym] : "Trap";
+              const target = (transitions[st] && transitions[st][sym]) ? transitions[st][sym] : "Ø";
               return partitions.findIndex(p => p.includes(target));
             });
             const sigKey = JSON.stringify(sig);
@@ -1276,7 +1621,7 @@
       const startState = dfaDef.start_state;
       function partitionRank(p) {
         if (p.includes(startState)) return { tier: 0, key: "" };
-        if (p.length === 1 && p[0] === "Trap") return { tier: 2, key: "Trap" };
+        if (p.length === 1 && p[0] === "Ø") return { tier: 2, key: "Ø" };
         return { tier: 1, key: [...p].sort(asciiCompare)[0] || "" };
       }
 
@@ -1326,20 +1671,23 @@
     function simulateString(dfaDef, inputStr) {
       const currStart = dfaDef.start_state;
       const path = [{ state: currStart, symbol: "Start" }];
-      if (!currStart) return { isAccepted: false, path, msg: "No initial start state defined." };
+      if (!currStart) return { isAccepted: false, path, msg: "No initial state defined." };
 
       let curr = currStart;
       for (const ch of inputStr) {
         if (!dfaDef.alphabet.includes(ch)) {
           return { isAccepted: false, path, msg: `Invalid symbol '${ch}' not in alphabet {${dfaDef.alphabet.join(", ")}}.` };
         }
-        const nextSt = (dfaDef.transitions[curr] && dfaDef.transitions[curr][ch]) ? dfaDef.transitions[curr][ch] : "Trap";
+        const nextSt = (dfaDef.transitions[curr] && dfaDef.transitions[curr][ch]) ? dfaDef.transitions[curr][ch] : "Ø";
         path.push({ state: nextSt, symbol: ch });
         curr = nextSt;
       }
       return { isAccepted: dfaDef.accept_states.includes(curr), path, msg: "Success" };
     }
 
+    // ==========================================
+    // HIGH-VISIBILITY LAYERED SVG GRAPH RENDERER
+    // ==========================================
     function computeLayeredLayout(automatonDef) {
       const states = automatonDef.states;
       const start = automatonDef.start_state;
@@ -1364,7 +1712,7 @@
           const u = q.shift();
           const r = rankMap.get(u);
           for (const v of adj.get(u) || []) {
-            if (v === "Trap") continue;
+            if (v === "Ø") continue;
             if (!rankMap.has(v)) {
               rankMap.set(v, r + 1);
               q.push(v);
@@ -1377,14 +1725,14 @@
       for (const r of rankMap.values()) if (r > maxRank) maxRank = r;
 
       for (const st of states) {
-        if (st !== "Trap" && !rankMap.has(st)) {
+        if (st !== "Ø" && !rankMap.has(st)) {
           maxRank += 1;
           rankMap.set(st, maxRank);
         }
       }
 
-      if (states.includes("Trap")) {
-        rankMap.set("Trap", states.length > 1 ? maxRank + 1 : 0);
+      if (states.includes("Ø")) {
+        rankMap.set("Ø", states.length > 1 ? maxRank + 1 : 0);
       }
 
       const layers = new Map();
@@ -1394,9 +1742,10 @@
         layers.get(r).push(st);
       }
 
+      const hasLongSubsets = states.some(s => s.length > 8);
       const sortedRanks = Array.from(layers.keys()).sort((a, b) => a - b);
-      const colGap = 132;
-      const rowGap = 104;
+      const colGap = hasLongSubsets ? 162 : 136;
+      const rowGap = hasLongSubsets ? 124 : 106;
 
       const coords = {};
       sortedRanks.forEach((rk, colIdx) => {
@@ -1405,12 +1754,24 @@
         const x = colIdx * colGap;
         colStates.forEach((st, rowIdx) => {
           const startY = -((m - 1) * rowGap) / 2;
-          const stagger = (m === 1 && sortedRanks.length >= 3 && colIdx % 2 === 1 && st !== "Trap") ? -16 : 0;
-          coords[st] = { x, y: startY + rowIdx * rowGap + stagger, col: colIdx, row: rowIdx };
+          const stagger = (m === 1 && sortedRanks.length >= 3 && colIdx % 2 === 1 && st !== "Ø") ? -18 : 0;
+          coords[st] = { x, y: startY + rowIdx * rowGap + stagger, col: colIdx, row: rowIdx, colSize: m };
         });
       });
 
       return coords;
+    }
+
+    function splitNodeLabelLines(st) {
+      if (st.length <= 11 || !st.includes(",")) return [st];
+      const inner = (st.startsWith("{") && st.endsWith("}")) ? st.slice(1, -1) : st;
+      const parts = inner.split(",").map(x => x.trim());
+      if (parts.length <= 3) return [st];
+      const mid = Math.ceil(parts.length / 2);
+      return [
+        "{" + parts.slice(0, mid).join(", ") + ",",
+        parts.slice(mid).join(", ") + "}"
+      ];
     }
 
     function renderAutomatonSvg(automatonDef, highlightedStates = [], activeEdge = null) {
@@ -1421,6 +1782,12 @@
       const acceptSet = new Set(automatonDef.accept_states || []);
       const highlightSet = new Set(highlightedStates || []);
       const coords = computeLayeredLayout(automatonDef);
+
+      const nodeRadius = {};
+      for (const st of states) {
+        const lines = splitNodeLabelLines(st);
+        nodeRadius[st] = lines.length > 1 ? 39 : (st.length > 6 ? 35 : 31);
+      }
 
       const edgeGroups = new Map();
       for (const [src, row] of Object.entries(automatonDef.transitions || {})) {
@@ -1435,7 +1802,6 @@
         }
       }
 
-      const R = 31;
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
       function expandBounds(x, y, pad = 0) {
         if (x - pad < minX) minX = x - pad;
@@ -1445,7 +1811,7 @@
       }
 
       for (const st of states) {
-        expandBounds(coords[st].x, coords[st].y, R + 4);
+        expandBounds(coords[st].x, coords[st].y, nodeRadius[st] + 5);
       }
 
       const uid = "g" + Math.random().toString(36).slice(2, 8);
@@ -1453,8 +1819,9 @@
 
       const startPos = coords[automatonDef.start_state];
       if (startPos) {
-        const sx1 = startPos.x - (R + 34);
-        const sx2 = startPos.x - (R + 3);
+        const r0 = nodeRadius[automatonDef.start_state];
+        const sx1 = startPos.x - (r0 + 34);
+        const sx2 = startPos.x - (r0 + 3);
         expandBounds(sx1, startPos.y, 4);
         bodySvg += `<line x1="${sx1}" y1="${startPos.y}" x2="${sx2}" y2="${startPos.y}" stroke="#2563eb" stroke-width="2.6" marker-end="url(#arrow-start-${uid})" />`;
       }
@@ -1462,63 +1829,80 @@
       for (const [key, syms] of edgeGroups.entries()) {
         const [src, dest] = key.split("|||");
         const p1 = coords[src], p2 = coords[dest];
+        const r1 = nodeRadius[src], r2 = nodeRadius[dest];
         const isHit = activeEdge && activeEdge.src === src && activeEdge.dest === dest && syms.includes(activeEdge.symbol);
         const strokeColor = isHit ? "#dc2626" : "#475569";
         const strokeWidth = isHit ? "3.2" : "1.8";
         const marker = isHit ? `url(#arrow-active-${uid})` : `url(#arrow-${uid})`;
         const label = syms.map(s => s === "e" ? "ε" : s).join(", ");
         const safeLabel = escapeHtml(label);
-        const pillW = Math.max(20, label.length * 8.6 + 12);
+        const pillW = Math.max(22, label.length * 8.4 + 12);
 
         if (src === dest) {
-          const lx = p1.x, ly = p1.y - R;
+          const lx = p1.x, ly = p1.y - r1;
           expandBounds(lx, ly - 48, pillW / 2 + 4);
           bodySvg += `<path d="M ${lx - 12} ${ly + 2} C ${lx - 28} ${ly - 44}, ${lx + 28} ${ly - 44}, ${lx + 12} ${ly + 2}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
           bodySvg += `<rect x="${lx - pillW / 2}" y="${ly - 50}" width="${pillW}" height="18" rx="4" fill="white" fill-opacity="0.95" />`;
-          bodySvg += `<text x="${lx}" y="${ly - 37}" text-anchor="middle" font-size="13.5" font-family="Arial, sans-serif" font-weight="700" fill="${isHit ? '#dc2626' : '#0f172a'}">${safeLabel}</text>`;
+          bodySvg += `<text x="${lx}" y="${ly - 37}" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="700" fill="${isHit ? '#dc2626' : '#0f172a'}">${safeLabel}</text>`;
         } else {
           const hasReverse = edgeGroups.has(`${dest}|||${src}`);
           const colSpan = Math.abs((p2.col || 0) - (p1.col || 0));
+          const rowSpan = Math.abs((p2.row || 0) - (p1.row || 0));
           const isBackEdge = (p2.col || 0) < (p1.col || 0);
           const dx = p2.x - p1.x, dy = p2.y - p1.y;
           const dist = Math.hypot(dx, dy) || 1;
           const ux = dx / dist, uy = dy / dist;
           const nx = -uy, ny = ux;
 
-          let curveOffset = 0;
+          const midY = (p1.y + p2.y) / 2;
+          let cx = (p1.x + p2.x) / 2;
+          let cy = midY;
+          let offX = 0, offY = 0;
+
           if (hasReverse) {
-            curveOffset = 28;
-          } else if (colSpan > 1) {
-            curveOffset = isBackEdge ? 44 : -38;
-          } else if (isBackEdge) {
-            curveOffset = 34;
+            offX = nx * 30;
+            offY = ny * 30;
+          } else if (colSpan === 0 && rowSpan > 1) {
+            offX = 44;
+          } else if (colSpan > 1 || isBackEdge) {
+            const laneMag = 42 + 22 * Math.max(0, colSpan - 1);
+            let bowSign;
+            if (midY < -8) {
+              bowSign = -1; // Top half: bow upward away from center
+            } else if (midY > 8) {
+              bowSign = 1;  // Bottom half: bow downward away from center
+            } else {
+              bowSign = isBackEdge ? 1 : -1; // Centerline: forward up, back-edges down in concentric lanes
+            }
+            offY = bowSign * laneMag;
           }
 
-          const sx = p1.x + ux * R + nx * (curveOffset * 0.22);
-          const sy = p1.y + uy * R + ny * (curveOffset * 0.22);
-          const ex = p2.x - ux * (R + 3) + nx * (curveOffset * 0.22);
-          const ey = p2.y - uy * (R + 3) + ny * (curveOffset * 0.22);
-          const cx = (p1.x + p2.x) / 2 + nx * curveOffset;
-          const cy = (p1.y + p2.y) / 2 + ny * curveOffset;
+          cx += offX;
+          cy += offY;
+          const sx = p1.x + ux * r1 + offX * 0.18;
+          const sy = p1.y + uy * r1 + offY * 0.18;
+          const ex = p2.x - ux * (r2 + 3) + offX * 0.18;
+          const ey = p2.y - uy * (r2 + 3) + offY * 0.18;
 
           const tx = 0.25 * sx + 0.5 * cx + 0.25 * ex;
           const ty = 0.25 * sy + 0.5 * cy + 0.25 * ey;
-          expandBounds(tx, ty, Math.max(14, pillW / 2));
+          expandBounds(tx, ty, Math.max(15, pillW / 2));
 
           bodySvg += `<path d="M ${sx} ${sy} Q ${cx} ${cy} ${ex} ${ey}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
           bodySvg += `<rect x="${tx - pillW / 2}" y="${ty - 10}" width="${pillW}" height="19" rx="4" fill="white" fill-opacity="0.95" stroke="#e2e8f0" stroke-width="0.8" />`;
-          bodySvg += `<text x="${tx}" y="${ty + 4}" text-anchor="middle" font-size="13.5" font-family="Arial, sans-serif" font-weight="700" fill="${isHit ? '#dc2626' : '#0f172a'}">${safeLabel}</text>`;
+          bodySvg += `<text x="${tx}" y="${ty + 4}" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="700" fill="${isHit ? '#dc2626' : '#0f172a'}">${safeLabel}</text>`;
         }
       }
 
       for (const st of states) {
         const { x, y } = coords[st];
+        const R = nodeRadius[st];
         let fill = "#ffffff", stroke = "#64748b", sw = "1.8";
         if (highlightSet.has(st)) {
-          fill = "#86efac"; stroke = "#15803d"; sw = "3.6";
+          fill = "#86efac"; stroke = "#15803d"; sw = "3.4";
         } else if (st === automatonDef.start_state) {
-          fill = "#dbeafe"; stroke = "#1d4ed8"; sw = "2.5";
-        } else if (st === "Trap") {
+          fill = "#dbeafe"; stroke = "#1d4ed8"; sw = "2.4";
+        } else if (st === "Ø") {
           fill = "#fee2e2"; stroke = "#b91c1c"; sw = "2.0";
         }
 
@@ -1526,17 +1910,26 @@
         if (acceptSet.has(st)) {
           bodySvg += `<circle cx="${x}" cy="${y}" r="${R - 5}" fill="none" stroke="${stroke}" stroke-width="1.7" />`;
         }
-        const fontSize = st.length > 9 ? 10.5 : (st.length > 5 ? 12.2 : 14.8);
-        bodySvg += `<text x="${x}" y="${y + 5}" text-anchor="middle" font-size="${fontSize}" font-family="Arial, sans-serif" font-weight="700" fill="#0f172a">${escapeHtml(st)}</text>`;
+
+        const lines = splitNodeLabelLines(st);
+        if (lines.length === 1) {
+          const fontSize = st.length > 9 ? 11.2 : (st.length > 5 ? 12.6 : 14.6);
+          bodySvg += `<text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="${fontSize}" font-family="Arial, sans-serif" font-weight="700" fill="#0f172a">${escapeHtml(lines[0])}</text>`;
+        } else {
+          bodySvg += `<text x="${x}" y="${y - 3}" text-anchor="middle" font-size="10.4" font-family="Arial, sans-serif" font-weight="700" fill="#0f172a">
+            <tspan x="${x}" dy="0">${escapeHtml(lines[0])}</tspan>
+            <tspan x="${x}" dy="13">${escapeHtml(lines[1])}</tspan>
+          </text>`;
+        }
       }
 
-      const margin = 12;
+      const margin = 14;
       const vbX = Math.floor(minX - margin);
       const vbY = Math.floor(minY - margin);
-      const vbW = Math.max(160, Math.ceil((maxX - minX) + margin * 2));
-      const vbH = Math.max(115, Math.ceil((maxY - minY) + margin * 2));
+      const vbW = Math.max(170, Math.ceil((maxX - minX) + margin * 2));
+      const vbH = Math.max(120, Math.ceil((maxY - minY) + margin * 2));
 
-      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vbX} ${vbY} ${vbW} ${vbH}">
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.round(vbW * 1.12)}" viewBox="${vbX} ${vbY} ${vbW} ${vbH}">
         <defs>
           <marker id="arrow-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
@@ -1552,8 +1945,49 @@
       </svg>`;
     }
 
+    // ==========================================
+    // UI CONTROLLERS
+    // ==========================================
+    function clearStringRuleError() {
+      const box = document.getElementById("stringRuleErrorBox");
+      if (box) { box.textContent = ""; box.classList.add("hidden"); }
+    }
+
+    function addStringTransitionRule() {
+      clearStringRuleError();
+      const fromSt = document.getElementById("strFromSelect").value;
+      const lbl = document.getElementById("strLabelInput").value.trim();
+      const toSt = document.getElementById("strToSelect").value;
+      const candidate = [{ from: fromSt, label: lbl, to: toSt }];
+      const errs = validateAlphabetAndStrings(appState.alphabet, appState.states, candidate);
+      if (errs.length > 0) {
+        const box = document.getElementById("stringRuleErrorBox");
+        box.textContent = errs[0];
+        box.classList.remove("hidden");
+        return;
+      }
+      const exists = appState.stringTransitions.some(r => r.from === fromSt && r.label === lbl && r.to === toSt);
+      if (!exists) {
+        appState.stringTransitions.push({ from: fromSt, label: lbl, to: toSt });
+        document.getElementById("strLabelInput").value = "";
+        appState.convStageIndex = 0;
+        logAction("add_string_transition", `${fromSt}--${lbl}-->${toSt}`);
+        rebuildSidebarControls();
+        recomputeAndRenderAll();
+      }
+    }
+
+    function removeStringTransitionRule(idx) {
+      const removed = appState.stringTransitions.splice(idx, 1)[0];
+      appState.convStageIndex = 0;
+      if (removed) logAction("remove_string_transition", `${removed.from}--${removed.label}-->${removed.to}`);
+      rebuildSidebarControls();
+      recomputeAndRenderAll();
+    }
+
     function loadPreset(presetName) {
       appState.presetName = presetName;
+      clearStringRuleError();
       const descBox = document.getElementById("scenarioDescriptionBox");
       if (presetName !== "Custom Automaton" && PREBUILT_SCENARIOS[presetName]) {
         const p = PREBUILT_SCENARIOS[presetName];
@@ -1564,35 +1998,55 @@
         appState.startState = p.start;
         appState.acceptStates = [...p.accept];
         appState.transitions = JSON.parse(JSON.stringify(p.transitions));
+        appState.stringTransitions = p.stringTransitions.map(r => ({ ...r }));
         appState.openBuilderStates = new Set(appState.states);
-        document.getElementById("stepperStringInput").value = p.sampleStr || "0101";
+        document.getElementById("stepperStringInput").value = p.sampleStr || "";
         descBox.innerHTML = `ℹ️ <strong>Scenario Note:</strong> ${escapeHtml(p.description)}`;
       } else {
-        appState.states = ["q0", "q1", "q2"];
-        appState.alphabet = ["0", "1", "e"];
-        appState.startState = "q0";
-        appState.acceptStates = ["q2"];
-        appState.transitions = { "q0": {}, "q1": {}, "q2": {} };
+        appState.states = ["q1", "q2", "q3"];
+        appState.alphabet = ["a", "b", "e"];
+        appState.startState = "q1";
+        appState.acceptStates = ["q3"];
+        appState.transitions = { "q1": {}, "q2": {}, "q3": {} };
+        appState.stringTransitions = [];
         appState.openBuilderStates = new Set();
-        document.getElementById("statesInput").value = "q0, q1, q2";
-        document.getElementById("alphabetInput").value = "0, 1, e";
-        document.getElementById("stepperStringInput").value = "0101";
-        descBox.innerHTML = `ℹ️ <strong>Custom Mode:</strong> Edit states, alphabet, and transition rules below.`;
+        document.getElementById("statesInput").value = "q1, q2, q3";
+        document.getElementById("alphabetInput").value = "a, b, e";
+        document.getElementById("stepperStringInput").value = "";
+        descBox.innerHTML = `ℹ️ <strong>Custom Mode:</strong> Define states, single-symbol alphabet, and transitions below (including multi-symbol strings like <code>ab</code>) to practice active conversion.`;
       }
       appState.simStepIndex = 0;
+      appState.convStageIndex = 0;
       rebuildSidebarControls();
       recomputeAndRenderAll();
     }
 
     function rebuildSidebarControls() {
       const startSel = document.getElementById("startStateSelect");
+      const strFromSel = document.getElementById("strFromSelect");
+      const strToSel = document.getElementById("strToSelect");
+      const prevFrom = strFromSel.value;
+      const prevTo = strToSel.value;
+
       startSel.innerHTML = "";
-      appState.states.forEach(st => {
+      strFromSel.innerHTML = "";
+      strToSel.innerHTML = "";
+
+      appState.states.forEach((st, idx) => {
         const opt = document.createElement("option");
-        opt.value = st;
-        opt.textContent = st;
+        opt.value = st; opt.textContent = st;
         if (st === appState.startState) opt.selected = true;
         startSel.appendChild(opt);
+
+        const of = document.createElement("option");
+        of.value = st; of.textContent = st;
+        if (st === prevFrom || (!prevFrom && idx === 0)) of.selected = true;
+        strFromSel.appendChild(of);
+
+        const ot = document.createElement("option");
+        ot.value = st; ot.textContent = st;
+        if (st === prevTo || (!prevTo && idx === appState.states.length - 1)) ot.selected = true;
+        strToSel.appendChild(ot);
       });
 
       const accContainer = document.getElementById("acceptStatesContainer");
@@ -1629,7 +2083,7 @@
         });
 
         const sum = document.createElement("summary");
-        sum.textContent = `Transitions from state: '${st}'`;
+        sum.textContent = `Transitions from '${st}'`;
         det.appendChild(sum);
 
         const body = document.createElement("div");
@@ -1674,66 +2128,363 @@
         det.appendChild(body);
         transBuilder.appendChild(det);
       });
+
+      const strListEl = document.getElementById("stringRulesListContainer");
+      appState.stringTransitions = appState.stringTransitions.filter(
+        r => appState.states.includes(r.from) && appState.states.includes(r.to)
+      );
+      if (appState.stringTransitions.length === 0) {
+        strListEl.innerHTML = `<div style="font-size:0.82rem;color:var(--st-muted);font-style:italic;">No multi-symbol string transitions active.</div>`;
+      } else {
+        strListEl.innerHTML = appState.stringTransitions.map((r, idx) => `
+          <div class="str-rule-item">
+            <span>${escapeHtml(r.from)} ──${escapeHtml(r.label)}──▶ ${escapeHtml(r.to)}</span>
+            <button type="button" class="str-rule-del" onclick="removeStringTransitionRule(${idx})" title="Remove string transition">✕</button>
+          </div>
+        `).join("");
+      }
+    }
+
+    function convStepAction(type, explicitIdx = null) {
+      if (!appState.pipelineData) return;
+      const maxStage = appState.pipelineData.steps.length + (appState.showOptionalMinDfa ? 1 : 0);
+      if (type === "goto" && explicitIdx !== null) {
+        appState.convStageIndex = Math.max(0, Math.min(maxStage, explicitIdx));
+      } else if (type === "reset") {
+        appState.convStageIndex = 0;
+      } else if (type === "prev") {
+        appState.convStageIndex = Math.max(0, appState.convStageIndex - 1);
+      } else if (type === "next") {
+        appState.convStageIndex = Math.min(maxStage, appState.convStageIndex + 1);
+      }
+      logAction(`conv_stage_${type}`, `Stage_${appState.convStageIndex}`);
+      renderPipelineTab();
+    }
+
+    function renderStepBodyHtml(stepObj, pd, originalNfa, expandedNfa, dfaDef) {
+      if (stepObj.key === "string_elim") {
+        const rowsHtml = pd.splitLog.map(r => `
+          <tr>
+            <td style="font-weight:700;">${escapeHtml(r.original)}</td>
+            <td style="font-weight:700;color:#15803d;">${escapeHtml(r.introduced)}</td>
+            <td>${escapeHtml(r.chain)}</td>
+          </tr>
+        `).join("");
+        return `
+          <div class="conv-two-equal">
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">
+                <span>Original NFA M</span>
+                <span class="state-count-code">${originalNfa.states.length} states</span>
+              </h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(originalNfa)}</div>
+            </div>
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">
+                <span>Expanded Single-Symbol NFA</span>
+                <span class="state-count-code">${expandedNfa.states.length} states</span>
+              </h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, pd.introducedStates)}</div>
+            </div>
+          </div>
+          <div class="st-table-wrap" style="margin-top:1rem;">
+            <table class="st-table">
+              <thead>
+                <tr>
+                  <th>Original Multi-Symbol Transition</th>
+                  <th>Introduced State(s)</th>
+                  <th>Expanded Single-Symbol Chain</th>
+                </tr>
+              </thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      if (stepObj.key === "e_sets") {
+        const rowsHtml = pd.eSetsRows.map(r => `
+          <tr>
+            <td style="font-weight:700;">${escapeHtml(r.state)}</td>
+            <td style="font-weight:700;color:#0068c9;">${escapeHtml(r.formula)}</td>
+          </tr>
+        `).join("");
+        return `
+          <div class="conv-split-grid">
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">Single-Symbol NFA Reference</h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa)}</div>
+            </div>
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">Definition of E-sets</h4>
+              <div class="st-table-wrap">
+                <table class="st-table">
+                  <thead><tr><th>State q</th><th>Definition of E-set</th></tr></thead>
+                  <tbody>${rowsHtml}</tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (stepObj.key === "initial_state") {
+        return `
+          <div class="conv-split-grid">
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">Initial E-Closure Highlighted on NFA</h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, pd.initialStateMembers)}</div>
+            </div>
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">Definition of new initial state</h4>
+              <div class="formula-card">${escapeHtml(pd.initialStateFormula)}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (stepObj.key === "transition_fn") {
+        const rowsHtml = pd.transitionsLog.map(r => `
+          <tr>
+            <td>${escapeHtml(r.fullFormula)}</td>
+          </tr>
+        `).join("");
+        return `
+          <div class="conv-split-grid">
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">Single-Symbol NFA Reference</h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa)}</div>
+            </div>
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">Definition of transition function (Q1..Q${dfaDef.states.length})</h4>
+              <div class="st-table-wrap">
+                <table class="st-table">
+                  <thead><tr><th>Slide Derivation Formula</th></tr></thead>
+                  <tbody>${rowsHtml}</tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (stepObj.key === "final_states") {
+        return `
+          <div class="formula-card" style="margin-bottom:1.1rem;border-left-color:#15803d;">
+            <strong>Definition of final states:</strong> ${escapeHtml(pd.finalStatesFormula)}
+          </div>
+          <h4 class="st-h4" style="margin-bottom:0.55rem;">
+            <span>Resulting Converted DFA M'</span>
+            <span class="state-count-code">${dfaDef.states.length} states</span>
+          </h4>
+          <div class="st-graph-frame">${renderAutomatonSvg(dfaDef, dfaDef.accept_states.filter(s => s !== dfaDef.start_state))}</div>
+        `;
+      }
+      return "";
+    }
+
+    function renderPipelineTab() {
+      const pd = appState.pipelineData;
+      const originalNfa = appState.originalNfa;
+      const expandedNfa = appState.expandedNfa;
+      const dfaDef = appState.dfaDef;
+      const minDfa = appState.minDfaDef;
+      if (!pd || !dfaDef) return;
+
+      const hasAnySingle = Object.values(appState.transitions).some(row => Object.values(row).some(arr => arr && arr.length > 0));
+      const isBlankCustom = (appState.presetName === "Custom Automaton") && !hasAnySingle && appState.stringTransitions.length === 0;
+      document.getElementById("blankCustomOnboardingBanner").classList.toggle("hidden", !isBlankCustom);
+
+      const detectBanner = document.getElementById("stepDetectionBanner");
+      if (pd.hasStringSplits) {
+        detectBanner.className = "st-banner st-banner-success";
+        detectBanner.innerHTML = `🔍 <strong>Auto-Detected ${pd.totalSteps} Conversion Steps (Slide 100):</strong> Detected <strong>${pd.splitLog.length}</strong> multi-symbol string transition(s) — <strong>Step 1</strong> splits string transitions by introducing intermediate state(s) <code>${escapeHtml(pd.introducedStates.join(", "))}</code>.`;
+      } else {
+        detectBanner.className = "st-banner st-banner-info";
+        detectBanner.innerHTML = `🔍 <strong>Auto-Detected ${pd.totalSteps} Conversion Steps (Slide 100):</strong> No multi-symbol string transitions detected — string-transition elimination is skipped automatically (starts directly at <strong>Step 1: Definition of E-sets</strong>, matching Example 3).`;
+      }
+
+      const steps = pd.steps;
+      const maxStage = steps.length + (appState.showOptionalMinDfa ? 1 : 0);
+      appState.convStageIndex = Math.min(appState.convStageIndex, maxStage);
+      const stageIdx = appState.convStageIndex;
+
+      // Render Interactive Walkthrough
+      document.getElementById("btnConvPrev").disabled = (stageIdx === 0);
+      document.getElementById("btnConvNext").disabled = (stageIdx >= maxStage);
+
+      const fullStageTitles = ["Given NFA M", ...steps.map(s => `Step ${s.stepNum}: ${s.title}`)];
+      const shortMap = {
+        string_elim: "Eliminate Strings",
+        e_sets: "E-sets",
+        initial_state: "Initial State",
+        transition_fn: "Transition δ",
+        final_states: "Final States & DFA"
+      };
+      const pillLabels = ["Given NFA M", ...steps.map(s => `Step ${s.stepNum}: ${shortMap[s.key] || s.title}`)];
+      if (appState.showOptionalMinDfa) {
+        fullStageTitles.push("Bonus: Minimized DFA");
+        pillLabels.push("Bonus: Min DFA");
+      }
+
+      document.getElementById("convCurrentStageLabel").textContent = fullStageTitles[stageIdx] || "";
+      document.getElementById("convStagePillsContainer").innerHTML = pillLabels.map((lbl, i) => `
+        <button type="button" class="conv-pill ${i === stageIdx ? 'active' : ''}" onclick="convStepAction('goto', ${i})">${escapeHtml(lbl)}</button>
+      `).join("");
+
+      const stageContainer = document.getElementById("convActiveStageContent");
+      if (stageIdx === 0) {
+        const planItems = steps.map(s => `<li style="margin-bottom:0.25rem;"><strong>Step ${s.stepNum}:</strong> ${escapeHtml(s.title)}</li>`).join("");
+        stageContainer.innerHTML = `
+          <div class="conv-split-grid">
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">
+                <span>Given NFA M</span>
+                <span class="state-count-code">${originalNfa.states.length} states</span>
+              </h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(originalNfa)}</div>
+            </div>
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">Detected Conversion Steps (Slide 100)</h4>
+              <div class="formula-card" style="font-family:var(--sans);">
+                <ol style="padding-left:1.25rem;">${planItems}</ol>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (stageIdx <= steps.length) {
+        const activeStep = steps[stageIdx - 1];
+        stageContainer.innerHTML = `
+          <h3 class="st-h3" style="font-size:1.3rem;margin-bottom:0.65rem;">Step ${activeStep.stepNum} of ${steps.length} — ${escapeHtml(activeStep.title)}</h3>
+          ${renderStepBodyHtml(activeStep, pd, originalNfa, expandedNfa, dfaDef)}
+        `;
+      } else if (minDfa) {
+        const mapRows = appState.minMapping.map(r => `
+          <tr>
+            <td style="font-weight:700;color:#059669;">${escapeHtml(r.group)}</td>
+            <td>${escapeHtml(r.members)}</td>
+          </tr>
+        `).join("");
+        stageContainer.innerHTML = `
+          <h3 class="st-h3" style="font-size:1.3rem;margin-bottom:0.65rem;">Optional Bonus Stage — Minimized DFA (${minDfa.states.length} states)</h3>
+          <div class="conv-split-grid">
+            <div class="st-graph-frame">${renderAutomatonSvg(minDfa)}</div>
+            <div class="st-table-wrap">
+              <table class="st-table">
+                <thead><tr><th>Minimized Group</th><th>Original DFA Subsets</th></tr></thead>
+                <tbody>${mapRows}</tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      // Render Full Pipeline Overview
+      const cards = [];
+      cards.push(`
+        <div>
+          <h4 class="st-h4" style="margin-bottom:0.5rem;"><span>Given NFA M</span><span class="state-count-code">${originalNfa.states.length} states</span></h4>
+          <div class="st-graph-frame">${renderAutomatonSvg(originalNfa)}</div>
+        </div>
+      `);
+      if (pd.hasStringSplits) {
+        cards.push(`
+          <div>
+            <h4 class="st-h4" style="margin-bottom:0.5rem;"><span>Step 1 Single-Symbol NFA</span><span class="state-count-code">${expandedNfa.states.length} states</span></h4>
+            <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, pd.introducedStates)}</div>
+          </div>
+        `);
+      }
+      cards.push(`
+        <div>
+          <h4 class="st-h4" style="margin-bottom:0.5rem;"><span>Converted DFA M'</span><span class="state-count-code">${dfaDef.states.length} states</span></h4>
+          <div class="st-graph-frame">${renderAutomatonSvg(dfaDef)}</div>
+        </div>
+      `);
+      if (appState.showOptionalMinDfa && minDfa) {
+        cards.push(`
+          <div>
+            <h4 class="st-h4" style="margin-bottom:0.5rem;"><span>Minimized DFA</span><span class="state-count-code">${minDfa.states.length} states</span></h4>
+            <div class="st-graph-frame">${renderAutomatonSvg(minDfa)}</div>
+          </div>
+        `);
+      }
+      const gridEl = document.getElementById("overviewGraphsGrid");
+      gridEl.className = `overview-grid overview-cols-${Math.min(4, Math.max(2, cards.length))}`;
+      gridEl.innerHTML = cards.join("");
+
+      document.getElementById("overviewStepsStack").innerHTML = steps.map(s => {
+        let inner = "";
+        if (s.key === "string_elim") {
+          inner = `<div class="st-table-wrap"><table class="st-table"><thead><tr><th>Original</th><th>Introduced State(s)</th><th>Expanded Chain</th></tr></thead><tbody>${pd.splitLog.map(r => `<tr><td>${escapeHtml(r.original)}</td><td>${escapeHtml(r.introduced)}</td><td>${escapeHtml(r.chain)}</td></tr>`).join("")}</tbody></table></div>`;
+        } else if (s.key === "e_sets") {
+          inner = `<div class="st-table-wrap"><table class="st-table"><thead><tr><th>State q</th><th>Definition of E-set</th></tr></thead><tbody>${pd.eSetsRows.map(r => `<tr><td>${escapeHtml(r.state)}</td><td>${escapeHtml(r.formula)}</td></tr>`).join("")}</tbody></table></div>`;
+        } else if (s.key === "initial_state") {
+          inner = `<div class="formula-card">${escapeHtml(pd.initialStateFormula)}</div>`;
+        } else if (s.key === "transition_fn") {
+          inner = `<div class="st-table-wrap"><table class="st-table"><thead><tr><th>State S</th><th>Symbol σ</th><th>E-set Union</th><th>Target = Qi</th><th>Slide Formula</th></tr></thead><tbody>${pd.transitionsLog.map(r => `<tr><td>${escapeHtml(r.stateWithAlias)}</td><td>${escapeHtml(r.symbol)}</td><td>${escapeHtml(r.unionExpr)}</td><td>${escapeHtml(r.targetWithAlias)}</td><td>${escapeHtml(r.fullFormula)}</td></tr>`).join("")}</tbody></table></div>`;
+        } else if (s.key === "final_states") {
+          inner = `<div class="formula-card">${escapeHtml(pd.finalStatesFormula)}</div>`;
+        }
+        return `<details class="st-expander" open><summary>Step ${s.stepNum} of ${steps.length} — ${escapeHtml(s.title)}</summary><div class="st-expander-content">${inner}</div></details>`;
+      }).join("");
     }
 
     function recomputeAndRenderAll() {
-      const nfaDef = {
-        states: appState.states,
-        alphabet: appState.alphabet,
-        start_state: appState.startState,
-        accept_states: appState.acceptStates,
-        transitions: appState.transitions
-      };
+      const valErrors = validateAlphabetAndStrings(appState.alphabet, appState.states, appState.stringTransitions);
+      const errBanner = document.getElementById("globalValidationErrorBanner");
+      if (valErrors.length > 0) {
+        errBanner.innerHTML = valErrors.map(e => `<div>⚠️ ${escapeHtml(e)}</div>`).join("");
+        errBanner.classList.remove("hidden");
+        return;
+      }
+      errBanner.classList.add("hidden");
 
-      const { dfaDef, stepData } = nfaToDfaWithSteps(nfaDef);
+      const originalNfa = buildCombinedOriginalNfa(
+        appState.states, appState.alphabet, appState.startState, appState.acceptStates,
+        appState.transitions, appState.stringTransitions
+      );
+      const { expandedNfa, splitLog, introducedStates } = expandStringTransitions(
+        appState.states, appState.alphabet, appState.startState, appState.acceptStates,
+        appState.transitions, appState.stringTransitions
+      );
+      const { dfaDef, pipelineData } = nfaToDfaSlide100Pipeline(expandedNfa, splitLog, introducedStates);
       const { minDfa, mapping } = minimizeDfa(dfaDef);
 
+      appState.originalNfa = originalNfa;
+      appState.expandedNfa = expandedNfa;
       appState.dfaDef = dfaDef;
-      appState.stepData = stepData;
+      appState.pipelineData = pipelineData;
       appState.minDfaDef = minDfa;
       appState.minMapping = mapping;
 
-      document.getElementById("nfaStatsBadge").textContent = `${nfaDef.states.length} states`;
-      document.getElementById("dfaStatsBadge").textContent = dfaDef ? `${dfaDef.states.length} states` : "0 states";
-      document.getElementById("minDfaStatsBadge").textContent = minDfa ? `${minDfa.states.length} states` : "0 states";
-
-      document.getElementById("nfaGraphContainer").innerHTML = renderAutomatonSvg(nfaDef);
-      document.getElementById("dfaGraphContainer").innerHTML = renderAutomatonSvg(dfaDef);
-      document.getElementById("minDfaGraphContainer").innerHTML = renderAutomatonSvg(minDfa);
-
-      document.getElementById("eClosureTableBody").innerHTML = Object.entries(stepData.e_sets).map(([st, eset]) => `
-        <tr>
-          <td style="font-weight:700;">${escapeHtml(st)}</td>
-          <td style="font-weight:700;color:#0068c9;">${escapeHtml(eset)}</td>
-        </tr>
-      `).join("");
-
-      document.getElementById("subsetTableBody").innerHTML = stepData.transitions_log.map(row => `
-        <tr>
-          <td style="font-weight:700;">${escapeHtml(row.current)}</td>
-          <td>${escapeHtml(row.symbol)}</td>
-          <td>${escapeHtml(row.move)}</td>
-          <td style="font-weight:700;color:${row.target === 'Trap' ? '#e11d48' : '#059669'};">${escapeHtml(row.target)}</td>
-        </tr>
-      `).join("");
-
-      document.getElementById("minMapTableBody").innerHTML = mapping.map(row => `
-        <tr>
-          <td style="font-weight:700;color:#059669;">${escapeHtml(row.group)}</td>
-          <td>${escapeHtml(row.members)}</td>
-        </tr>
-      `).join("");
-
+      renderPipelineTab();
       renderStepperView();
       updateTelemetryView();
     }
 
     function renderStepperView() {
       const targetStr = document.getElementById("stepperStringInput").value.trim();
-      const machineChoice = document.querySelector("input[name='stepperTargetMachine']:checked")?.value || "Minimized DFA";
-      const chosenMachine = (machineChoice === "Minimized DFA" && appState.minDfaDef) ? appState.minDfaDef : appState.dfaDef;
+      const machineChoice = document.querySelector("input[name='stepperTargetMachine']:checked")?.value || "Converted DFA";
+      const chosenMachine = (machineChoice === "Minimized DFA" && appState.showOptionalMinDfa && appState.minDfaDef)
+        ? appState.minDfaDef
+        : appState.dfaDef;
 
       if (!chosenMachine) return;
+
+      const hasAnySingle = Object.values(appState.transitions).some(row => Object.values(row).some(arr => arr && arr.length > 0));
+      const isBlankCustom = (appState.presetName === "Custom Automaton") && !hasAnySingle && appState.stringTransitions.length === 0;
+      const blankPrompt = document.getElementById("stepperBlankCustomPrompt");
+      const execArea = document.getElementById("stepperExecutionArea");
+
+      if (isBlankCustom && targetStr.length === 0) {
+        blankPrompt.classList.remove("hidden");
+        execArea.classList.add("hidden");
+        return;
+      }
+      blankPrompt.classList.add("hidden");
+      execArea.classList.remove("hidden");
+
       const { isAccepted, path, msg } = simulateString(chosenMachine, targetStr);
       const banner = document.getElementById("stepperResultBanner");
 
@@ -1776,13 +2527,14 @@
       document.getElementById("stepperGraphContainer").innerHTML = renderAutomatonSvg(chosenMachine, [currState], activeEdge);
 
       if (currIdx === maxSteps) {
+        const dispStr = targetStr.length > 0 ? targetStr : "ε";
         banner.classList.remove("hidden");
         if (isAccepted) {
           banner.className = "st-alert-success";
-          banner.innerHTML = `🎉 Simulation Complete: The string <code>'${escapeHtml(targetStr)}'</code> is <strong>ACCEPTED</strong> (Ended in accepting state <code>${escapeHtml(currState)}</code>).`;
+          banner.innerHTML = `🎉 Simulation Complete: The string <code>'${escapeHtml(dispStr)}'</code> is <strong>ACCEPTED</strong> (Ended in final state <code>${escapeHtml(currState)}</code>).`;
         } else {
           banner.className = "st-alert-error";
-          banner.innerHTML = `🛑 Simulation Complete: The string <code>'${escapeHtml(targetStr)}'</code> is <strong>REJECTED</strong> (Ended in non-accept state <code>${escapeHtml(currState)}</code>).`;
+          banner.innerHTML = `🛑 Simulation Complete: The string <code>'${escapeHtml(dispStr)}'</code> is <strong>REJECTED</strong> (Ended in non-final state <code>${escapeHtml(currState)}</code>).`;
         }
       } else {
         banner.classList.add("hidden");
@@ -1888,7 +2640,6 @@
           appState.states = list;
           if (!appState.states.includes(appState.startState)) appState.startState = appState.states[0];
           appState.acceptStates = appState.acceptStates.filter(s => appState.states.includes(s));
-          list.forEach(s => appState.openBuilderStates.add(s));
           logAction("edit_states", appState.states.join(","));
           rebuildSidebarControls();
           recomputeAndRenderAll();
@@ -1909,6 +2660,13 @@
         appState.startState = e.target.value;
         logAction("select_start_state", appState.startState);
         recomputeAndRenderAll();
+      });
+
+      document.getElementById("strLabelInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          addStringTransitionRule();
+        }
       });
 
       document.getElementById("stepperStringInput").addEventListener("input", () => {

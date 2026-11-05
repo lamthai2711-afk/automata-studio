@@ -1,8 +1,16 @@
-# Automata Studio: Interactive NFA → DFA → Minimized DFA Learning Lab
+# Automata Studio: Interactive NFA → DFA Learning Laboratory
 
-Interactive educational laboratory for **Formal Languages and Automata Theory** (`NFA → DFA Subset Construction`, `E-Closure (E-sets)`, `Moore Equivalence Partitioning`, `Step-by-Step String Stepper`, and `Research Interaction Telemetry`) at **Széchenyi István University (SZE)**.
+Interactive educational laboratory for **Formal Languages and Automata Theory** (`NFA → DFA Subset Construction`, `Dynamic Slide 100 Step Detection`, `Multi-Symbol String Transition Splitting`, `E-Set Union Derivations`, `Optional Moore Minimization`, `Step-by-Step String Stepper`, and `Research Interaction Telemetry`) at **Széchenyi István University (SZE)**.
 
-Both the **Web Edition (`index.html`)** and the **Python Streamlit Edition (`streamlit_source/NFA.py`)** are 100% synchronized across scenarios, mathematical derivation tables, canonical Moore partitioning, string execution tracing, and research telemetry logs.
+Both the **Web Edition (`index.html`)** and the **Python Streamlit Edition (`streamlit_source/NFA.py`)** are 100% synchronized:
+- **Active Self-Practice Default (`Custom Automaton`)**: Opens on a clean custom canvas so students construct their own NFAs (including single-symbol, `ε` via `'e'`, and multi-symbol string edges like `ab`, `aa`, `ba`, `bb` with strict formal alphabet validation).
+- **Dynamic Conversion Step Detection (Lecture 5, Slide 100)**: Automatically detects **5 conversion steps** when multi-symbol string transitions exist (introducing `q_{max+1}` intermediate states in Step 1) or **4 conversion steps** when only single-symbol/`ε` edges exist (skipping Step 1 automatically).
+- **Complete Lecture 5 Worked Example Presets (Slides 101–132)**:
+  - `NFA → DFA: Example 1` (`Slides 101–106`)
+  - `NFA → DFA: Example 2` (`Slides 107–112`)
+  - `NFA → DFA: Example 3` (`Slides 113–117`)
+  - `NFA → DFA: Example 4` (`Slides 118–124`)
+  - `NFA → DFA: Example 5` (`Slides 125–132`)
 
 ---
 
