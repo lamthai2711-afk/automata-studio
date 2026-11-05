@@ -167,13 +167,13 @@
 
     .st-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
     .st-btn {
-      min-height: 40px;
-      padding: 0.45rem 0.85rem;
+      min-height: 38px;
+      padding: 0.4rem 0.82rem;
       border-radius: 0.5rem;
       border: 1px solid var(--st-border);
       background: #ffffff;
       color: var(--st-heading);
-      font-size: 0.91rem;
+      font-size: 0.9rem;
       font-weight: 500;
       cursor: pointer;
       display: inline-flex;
@@ -378,7 +378,7 @@
       flex-wrap: wrap;
       gap: 1.7rem;
       border-bottom: 1px solid var(--st-border-soft);
-      margin-bottom: 0.95rem;
+      margin-bottom: 0.85rem;
     }
     .st-tab {
       background: transparent;
@@ -399,14 +399,14 @@
     }
 
     .st-h3 {
-      font-size: 1.52rem;
+      font-size: 1.48rem;
       font-weight: 700;
       color: var(--st-heading);
       letter-spacing: -0.01em;
       margin-bottom: 0.25rem;
     }
     .st-h4 {
-      font-size: 1.18rem;
+      font-size: 1.14rem;
       font-weight: 700;
       color: var(--st-heading);
       display: flex;
@@ -417,14 +417,14 @@
     .st-caption {
       font-size: 0.92rem;
       color: var(--st-muted);
-      margin-bottom: 0.85rem;
+      margin-bottom: 0.8rem;
     }
 
     .st-banner {
-      padding: 0.85rem 1.05rem;
+      padding: 0.8rem 1rem;
       border-radius: 0.55rem;
-      font-size: 0.94rem;
-      margin-bottom: 0.85rem;
+      font-size: 0.93rem;
+      margin-bottom: 0.8rem;
       line-height: 1.5;
     }
     .st-banner-info { background: var(--st-info-bg); color: var(--st-info-text); border: 1px solid #cbe2fa; }
@@ -437,9 +437,9 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
-      padding: 0.55rem 0;
-      margin-bottom: 0.85rem;
+      gap: 0.9rem;
+      padding: 0.45rem 0;
+      margin-bottom: 0.7rem;
     }
     .st-checkbox-label {
       display: inline-flex;
@@ -461,8 +461,8 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.95rem;
-      font-size: 0.88rem;
+      gap: 0.9rem;
+      font-size: 0.86rem;
       color: var(--st-text);
     }
     .legend-dot {
@@ -494,22 +494,22 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.65rem;
-      margin-bottom: 0.85rem;
+      gap: 0.55rem;
+      margin-bottom: 0.7rem;
     }
     .conv-pills-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.45rem;
-      margin-bottom: 1.15rem;
+      gap: 0.42rem;
+      margin-bottom: 0.95rem;
     }
     .conv-pill {
       border: 1px solid var(--st-border-soft);
       background: var(--st-surface);
       color: var(--st-muted);
       border-radius: 999px;
-      padding: 0.32rem 0.85rem;
-      font-size: 0.86rem;
+      padding: 0.3rem 0.82rem;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.14s;
@@ -521,19 +521,135 @@
       color: #ffffff;
     }
 
+    /* Sub-step Explorer Bar & Trace Cards */
+    .substep-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.38rem;
+      padding: 0.5rem 0.65rem;
+      background: var(--st-surface);
+      border: 1px solid var(--st-border-soft);
+      border-radius: 0.55rem;
+      margin-bottom: 0.85rem;
+    }
+    .substep-pill {
+      border: 1px solid var(--st-border-soft);
+      background: #ffffff;
+      color: var(--st-muted);
+      border-radius: 6px;
+      padding: 0.22rem 0.62rem;
+      font-size: 0.81rem;
+      font-family: var(--mono);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .substep-pill:hover { border-color: var(--st-blue); color: var(--st-heading); }
+    .substep-pill.active {
+      background: var(--st-blue);
+      border-color: var(--st-blue);
+      color: #ffffff;
+    }
+    .substep-nav-mini {
+      border: 1px solid var(--st-border);
+      background: #ffffff;
+      color: var(--st-heading);
+      border-radius: 6px;
+      padding: 0.22rem 0.6rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .substep-nav-mini:hover:not(:disabled) { border-color: var(--st-blue); color: var(--st-blue); }
+    .substep-nav-mini:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .substep-trace-card {
+      padding: 0.85rem 1.05rem;
+      border-radius: 0.55rem;
+      background: #f8fafc;
+      border: 1px solid #dbeafe;
+      border-left: 4px solid var(--st-blue);
+      margin-bottom: 0.8rem;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    .trace-step-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.35rem;
+    }
+    .hop-chip-move {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 5px;
+      background: #fff1f2;
+      border: 1px solid #fda4af;
+      color: #be123c;
+      font-family: var(--mono);
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+    .hop-chip-eps {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 5px;
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      color: #15803d;
+      font-family: var(--mono);
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+    .hop-chip-origin {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 5px;
+      background: #fef9c3;
+      border: 1px solid #fde047;
+      color: #854d0e;
+      font-family: var(--mono);
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+    .hop-chip-src {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 5px;
+      background: #dbeafe;
+      border: 1px solid #93c5fd;
+      color: #1e40af;
+      font-family: var(--mono);
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+    .mini-graph-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      font-size: 0.81rem;
+      color: var(--st-muted);
+      margin-top: 0.45rem;
+      padding: 0.35rem 0.55rem;
+      background: var(--st-surface);
+      border-radius: 6px;
+    }
+
     .conv-split-grid {
       display: grid;
-      grid-template-columns: 1.08fr 1.22fr;
-      gap: 1.5rem;
+      grid-template-columns: 1.06fr 1.24fr;
+      gap: 1.4rem;
       align-items: start;
-      margin-top: 0.6rem;
+      margin-top: 0.4rem;
     }
     .conv-two-equal {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
+      gap: 1.4rem;
       align-items: start;
-      margin-top: 0.6rem;
+      margin-top: 0.4rem;
     }
     @media (max-width: 1180px) {
       .conv-split-grid, .conv-two-equal { grid-template-columns: 1fr; }
@@ -567,7 +683,7 @@
       background: #ffffff;
       border: 1px solid var(--st-border-soft);
       border-radius: 0.65rem;
-      padding: 1rem 0.85rem;
+      padding: 0.9rem 0.85rem;
       min-height: 225px;
       display: flex;
       align-items: center;
@@ -579,7 +695,7 @@
       max-width: calc(100% * var(--diagram-scale));
       height: auto;
       min-height: 185px;
-      max-height: calc(280px * var(--diagram-scale));
+      max-height: calc(285px * var(--diagram-scale));
       display: block;
     }
     #stepperGraphContainer {
@@ -595,19 +711,19 @@
     }
 
     .formula-card {
-      padding: 1rem 1.2rem;
+      padding: 0.95rem 1.15rem;
       border-radius: 0.55rem;
       background: var(--st-surface);
       border-left: 4px solid var(--st-blue);
       font-family: var(--mono);
-      font-size: 0.96rem;
+      font-size: 0.95rem;
       color: var(--st-heading);
-      line-height: 1.65;
+      line-height: 1.62;
     }
 
     .st-table-wrap {
       overflow-x: auto;
-      max-height: 360px;
+      max-height: 280px;
       overflow-y: auto;
       border: 1px solid var(--st-border-soft);
       border-radius: 0.45rem;
@@ -615,26 +731,36 @@
     table.st-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.88rem;
+      font-size: 0.87rem;
       text-align: left;
     }
     table.st-table th {
       background: var(--st-surface);
       color: var(--st-muted);
       font-weight: 600;
-      padding: 0.52rem 0.55rem;
+      padding: 0.48rem 0.55rem;
       border-bottom: 1px solid var(--st-border-soft);
       position: sticky;
       top: 0;
       white-space: nowrap;
+      z-index: 2;
     }
     table.st-table td {
-      padding: 0.5rem 0.55rem;
+      padding: 0.46rem 0.55rem;
       border-bottom: 1px solid #f1f3f8;
       font-family: var(--mono);
       color: var(--st-heading);
     }
-    table.st-table tr:hover td { background: #fafbfd; }
+    table.st-table tr.clickable-row { cursor: pointer; transition: background 0.1s; }
+    table.st-table tr.clickable-row:hover td { background: #f1f7fe; }
+    table.st-table tr.active-substep-row td {
+      background: #e8f2fc !important;
+      border-top: 1px solid #93c5fd;
+      border-bottom: 1px solid #93c5fd;
+    }
+    table.st-table tr.pending-substep-row td {
+      opacity: 0.48;
+    }
 
     .stepper-top-grid {
       display: grid;
@@ -648,9 +774,9 @@
       display: flex;
       flex-wrap: wrap;
       gap: 1.2rem;
-      min-height: 40px;
+      min-height: 38px;
       align-items: center;
-      font-size: 0.95rem;
+      font-size: 0.94rem;
       font-weight: 500;
     }
     .st-radio-row label {
@@ -895,12 +1021,6 @@
 
       <!-- TAB 1: CONVERSION PIPELINE -->
       <section id="tabPanelPipeline">
-        <div id="blankCustomOnboardingBanner" class="st-banner st-banner-info hidden">
-          📝 <strong>Blank Custom Automaton Ready for Practice:</strong> Add single-symbol transitions or multi-symbol string transitions (e.g., <code>ab</code>, <code>ba</code>) in the left sidebar — or select a <strong>Lecture 5 Example (Slides 101–132)</strong> preset — to build your NFA and step through the conversion.
-        </div>
-
-        <div id="stepDetectionBanner" class="st-banner st-banner-info"></div>
-
         <div class="st-toolbar">
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem;">
             <div class="st-radio-row">
@@ -923,7 +1043,8 @@
 
           <div class="legend-and-zoom">
             <span><span class="legend-dot" style="background:#dbeafe;border:2px solid #1d4ed8;"></span>Initial State</span>
-            <span><span class="legend-dot" style="background:#86efac;border:2px solid #15803d;"></span>Introduced / Highlighted</span>
+            <span><span class="legend-dot" style="background:#fef08a;border:2px solid #ca8a04;"></span>Origin / Direct Move</span>
+            <span><span class="legend-dot" style="background:#86efac;border:2px solid #15803d;"></span>ε-Closure / Introduced</span>
             <span><span class="legend-dot" style="background:#ffffff;border:3px double #334155;"></span>Final State</span>
             <span><span class="legend-dot" style="background:#fee2e2;border:2px solid #b91c1c;"></span>Ø (Empty / Trap)</span>
             <div class="zoom-group" title="Adjust diagram magnification">
@@ -941,7 +1062,8 @@
             <button type="button" id="btnConvGiven" onclick="convStepAction('reset')" class="st-btn">⏮️ Given NFA</button>
             <button type="button" id="btnConvPrev" onclick="convStepAction('prev')" class="st-btn">◀️ Prev Step</button>
             <button type="button" id="btnConvNext" onclick="convStepAction('next')" class="st-btn st-btn-primary">Next Step ▶️</button>
-            <span id="convCurrentStageLabel" style="font-weight:700;color:var(--st-heading);margin-left:0.4rem;"></span>
+            <button type="button" id="btnConvSkipMajor" onclick="convStepAction('next_major')" class="st-btn hidden" title="Skip remaining sub-steps and advance to the next major step">⏭️ Next Major Step</button>
+            <span id="convCurrentStageLabel" style="font-weight:700;color:var(--st-heading);margin-left:0.35rem;"></span>
           </div>
           <div id="convStagePillsContainer" class="conv-pills-row"></div>
           <div id="convActiveStageContent"></div>
@@ -1163,6 +1285,8 @@
       userActionsLog: [],
       simStepIndex: 0,
       convStageIndex: 0,
+      eSetSubIndex: 0,
+      transSubIndex: 0,
       pipelineViewMode: "interactive",
       showOptionalMinDfa: false,
       presetName: DEFAULT_PRESET_NAME,
@@ -1260,7 +1384,7 @@
     }
 
     // ==========================================
-    // FORMAL ALGORITHM ENGINES (1:1 WITH NFA.py v4)
+    // FORMAL ALGORITHM ENGINES (SLIDE 100 + SUB-STEP TRACING)
     // ==========================================
     function stateSortKey(stateName, stateOrderMap = null) {
       if (stateOrderMap && Object.prototype.hasOwnProperty.call(stateOrderMap, stateName)) {
@@ -1429,29 +1553,26 @@
       };
     }
 
-    function getEmptyClosure(stateArray, transitions) {
-      const closure = new Set(stateArray);
-      const stack = [...stateArray];
-      while (stack.length > 0) {
-        const curr = stack.pop();
-        const epsTargets = (transitions[curr] && transitions[curr]["e"]) ? transitions[curr]["e"] : [];
-        for (const nxt of epsTargets) {
-          if (!closure.has(nxt)) {
-            closure.add(nxt);
-            stack.push(nxt);
+    function traceEpsilonClosureBfs(seedStates, transitions, stateOrderMap) {
+      const closureSet = new Set(seedStates);
+      const bfsQueue = [...seedStates];
+      const hops = [];
+      const epsEdges = [];
+      while (bfsQueue.length > 0) {
+        const u = bfsQueue.shift();
+        const epsTargets = (transitions[u] && transitions[u]["e"]) ? transitions[u]["e"] : [];
+        for (const v of epsTargets) {
+          const isNew = !closureSet.has(v);
+          hops.push({ from: u, to: v, isNew });
+          epsEdges.push({ src: u, dest: v, symbol: "e", role: "eps" });
+          if (isNew) {
+            closureSet.add(v);
+            bfsQueue.push(v);
           }
         }
       }
-      return Array.from(closure);
-    }
-
-    function moveSet(stateArray, symbol, transitions) {
-      const reachable = new Set();
-      for (const s of stateArray) {
-        const targets = (transitions[s] && transitions[s][symbol]) ? transitions[s][symbol] : [];
-        for (const nxt of targets) reachable.add(nxt);
-      }
-      return Array.from(reachable);
+      const members = sortStates(closureSet, stateOrderMap);
+      return { members, hops, epsEdges };
     }
 
     function nfaToDfaSlide100Pipeline(expandedNfa, splitLog, introducedStates) {
@@ -1471,8 +1592,10 @@
         splitLog,
         introducedStates,
         eSetsRows: [],
+        eSetMap: {},
         initialStateLabel: null,
         initialStateMembers: [],
+        initialStateEpsEdges: [],
         initialStateFormula: "",
         qAliases: {},
         transitionsLog: [],
@@ -1483,14 +1606,28 @@
 
       if (!startState) return { dfaDef: null, pipelineData };
 
-      for (const st of expandedNfa.states) {
-        const esetStr = formatStateName(getEmptyClosure([st], nfaTrans), stateOrderMap);
-        pipelineData.eSetsRows.push({ state: st, formula: `E(${st}) = ${esetStr}` });
-      }
+      expandedNfa.states.forEach((st, idx) => {
+        const { members, hops, epsEdges } = traceEpsilonClosureBfs([st], nfaTrans, stateOrderMap);
+        const esetStr = formatStateName(members, stateOrderMap);
+        const epsReachedStates = members.filter(x => x !== st);
+        pipelineData.eSetMap[st] = esetStr;
+        pipelineData.eSetsRows.push({
+          subIndex: idx,
+          state: st,
+          members,
+          epsReachedStates,
+          hops,
+          epsEdges,
+          esetStr,
+          formula: `E(${st}) = ${esetStr}`
+        });
+      });
 
-      const initialClosure = sortStates(getEmptyClosure([startState], nfaTrans), stateOrderMap);
+      const initTrace = traceEpsilonClosureBfs([startState], nfaTrans, stateOrderMap);
+      const initialClosure = initTrace.members;
       const initialLabel = formatStateName(initialClosure, stateOrderMap);
       pipelineData.initialStateMembers = initialClosure;
+      pipelineData.initialStateEpsEdges = initTrace.epsEdges;
       pipelineData.initialStateLabel = initialLabel;
       pipelineData.qAliases[initialLabel] = "Q1";
       pipelineData.initialStateFormula = `s' = E(${startState}) = ${initialLabel} = Q1`;
@@ -1499,6 +1636,7 @@
       const dfaClosures = [initialClosure];
       const seenLabels = new Set([initialLabel]);
       const queue = [initialClosure];
+      let transSubCounter = 0;
 
       while (queue.length > 0) {
         const curr = queue.shift();
@@ -1507,18 +1645,41 @@
         dfaTransitions[currLabel] = {};
 
         for (const sym of alphabet) {
-          const mSorted = curr.length > 0 ? sortStates(moveSet(curr, sym, nfaTrans), stateOrderMap) : [];
+          const moveHops = [];
+          const moveEdges = [];
+          const directSet = new Set();
+
+          for (const u of curr) {
+            const targets = (nfaTrans[u] && nfaTrans[u][sym]) ? nfaTrans[u][sym] : [];
+            for (const v of targets) {
+              directSet.add(v);
+              moveHops.push({ from: u, symbol: sym, to: v });
+              moveEdges.push({ src: u, dest: v, symbol: sym, role: "move" });
+            }
+          }
+
+          const mSorted = sortStates(directSet, stateOrderMap);
           let targetClosure = [];
           let targetLabel = "Ø";
           let unionExpr = "Ø";
+          let epsHops = [];
+          let epsEdges = [];
+          let epsOnlyStates = [];
+          let esetComponents = [];
 
           if (mSorted.length > 0) {
-            targetClosure = sortStates(getEmptyClosure(mSorted, nfaTrans), stateOrderMap);
+            const cTrace = traceEpsilonClosureBfs(mSorted, nfaTrans, stateOrderMap);
+            targetClosure = cTrace.members;
+            epsHops = cTrace.hops;
+            epsEdges = cTrace.epsEdges;
+            epsOnlyStates = targetClosure.filter(x => !directSet.has(x));
             targetLabel = formatStateName(targetClosure, stateOrderMap);
             unionExpr = mSorted.map(p => `E(${p})`).join(" ∪ ");
+            esetComponents = mSorted.map(p => ({ state: p, esetStr: pipelineData.eSetMap[p] }));
           }
 
-          if (!seenLabels.has(targetLabel)) {
+          const isNewlyDiscovered = !seenLabels.has(targetLabel);
+          if (isNewlyDiscovered) {
             seenLabels.add(targetLabel);
             dfaClosures.push(targetClosure);
             pipelineData.qAliases[targetLabel] = `Q${dfaClosures.length}`;
@@ -1533,10 +1694,25 @@
             : `δ(${currLabel}, ${sym}) = Ø = ${targetAlias}`;
 
           pipelineData.transitionsLog.push({
+            subIndex: transSubCounter++,
+            currMembers: [...curr],
+            currLabel,
+            currAlias,
             stateWithAlias: `${currLabel} (${currAlias})`,
             symbol: sym,
+            moveHops,
+            moveStates: mSorted,
+            moveEdges,
+            epsHops,
+            epsOnlyStates,
+            epsEdges,
+            esetComponents,
             unionExpr,
+            targetClosure,
+            targetLabel,
+            targetAlias,
             targetWithAlias: `${targetLabel} = ${targetAlias}`,
+            isNewlyDiscovered,
             fullFormula
           });
         }
@@ -1686,7 +1862,7 @@
     }
 
     // ==========================================
-    // HIGH-VISIBILITY LAYERED SVG GRAPH RENDERER
+    // HIGH-VISIBILITY LAYERED SVG GRAPH RENDERER WITH PATH CUEING
     // ==========================================
     function computeLayeredLayout(automatonDef) {
       const states = automatonDef.states;
@@ -1774,13 +1950,34 @@
       ];
     }
 
-    function renderAutomatonSvg(automatonDef, highlightedStates = [], activeEdge = null) {
+    function normalizeHighlightConfig(highlightSpec, activeEdge) {
+      if (Array.isArray(highlightSpec) || !highlightSpec) {
+        return {
+          greenStates: new Set(highlightSpec || []),
+          originStates: new Set(),
+          moveStates: new Set(),
+          sourceHaloStates: new Set(),
+          edges: activeEdge ? [{ src: activeEdge.src, dest: activeEdge.dest, symbol: activeEdge.symbol, role: "move" }] : [],
+          dimInactive: false
+        };
+      }
+      return {
+        greenStates: new Set(highlightSpec.greenStates || []),
+        originStates: new Set(highlightSpec.originStates || []),
+        moveStates: new Set(highlightSpec.moveStates || []),
+        sourceHaloStates: new Set(highlightSpec.sourceHaloStates || []),
+        edges: highlightSpec.edges || [],
+        dimInactive: Boolean(highlightSpec.dimInactive)
+      };
+    }
+
+    function renderAutomatonSvg(automatonDef, highlightSpec = [], activeEdge = null) {
       if (!automatonDef || !automatonDef.states || automatonDef.states.length === 0) {
         return `<div style="font-size:0.95rem;color:#94a3b8;padding:16px;">No states to display</div>`;
       }
       const states = automatonDef.states;
       const acceptSet = new Set(automatonDef.accept_states || []);
-      const highlightSet = new Set(highlightedStates || []);
+      const cfg = normalizeHighlightConfig(highlightSpec, activeEdge);
       const coords = computeLayeredLayout(automatonDef);
 
       const nodeRadius = {};
@@ -1811,7 +2008,8 @@
       }
 
       for (const st of states) {
-        expandBounds(coords[st].x, coords[st].y, nodeRadius[st] + 5);
+        const extraHalo = cfg.sourceHaloStates.has(st) ? 7 : 0;
+        expandBounds(coords[st].x, coords[st].y, nodeRadius[st] + 5 + extraHalo);
       }
 
       const uid = "g" + Math.random().toString(36).slice(2, 8);
@@ -1823,27 +2021,66 @@
         const sx1 = startPos.x - (r0 + 34);
         const sx2 = startPos.x - (r0 + 3);
         expandBounds(sx1, startPos.y, 4);
-        bodySvg += `<line x1="${sx1}" y1="${startPos.y}" x2="${sx2}" y2="${startPos.y}" stroke="#2563eb" stroke-width="2.6" marker-end="url(#arrow-start-${uid})" />`;
+        const startStroke = cfg.dimInactive ? "#93c5fd" : "#2563eb";
+        bodySvg += `<line x1="${sx1}" y1="${startPos.y}" x2="${sx2}" y2="${startPos.y}" stroke="${startStroke}" stroke-width="2.4" marker-end="url(#arrow-start-${uid})" />`;
       }
 
       for (const [key, syms] of edgeGroups.entries()) {
         const [src, dest] = key.split("|||");
         const p1 = coords[src], p2 = coords[dest];
         const r1 = nodeRadius[src], r2 = nodeRadius[dest];
-        const isHit = activeEdge && activeEdge.src === src && activeEdge.dest === dest && syms.includes(activeEdge.symbol);
-        const strokeColor = isHit ? "#dc2626" : "#475569";
-        const strokeWidth = isHit ? "3.2" : "1.8";
-        const marker = isHit ? `url(#arrow-active-${uid})` : `url(#arrow-${uid})`;
-        const label = syms.map(s => s === "e" ? "ε" : s).join(", ");
-        const safeLabel = escapeHtml(label);
-        const pillW = Math.max(22, label.length * 8.4 + 12);
+
+        const matchedMoveSyms = new Set(
+          cfg.edges.filter(e => e.src === src && e.dest === dest && e.role === "move").map(e => e.symbol)
+        );
+        const matchedEpsSyms = new Set(
+          cfg.edges.filter(e => e.src === src && e.dest === dest && e.role === "eps").map(e => e.symbol)
+        );
+        const isMoveHit = syms.some(s => matchedMoveSyms.has(s));
+        const isEpsHit = !isMoveHit && syms.some(s => matchedEpsSyms.has(s));
+
+        let strokeColor = "#475569";
+        let strokeWidth = "1.8";
+        let marker = `url(#arrow-${uid})`;
+        let pillBg = "white";
+        let pillStroke = "#e2e8f0";
+
+        if (isMoveHit) {
+          strokeColor = "#dc2626";
+          strokeWidth = "3.4";
+          marker = `url(#arrow-active-${uid})`;
+          pillBg = "#fff1f2";
+          pillStroke = "#fda4af";
+        } else if (isEpsHit) {
+          strokeColor = "#16a34a";
+          strokeWidth = "3.3";
+          marker = `url(#arrow-eps-${uid})`;
+          pillBg = "#f0fdf4";
+          pillStroke = "#86efac";
+        } else if (cfg.dimInactive) {
+          strokeColor = "#cbd5e1";
+          strokeWidth = "1.35";
+          marker = `url(#arrow-dim-${uid})`;
+        }
+
+        const plainLabel = syms.map(s => s === "e" ? "ε" : s).join(", ");
+        const pillW = Math.max(22, plainLabel.length * 8.4 + 12);
+
+        const labelSpansHtml = syms.map((s, idx) => {
+          const disp = escapeHtml(s === "e" ? "ε" : s);
+          const sep = idx < syms.length - 1 ? ", " : "";
+          let fillCol = cfg.dimInactive ? "#94a3b8" : "#0f172a";
+          if (matchedMoveSyms.has(s)) fillCol = "#dc2626";
+          else if (matchedEpsSyms.has(s)) fillCol = "#15803d";
+          return `<tspan fill="${fillCol}">${disp}</tspan>${sep ? `<tspan fill="#94a3b8">${sep}</tspan>` : ""}`;
+        }).join("");
 
         if (src === dest) {
           const lx = p1.x, ly = p1.y - r1;
           expandBounds(lx, ly - 48, pillW / 2 + 4);
           bodySvg += `<path d="M ${lx - 12} ${ly + 2} C ${lx - 28} ${ly - 44}, ${lx + 28} ${ly - 44}, ${lx + 12} ${ly + 2}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
-          bodySvg += `<rect x="${lx - pillW / 2}" y="${ly - 50}" width="${pillW}" height="18" rx="4" fill="white" fill-opacity="0.95" />`;
-          bodySvg += `<text x="${lx}" y="${ly - 37}" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="700" fill="${isHit ? '#dc2626' : '#0f172a'}">${safeLabel}</text>`;
+          bodySvg += `<rect x="${lx - pillW / 2}" y="${ly - 50}" width="${pillW}" height="18" rx="4" fill="${pillBg}" fill-opacity="0.96" stroke="${pillStroke}" stroke-width="0.9" />`;
+          bodySvg += `<text x="${lx}" y="${ly - 37}" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="700">${labelSpansHtml}</text>`;
         } else {
           const hasReverse = edgeGroups.has(`${dest}|||${src}`);
           const colSpan = Math.abs((p2.col || 0) - (p1.col || 0));
@@ -1868,11 +2105,11 @@
             const laneMag = 42 + 22 * Math.max(0, colSpan - 1);
             let bowSign;
             if (midY < -8) {
-              bowSign = -1; // Top half: bow upward away from center
+              bowSign = -1;
             } else if (midY > 8) {
-              bowSign = 1;  // Bottom half: bow downward away from center
+              bowSign = 1;
             } else {
-              bowSign = isBackEdge ? 1 : -1; // Centerline: forward up, back-edges down in concentric lanes
+              bowSign = isBackEdge ? 1 : -1;
             }
             offY = bowSign * laneMag;
           }
@@ -1889,18 +2126,27 @@
           expandBounds(tx, ty, Math.max(15, pillW / 2));
 
           bodySvg += `<path d="M ${sx} ${sy} Q ${cx} ${cy} ${ex} ${ey}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
-          bodySvg += `<rect x="${tx - pillW / 2}" y="${ty - 10}" width="${pillW}" height="19" rx="4" fill="white" fill-opacity="0.95" stroke="#e2e8f0" stroke-width="0.8" />`;
-          bodySvg += `<text x="${tx}" y="${ty + 4}" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="700" fill="${isHit ? '#dc2626' : '#0f172a'}">${safeLabel}</text>`;
+          bodySvg += `<rect x="${tx - pillW / 2}" y="${ty - 10}" width="${pillW}" height="19" rx="4" fill="${pillBg}" fill-opacity="0.96" stroke="${pillStroke}" stroke-width="0.9" />`;
+          bodySvg += `<text x="${tx}" y="${ty + 4}" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="700">${labelSpansHtml}</text>`;
         }
       }
 
       for (const st of states) {
         const { x, y } = coords[st];
         const R = nodeRadius[st];
-        let fill = "#ffffff", stroke = "#64748b", sw = "1.8";
-        if (highlightSet.has(st)) {
-          fill = "#86efac"; stroke = "#15803d"; sw = "3.4";
-        } else if (st === automatonDef.start_state) {
+
+        if (cfg.sourceHaloStates.has(st)) {
+          bodySvg += `<circle cx="${x}" cy="${y}" r="${R + 5}" fill="none" stroke="#2563eb" stroke-width="2.3" stroke-dasharray="5,3" />`;
+        }
+
+        let fill = "#ffffff", stroke = cfg.dimInactive ? "#94a3b8" : "#64748b", sw = "1.8";
+        if (cfg.originStates.has(st) || cfg.moveStates.has(st)) {
+          fill = "#fef08a"; stroke = "#ca8a04"; sw = "3.3";
+        } else if (cfg.greenStates.has(st)) {
+          fill = "#86efac"; stroke = "#15803d"; sw = "3.3";
+        } else if (cfg.sourceHaloStates.has(st)) {
+          fill = "#dbeafe"; stroke = "#1d4ed8"; sw = "2.5";
+        } else if (!cfg.dimInactive && st === automatonDef.start_state) {
           fill = "#dbeafe"; stroke = "#1d4ed8"; sw = "2.4";
         } else if (st === "Ø") {
           fill = "#fee2e2"; stroke = "#b91c1c"; sw = "2.0";
@@ -1911,12 +2157,13 @@
           bodySvg += `<circle cx="${x}" cy="${y}" r="${R - 5}" fill="none" stroke="${stroke}" stroke-width="1.7" />`;
         }
 
+        const textFill = (cfg.dimInactive && fill === "#ffffff") ? "#64748b" : "#0f172a";
         const lines = splitNodeLabelLines(st);
         if (lines.length === 1) {
           const fontSize = st.length > 9 ? 11.2 : (st.length > 5 ? 12.6 : 14.6);
-          bodySvg += `<text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="${fontSize}" font-family="Arial, sans-serif" font-weight="700" fill="#0f172a">${escapeHtml(lines[0])}</text>`;
+          bodySvg += `<text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="${fontSize}" font-family="Arial, sans-serif" font-weight="700" fill="${textFill}">${escapeHtml(lines[0])}</text>`;
         } else {
-          bodySvg += `<text x="${x}" y="${y - 3}" text-anchor="middle" font-size="10.4" font-family="Arial, sans-serif" font-weight="700" fill="#0f172a">
+          bodySvg += `<text x="${x}" y="${y - 3}" text-anchor="middle" font-size="10.4" font-family="Arial, sans-serif" font-weight="700" fill="${textFill}">
             <tspan x="${x}" dy="0">${escapeHtml(lines[0])}</tspan>
             <tspan x="${x}" dy="13">${escapeHtml(lines[1])}</tspan>
           </text>`;
@@ -1934,8 +2181,14 @@
           <marker id="arrow-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
           </marker>
+          <marker id="arrow-dim-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#cbd5e1"/>
+          </marker>
           <marker id="arrow-active-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
             <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+          </marker>
+          <marker id="arrow-eps-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
           </marker>
           <marker id="arrow-start-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
             <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
@@ -1946,7 +2199,7 @@
     }
 
     // ==========================================
-    // UI CONTROLLERS
+    // UI CONTROLLERS & SUB-STEP EXPLORERS
     // ==========================================
     function clearStringRuleError() {
       const box = document.getElementById("stringRuleErrorBox");
@@ -1971,6 +2224,8 @@
         appState.stringTransitions.push({ from: fromSt, label: lbl, to: toSt });
         document.getElementById("strLabelInput").value = "";
         appState.convStageIndex = 0;
+        appState.eSetSubIndex = 0;
+        appState.transSubIndex = 0;
         logAction("add_string_transition", `${fromSt}--${lbl}-->${toSt}`);
         rebuildSidebarControls();
         recomputeAndRenderAll();
@@ -1980,6 +2235,8 @@
     function removeStringTransitionRule(idx) {
       const removed = appState.stringTransitions.splice(idx, 1)[0];
       appState.convStageIndex = 0;
+      appState.eSetSubIndex = 0;
+      appState.transSubIndex = 0;
       if (removed) logAction("remove_string_transition", `${removed.from}--${removed.label}-->${removed.to}`);
       rebuildSidebarControls();
       recomputeAndRenderAll();
@@ -2017,6 +2274,8 @@
       }
       appState.simStepIndex = 0;
       appState.convStageIndex = 0;
+      appState.eSetSubIndex = 0;
+      appState.transSubIndex = 0;
       rebuildSidebarControls();
       recomputeAndRenderAll();
     }
@@ -2145,19 +2404,72 @@
       }
     }
 
+    function setESetSubStep(val) {
+      appState.eSetSubIndex = val;
+      logAction("select_eset_substep", String(val));
+      renderPipelineTab();
+    }
+
+    function setTransSubStep(val) {
+      appState.transSubIndex = val;
+      logAction("select_trans_substep", String(val));
+      renderPipelineTab();
+    }
+
+    function getActiveStepObject() {
+      const pd = appState.pipelineData;
+      if (!pd) return null;
+      const idx = appState.convStageIndex;
+      if (idx >= 1 && idx <= pd.steps.length) return pd.steps[idx - 1];
+      return null;
+    }
+
     function convStepAction(type, explicitIdx = null) {
-      if (!appState.pipelineData) return;
-      const maxStage = appState.pipelineData.steps.length + (appState.showOptionalMinDfa ? 1 : 0);
+      const pd = appState.pipelineData;
+      if (!pd) return;
+      const steps = pd.steps;
+      const maxStage = steps.length + (appState.showOptionalMinDfa ? 1 : 0);
+      const activeStep = getActiveStepObject();
+
       if (type === "goto" && explicitIdx !== null) {
         appState.convStageIndex = Math.max(0, Math.min(maxStage, explicitIdx));
+        const targetStep = getActiveStepObject();
+        if (targetStep && targetStep.key === "e_sets") appState.eSetSubIndex = 0;
+        if (targetStep && targetStep.key === "transition_fn") appState.transSubIndex = 0;
       } else if (type === "reset") {
         appState.convStageIndex = 0;
-      } else if (type === "prev") {
-        appState.convStageIndex = Math.max(0, appState.convStageIndex - 1);
-      } else if (type === "next") {
+        appState.eSetSubIndex = 0;
+        appState.transSubIndex = 0;
+      } else if (type === "next_major") {
         appState.convStageIndex = Math.min(maxStage, appState.convStageIndex + 1);
+        const targetStep = getActiveStepObject();
+        if (targetStep && targetStep.key === "e_sets") appState.eSetSubIndex = 0;
+        if (targetStep && targetStep.key === "transition_fn") appState.transSubIndex = 0;
+      } else if (type === "next") {
+        if (activeStep && activeStep.key === "e_sets" && appState.eSetSubIndex !== "all" && appState.eSetSubIndex < pd.eSetsRows.length - 1) {
+          appState.eSetSubIndex += 1;
+        } else if (activeStep && activeStep.key === "transition_fn" && appState.transSubIndex !== "all" && appState.transSubIndex < pd.transitionsLog.length - 1) {
+          appState.transSubIndex += 1;
+        } else {
+          appState.convStageIndex = Math.min(maxStage, appState.convStageIndex + 1);
+          const nextStep = getActiveStepObject();
+          if (nextStep && nextStep.key === "e_sets") appState.eSetSubIndex = 0;
+          if (nextStep && nextStep.key === "transition_fn") appState.transSubIndex = 0;
+        }
+      } else if (type === "prev") {
+        if (activeStep && activeStep.key === "e_sets" && typeof appState.eSetSubIndex === "number" && appState.eSetSubIndex > 0) {
+          appState.eSetSubIndex -= 1;
+        } else if (activeStep && activeStep.key === "transition_fn" && typeof appState.transSubIndex === "number" && appState.transSubIndex > 0) {
+          appState.transSubIndex -= 1;
+        } else {
+          appState.convStageIndex = Math.max(0, appState.convStageIndex - 1);
+          const prevStep = getActiveStepObject();
+          if (prevStep && prevStep.key === "e_sets") appState.eSetSubIndex = Math.max(0, pd.eSetsRows.length - 1);
+          if (prevStep && prevStep.key === "transition_fn") appState.transSubIndex = Math.max(0, pd.transitionsLog.length - 1);
+        }
       }
-      logAction(`conv_stage_${type}`, `Stage_${appState.convStageIndex}`);
+
+      logAction(`conv_stage_${type}`, `Stage_${appState.convStageIndex}_eSub_${appState.eSetSubIndex}_tSub_${appState.transSubIndex}`);
       renderPipelineTab();
     }
 
@@ -2187,7 +2499,7 @@
               <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, pd.introducedStates)}</div>
             </div>
           </div>
-          <div class="st-table-wrap" style="margin-top:1rem;">
+          <div class="st-table-wrap" style="margin-top:0.9rem;">
             <table class="st-table">
               <thead>
                 <tr>
@@ -2203,23 +2515,99 @@
       }
 
       if (stepObj.key === "e_sets") {
-        const rowsHtml = pd.eSetsRows.map(r => `
-          <tr>
-            <td style="font-weight:700;">${escapeHtml(r.state)}</td>
-            <td style="font-weight:700;color:#0068c9;">${escapeHtml(r.formula)}</td>
-          </tr>
+        const totalSub = pd.eSetsRows.length;
+        const isAll = (appState.eSetSubIndex === "all");
+        const subIdx = isAll ? (totalSub - 1) : Math.max(0, Math.min(totalSub - 1, Number(appState.eSetSubIndex) || 0));
+        if (!isAll) appState.eSetSubIndex = subIdx;
+        const activeRow = pd.eSetsRows[subIdx];
+
+        const pillsHtml = pd.eSetsRows.map((r, i) => `
+          <button type="button" class="substep-pill ${(!isAll && i === subIdx) ? 'active' : ''}" onclick="setESetSubStep(${i})">
+            E(${escapeHtml(r.state)})
+          </button>
         `).join("");
+
+        let highlightCfg = [];
+        let traceCardHtml = "";
+
+        if (isAll || !activeRow) {
+          highlightCfg = [];
+          traceCardHtml = `
+            <div class="substep-trace-card">
+              <strong>Complete Summary — All ${totalSub} E-sets Computed:</strong>
+              Click any <code>E(qi)</code> button above or any row in the table below to inspect its step-by-step ε-path highlight on the NFA diagram.
+            </div>
+          `;
+        } else {
+          highlightCfg = {
+            originStates: [activeRow.state],
+            greenStates: activeRow.epsReachedStates,
+            edges: activeRow.epsEdges,
+            dimInactive: true
+          };
+
+          const hopsMarkup = activeRow.hops.length === 0
+            ? `<span style="color:var(--st-muted);font-style:italic;">No outgoing ε-transitions from <code>${escapeHtml(activeRow.state)}</code> — only the origin state itself is included.</span>`
+            : activeRow.hops.map(h => `<span class="hop-chip-eps">${escapeHtml(h.from)} ──ε──▶ ${escapeHtml(h.to)}</span>`).join(" ");
+
+          traceCardHtml = `
+            <div class="substep-trace-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem;">
+                <strong>Sub-step ${subIdx + 1} of ${totalSub} — Formation of <code>E(${escapeHtml(activeRow.state)})</code></strong>
+                <span style="font-family:var(--mono);font-weight:700;color:#0068c9;">${escapeHtml(activeRow.formula)}</span>
+              </div>
+              <div class="trace-step-line">
+                <strong>1. Start at origin state:</strong>
+                <span class="hop-chip-origin">${escapeHtml(activeRow.state)}</span>
+              </div>
+              <div class="trace-step-line">
+                <strong>2. Traverse ε-transitions:</strong>
+                ${hopsMarkup}
+              </div>
+              <div class="trace-step-line">
+                <strong>3. Resulting E-set:</strong>
+                <code style="font-weight:700;color:#0f5132;background:#e6f6ed;padding:2px 8px;border-radius:5px;">${escapeHtml(activeRow.formula)}</code>
+              </div>
+            </div>
+          `;
+        }
+
+        const rowsHtml = pd.eSetsRows.map((r, i) => {
+          const rowCls = isAll
+            ? "clickable-row"
+            : (i === subIdx ? "clickable-row active-substep-row" : (i < subIdx ? "clickable-row" : "clickable-row pending-substep-row"));
+          const statusMark = (!isAll && i === subIdx) ? "▶ " : ((!isAll && i < subIdx) || isAll ? "✓ " : "· ");
+          return `
+            <tr class="${rowCls}" onclick="setESetSubStep(${i})">
+              <td style="font-weight:700;">${statusMark}${escapeHtml(r.state)}</td>
+              <td style="font-weight:700;color:#0068c9;">${escapeHtml(r.formula)}</td>
+              <td style="font-size:0.81rem;color:var(--st-muted);">${r.hops.length > 0 ? r.hops.map(h => `${escapeHtml(h.from)}→${escapeHtml(h.to)}`).join(", ") : "self only"}</td>
+            </tr>
+          `;
+        }).join("");
+
         return `
+          <div class="substep-bar">
+            <button type="button" class="substep-nav-mini" onclick="setESetSubStep(${Math.max(0, subIdx - 1)})" ${(!isAll && subIdx === 0) ? "disabled" : ""}>◀ Prev E-set</button>
+            <button type="button" class="substep-nav-mini" onclick="setESetSubStep(${Math.min(totalSub - 1, subIdx + 1)})" ${(!isAll && subIdx >= totalSub - 1) ? "disabled" : ""}>Next E-set ▶</button>
+            <span style="color:var(--st-border);margin:0 2px;">|</span>
+            ${pillsHtml}
+            <button type="button" class="substep-pill ${isAll ? 'active' : ''}" onclick="setESetSubStep('all')">📋 Show All</button>
+          </div>
           <div class="conv-split-grid">
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.55rem;">Single-Symbol NFA Reference</h4>
-              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa)}</div>
+              <h4 class="st-h4" style="margin-bottom:0.45rem;">Single-Symbol NFA — ε-Path Highlight</h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, highlightCfg)}</div>
+              <div class="mini-graph-legend">
+                <span><span class="legend-dot" style="background:#fef08a;border:2px solid #ca8a04;"></span>Origin State <code>qi</code></span>
+                <span><span class="legend-dot" style="background:#86efac;border:2px solid #15803d;"></span>ε-Reached States &amp; Green ε-Edges</span>
+              </div>
             </div>
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.55rem;">Definition of E-sets</h4>
+              ${traceCardHtml}
               <div class="st-table-wrap">
                 <table class="st-table">
-                  <thead><tr><th>State q</th><th>Definition of E-set</th></tr></thead>
+                  <thead><tr><th>State q</th><th>Definition of E-set</th><th>ε-Hops</th></tr></thead>
                   <tbody>${rowsHtml}</tbody>
                 </table>
               </div>
@@ -2229,11 +2617,17 @@
       }
 
       if (stepObj.key === "initial_state") {
+        const initHighlight = {
+          originStates: [expandedNfa.start_state],
+          greenStates: pd.initialStateMembers.filter(x => x !== expandedNfa.start_state),
+          edges: pd.initialStateEpsEdges,
+          dimInactive: true
+        };
         return `
           <div class="conv-split-grid">
             <div>
               <h4 class="st-h4" style="margin-bottom:0.55rem;">Initial E-Closure Highlighted on NFA</h4>
-              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, pd.initialStateMembers)}</div>
+              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, initHighlight)}</div>
             </div>
             <div>
               <h4 class="st-h4" style="margin-bottom:0.55rem;">Definition of new initial state</h4>
@@ -2244,22 +2638,124 @@
       }
 
       if (stepObj.key === "transition_fn") {
-        const rowsHtml = pd.transitionsLog.map(r => `
-          <tr>
-            <td>${escapeHtml(r.fullFormula)}</td>
-          </tr>
+        const totalSub = pd.transitionsLog.length;
+        const isAll = (appState.transSubIndex === "all");
+        const subIdx = isAll ? (totalSub - 1) : Math.max(0, Math.min(totalSub - 1, Number(appState.transSubIndex) || 0));
+        if (!isAll) appState.transSubIndex = subIdx;
+        const activeRow = pd.transitionsLog[subIdx];
+
+        const pillsHtml = pd.transitionsLog.map((r, i) => `
+          <button type="button" class="substep-pill ${(!isAll && i === subIdx) ? 'active' : ''}" onclick="setTransSubStep(${i})" title="${escapeHtml(r.fullFormula)}">
+            ${i + 1}. δ(${escapeHtml(r.currAlias)}, ${escapeHtml(r.symbol)})
+          </button>
         `).join("");
+
+        let highlightCfg = [];
+        let traceCardHtml = "";
+
+        if (isAll || !activeRow) {
+          highlightCfg = [];
+          traceCardHtml = `
+            <div class="substep-trace-card">
+              <strong>Complete Summary — All ${totalSub} Transition Evaluations (Q1..Q${dfaDef.states.length}):</strong>
+              Click any <code>δ(Qi, σ)</code> button above or any row in the table below to highlight its exact symbol move and ε-closure path on the NFA diagram.
+            </div>
+          `;
+        } else {
+          highlightCfg = {
+            sourceHaloStates: activeRow.currMembers,
+            moveStates: activeRow.moveStates,
+            greenStates: activeRow.epsOnlyStates,
+            edges: [...activeRow.moveEdges, ...activeRow.epsEdges],
+            dimInactive: true
+          };
+
+          const discoveryBadge = activeRow.isNewlyDiscovered
+            ? `<span style="background:#dcfce7;color:#166534;padding:1px 8px;border-radius:999px;font-size:0.78rem;font-weight:700;">🆕 New State ${escapeHtml(activeRow.targetAlias)}</span>`
+            : `<span style="background:#f1f5f9;color:#475569;padding:1px 8px;border-radius:999px;font-size:0.78rem;font-weight:600;">↪ Known ${escapeHtml(activeRow.targetAlias)}</span>`;
+
+          const srcMarkup = activeRow.currMembers.length === 0
+            ? `<span class="hop-chip-src">Ø (Empty Set — 0 NFA states)</span>`
+            : activeRow.currMembers.map(s => `<span class="hop-chip-src">${escapeHtml(s)}</span>`).join(" ");
+
+          let moveMarkup = "";
+          if (activeRow.currMembers.length === 0) {
+            moveMarkup = `<span style="color:var(--st-muted);font-style:italic;">From <code>Ø</code>, reading <code>'${escapeHtml(activeRow.symbol)}'</code> stays in <code>Ø</code>.</span>`;
+          } else if (activeRow.moveHops.length === 0) {
+            moveMarkup = `<span style="color:#b91c1c;font-weight:600;">No outgoing <code>'${escapeHtml(activeRow.symbol)}'</code> edge from ${escapeHtml(activeRow.currLabel)} ➔ Move = Ø.</span>`;
+          } else {
+            moveMarkup = activeRow.moveHops.map(h => `<span class="hop-chip-move">${escapeHtml(h.from)} ──${escapeHtml(h.symbol)}──▶ ${escapeHtml(h.to)}</span>`).join(" ")
+              + ` <span style="font-family:var(--mono);font-weight:700;">➔ {${escapeHtml(activeRow.moveStates.join(", "))}}</span>`;
+          }
+
+          let closureMarkup = "";
+          if (activeRow.esetComponents.length === 0) {
+            closureMarkup = `<code style="font-weight:700;color:#b91c1c;">Ø = ${escapeHtml(activeRow.targetAlias)}</code>`;
+          } else {
+            const parts = activeRow.esetComponents.map(c => `<span class="hop-chip-eps">E(${escapeHtml(c.state)}) = ${escapeHtml(c.esetStr)}</span>`).join(" ∪ ");
+            closureMarkup = `${parts}`;
+          }
+
+          traceCardHtml = `
+            <div class="substep-trace-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem;">
+                <strong>Sub-step ${subIdx + 1} of ${totalSub} — Evaluating <code>δ(${escapeHtml(activeRow.currLabel)}, ${escapeHtml(activeRow.symbol)})</code></strong>
+                ${discoveryBadge}
+              </div>
+              <div class="trace-step-line">
+                <strong>1. Source subset ${escapeHtml(activeRow.currAlias)}:</strong>
+                ${srcMarkup}
+              </div>
+              <div class="trace-step-line">
+                <strong>2. Read '${escapeHtml(activeRow.symbol)}':</strong>
+                ${moveMarkup}
+              </div>
+              <div class="trace-step-line">
+                <strong>3. E-set union:</strong>
+                ${closureMarkup}
+              </div>
+              <div class="trace-step-line" style="margin-top:0.45rem;">
+                <code style="font-weight:700;color:#004280;background:#e8f2fc;padding:3px 9px;border-radius:5px;font-size:0.89rem;">${escapeHtml(activeRow.fullFormula)}</code>
+              </div>
+            </div>
+          `;
+        }
+
+        const rowsHtml = pd.transitionsLog.map((r, i) => {
+          const rowCls = isAll
+            ? "clickable-row"
+            : (i === subIdx ? "clickable-row active-substep-row" : (i < subIdx ? "clickable-row" : "clickable-row pending-substep-row"));
+          const statusMark = (!isAll && i === subIdx) ? "▶ " : ((!isAll && i < subIdx) || isAll ? "✓ " : "· ");
+          return `
+            <tr class="${rowCls}" onclick="setTransSubStep(${i})">
+              <td>${statusMark}${escapeHtml(r.fullFormula)}</td>
+            </tr>
+          `;
+        }).join("");
+
         return `
+          <div class="substep-bar">
+            <button type="button" class="substep-nav-mini" onclick="setTransSubStep(${Math.max(0, subIdx - 1)})" ${(!isAll && subIdx === 0) ? "disabled" : ""}>◀ Prev δ</button>
+            <button type="button" class="substep-nav-mini" onclick="setTransSubStep(${Math.min(totalSub - 1, subIdx + 1)})" ${(!isAll && subIdx >= totalSub - 1) ? "disabled" : ""}>Next δ ▶</button>
+            <span style="color:var(--st-border);margin:0 2px;">|</span>
+            ${pillsHtml}
+            <button type="button" class="substep-pill ${isAll ? 'active' : ''}" onclick="setTransSubStep('all')">📋 Show All</button>
+          </div>
           <div class="conv-split-grid">
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.55rem;">Single-Symbol NFA Reference</h4>
-              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa)}</div>
+              <h4 class="st-h4" style="margin-bottom:0.45rem;">Single-Symbol NFA — Transition &amp; ε-Closure Highlight</h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, highlightCfg)}</div>
+              <div class="mini-graph-legend">
+                <span><span class="legend-dot" style="background:#dbeafe;border:2px dashed #2563eb;"></span>Source Set <code>S</code></span>
+                <span><span class="legend-dot" style="background:#fef08a;border:2px solid #dc2626;"></span>Read <code>σ</code> (Red Edge ➔ Gold Node)</span>
+                <span><span class="legend-dot" style="background:#86efac;border:2px solid #16a34a;"></span>Follow-up <code>ε</code>-Closure</span>
+              </div>
             </div>
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.55rem;">Definition of transition function (Q1..Q${dfaDef.states.length})</h4>
+              ${traceCardHtml}
               <div class="st-table-wrap">
                 <table class="st-table">
-                  <thead><tr><th>Slide Derivation Formula</th></tr></thead>
+                  <thead><tr><th>Slide Derivation Formula (Click any row to highlight)</th></tr></thead>
                   <tbody>${rowsHtml}</tbody>
                 </table>
               </div>
@@ -2270,7 +2766,7 @@
 
       if (stepObj.key === "final_states") {
         return `
-          <div class="formula-card" style="margin-bottom:1.1rem;border-left-color:#15803d;">
+          <div class="formula-card" style="margin-bottom:1rem;border-left-color:#15803d;">
             <strong>Definition of final states:</strong> ${escapeHtml(pd.finalStatesFormula)}
           </div>
           <h4 class="st-h4" style="margin-bottom:0.55rem;">
@@ -2291,27 +2787,23 @@
       const minDfa = appState.minDfaDef;
       if (!pd || !dfaDef) return;
 
-      const hasAnySingle = Object.values(appState.transitions).some(row => Object.values(row).some(arr => arr && arr.length > 0));
-      const isBlankCustom = (appState.presetName === "Custom Automaton") && !hasAnySingle && appState.stringTransitions.length === 0;
-      document.getElementById("blankCustomOnboardingBanner").classList.toggle("hidden", !isBlankCustom);
-
-      const detectBanner = document.getElementById("stepDetectionBanner");
-      if (pd.hasStringSplits) {
-        detectBanner.className = "st-banner st-banner-success";
-        detectBanner.innerHTML = `🔍 <strong>Auto-Detected ${pd.totalSteps} Conversion Steps (Slide 100):</strong> Detected <strong>${pd.splitLog.length}</strong> multi-symbol string transition(s) — <strong>Step 1</strong> splits string transitions by introducing intermediate state(s) <code>${escapeHtml(pd.introducedStates.join(", "))}</code>.`;
-      } else {
-        detectBanner.className = "st-banner st-banner-info";
-        detectBanner.innerHTML = `🔍 <strong>Auto-Detected ${pd.totalSteps} Conversion Steps (Slide 100):</strong> No multi-symbol string transitions detected — string-transition elimination is skipped automatically (starts directly at <strong>Step 1: Definition of E-sets</strong>, matching Example 3).`;
-      }
-
       const steps = pd.steps;
       const maxStage = steps.length + (appState.showOptionalMinDfa ? 1 : 0);
       appState.convStageIndex = Math.min(appState.convStageIndex, maxStage);
       const stageIdx = appState.convStageIndex;
+      const activeStep = getActiveStepObject();
 
-      // Render Interactive Walkthrough
-      document.getElementById("btnConvPrev").disabled = (stageIdx === 0);
-      document.getElementById("btnConvNext").disabled = (stageIdx >= maxStage);
+      const atVeryStart = (stageIdx === 0);
+      const onLastESetSub = activeStep && activeStep.key === "e_sets" && (appState.eSetSubIndex === "all" || appState.eSetSubIndex >= pd.eSetsRows.length - 1);
+      const onLastTransSub = activeStep && activeStep.key === "transition_fn" && (appState.transSubIndex === "all" || appState.transSubIndex >= pd.transitionsLog.length - 1);
+      const atVeryEnd = (stageIdx >= maxStage) && (!activeStep || (activeStep.key !== "e_sets" && activeStep.key !== "transition_fn") || onLastESetSub || onLastTransSub);
+
+      document.getElementById("btnConvPrev").disabled = atVeryStart;
+      document.getElementById("btnConvNext").disabled = atVeryEnd;
+
+      const skipBtn = document.getElementById("btnConvSkipMajor");
+      const showSkip = activeStep && ((activeStep.key === "e_sets" && !onLastESetSub) || (activeStep.key === "transition_fn" && !onLastTransSub));
+      skipBtn.classList.toggle("hidden", !showSkip);
 
       const fullStageTitles = ["Given NFA M", ...steps.map(s => `Step ${s.stepNum}: ${s.title}`)];
       const shortMap = {
@@ -2345,7 +2837,7 @@
               <div class="st-graph-frame">${renderAutomatonSvg(originalNfa)}</div>
             </div>
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.55rem;">Detected Conversion Steps (Slide 100)</h4>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">Conversion Steps (${steps.length} Steps — Slide 100)</h4>
               <div class="formula-card" style="font-family:var(--sans);">
                 <ol style="padding-left:1.25rem;">${planItems}</ol>
               </div>
@@ -2353,11 +2845,14 @@
           </div>
         `;
       } else if (stageIdx <= steps.length) {
-        const activeStep = steps[stageIdx - 1];
         stageContainer.innerHTML = `
-          <h3 class="st-h3" style="font-size:1.3rem;margin-bottom:0.65rem;">Step ${activeStep.stepNum} of ${steps.length} — ${escapeHtml(activeStep.title)}</h3>
+          <h3 class="st-h3" style="font-size:1.26rem;margin-bottom:0.55rem;">Step ${activeStep.stepNum} of ${steps.length} — ${escapeHtml(activeStep.title)}</h3>
           ${renderStepBodyHtml(activeStep, pd, originalNfa, expandedNfa, dfaDef)}
         `;
+        const activeTr = stageContainer.querySelector("tr.active-substep-row");
+        if (activeTr && activeTr.scrollIntoView) {
+          activeTr.scrollIntoView({ block: "nearest" });
+        }
       } else if (minDfa) {
         const mapRows = appState.minMapping.map(r => `
           <tr>
@@ -2366,7 +2861,7 @@
           </tr>
         `).join("");
         stageContainer.innerHTML = `
-          <h3 class="st-h3" style="font-size:1.3rem;margin-bottom:0.65rem;">Optional Bonus Stage — Minimized DFA (${minDfa.states.length} states)</h3>
+          <h3 class="st-h3" style="font-size:1.26rem;margin-bottom:0.55rem;">Optional Bonus Stage — Minimized DFA (${minDfa.states.length} states)</h3>
           <div class="conv-split-grid">
             <div class="st-graph-frame">${renderAutomatonSvg(minDfa)}</div>
             <div class="st-table-wrap">
@@ -2640,6 +3135,8 @@
           appState.states = list;
           if (!appState.states.includes(appState.startState)) appState.startState = appState.states[0];
           appState.acceptStates = appState.acceptStates.filter(s => appState.states.includes(s));
+          appState.eSetSubIndex = 0;
+          appState.transSubIndex = 0;
           logAction("edit_states", appState.states.join(","));
           rebuildSidebarControls();
           recomputeAndRenderAll();
@@ -2650,6 +3147,8 @@
         const list = Array.from(new Set(e.target.value.split(",").map(s => s.trim()).filter(Boolean)));
         if (list.length > 0) {
           appState.alphabet = list;
+          appState.eSetSubIndex = 0;
+          appState.transSubIndex = 0;
           logAction("edit_alphabet", appState.alphabet.join(","));
           rebuildSidebarControls();
           recomputeAndRenderAll();
@@ -2658,6 +3157,8 @@
 
       document.getElementById("startStateSelect").addEventListener("change", (e) => {
         appState.startState = e.target.value;
+        appState.eSetSubIndex = 0;
+        appState.transSubIndex = 0;
         logAction("select_start_state", appState.startState);
         recomputeAndRenderAll();
       });
