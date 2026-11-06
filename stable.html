@@ -1,0 +1,3191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Automata Studio: Cognitive Learning Lab</title>
+  <style>
+    :root {
+      --st-bg: #ffffff;
+      --st-sidebar-bg: #f0f2f6;
+      --st-surface: #f8f9fb;
+      --st-text: #31333F;
+      --st-heading: #0e1117;
+      --st-muted: #555867;
+      --st-border: rgba(49, 51, 63, 0.2);
+      --st-border-soft: #e6eaf1;
+      --st-primary: #ff4b4b;
+      --st-primary-hover: #e03c3c;
+      --st-blue: #0068c9;
+      --st-info-bg: #e8f2fc;
+      --st-info-text: #004280;
+      --st-success-bg: #e6f6ed;
+      --st-success-text: #0f5132;
+      --st-error-bg: #fde8e8;
+      --st-error-text: #842029;
+      --st-warn-bg: #fff8e6;
+      --st-warn-text: #664d03;
+      --mono: "Source Code Pro", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --diagram-scale: 1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      font-family: var(--sans);
+      font-size: 16px;
+      background: var(--st-bg);
+      color: var(--st-text);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    code, pre, .mono { font-family: var(--mono); }
+
+    .st-top-ribbon {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #ff4b4b 0%, #ffbb00 50%, #ff4b4b 100%);
+      z-index: 100;
+    }
+
+    .st-app-shell {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+      padding-top: 3px;
+    }
+
+    .st-sidebar {
+      width: 376px;
+      min-width: 376px;
+      max-width: 376px;
+      background: var(--st-sidebar-bg);
+      border-right: 1px solid rgba(49, 51, 63, 0.12);
+      padding: 1.5rem 1.35rem 3rem;
+      height: calc(100vh - 3px);
+      position: sticky;
+      top: 3px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.05rem;
+      transition: margin-left 0.22s ease, opacity 0.18s ease;
+      z-index: 40;
+    }
+    body.sidebar-collapsed .st-sidebar {
+      margin-left: -376px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .sidebar-collapse-btn {
+      align-self: flex-end;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      color: var(--st-muted);
+      font-size: 18px;
+      line-height: 1;
+      padding: 4px 8px;
+      cursor: pointer;
+      margin-bottom: -10px;
+    }
+    .sidebar-collapse-btn:hover {
+      background: rgba(49, 51, 63, 0.08);
+      color: var(--st-heading);
+    }
+
+    .sidebar-open-fab {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 60;
+      background: var(--st-sidebar-bg);
+      border: 1px solid var(--st-border);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--st-heading);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    body.sidebar-collapsed .sidebar-open-fab { display: inline-flex; }
+    .sidebar-open-fab:hover { background: #e2e6ee; }
+
+    .st-sidebar h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--st-heading);
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+    }
+    .st-sidebar h3 {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--st-heading);
+      margin-top: 0.1rem;
+    }
+    .st-sidebar h4 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--st-heading);
+    }
+    .st-divider {
+      border: 0;
+      border-top: 1px solid rgba(49, 51, 63, 0.16);
+      margin: 0.2rem 0;
+    }
+    .st-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--st-text);
+      margin-bottom: 0.3rem;
+    }
+    .st-input, .st-select {
+      width: 100%;
+      min-height: 40px;
+      padding: 0.45rem 0.7rem;
+      font-size: 0.93rem;
+      border: 1px solid var(--st-border);
+      border-radius: 0.5rem;
+      background: #ffffff;
+      color: var(--st-heading);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .st-input:focus, .st-select:focus {
+      border-color: var(--st-primary);
+      box-shadow: 0 0 0 2px rgba(255, 75, 75, 0.2);
+    }
+
+    .st-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .st-btn {
+      min-height: 38px;
+      padding: 0.4rem 0.82rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--st-border);
+      background: #ffffff;
+      color: var(--st-heading);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .st-btn:hover:not(:disabled) {
+      border-color: var(--st-primary);
+      color: var(--st-primary);
+      background: #fffafa;
+    }
+    .st-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .st-btn-primary {
+      background: var(--st-primary);
+      border-color: var(--st-primary);
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .st-btn-primary:hover:not(:disabled) {
+      background: var(--st-primary-hover);
+      border-color: var(--st-primary-hover);
+      color: #ffffff;
+    }
+
+    .st-info-box {
+      padding: 0.8rem 0.95rem;
+      border-radius: 0.5rem;
+      background: var(--st-info-bg);
+      color: var(--st-info-text);
+      font-size: 0.9rem;
+      line-height: 1.48;
+    }
+
+    .st-multiselect-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 7px 9px;
+      min-height: 40px;
+      border-radius: 0.5rem;
+      border: 1px solid var(--st-border);
+      background: #ffffff;
+      align-items: center;
+    }
+    .st-tag {
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.86rem;
+      font-family: var(--mono);
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid rgba(49, 51, 63, 0.22);
+      background: #f0f2f6;
+      color: #475569;
+      transition: all 0.12s;
+    }
+    .st-tag:hover { border-color: var(--st-primary); color: var(--st-heading); }
+    .st-tag.selected {
+      background: var(--st-primary);
+      border-color: var(--st-primary);
+      color: #ffffff;
+    }
+
+    .st-expander-stack { display: flex; flex-direction: column; gap: 0.55rem; }
+    details.st-expander {
+      border: 1px solid var(--st-border);
+      border-radius: 0.5rem;
+      background: #ffffff;
+      overflow: hidden;
+    }
+    details.st-expander > summary {
+      padding: 0.65rem 0.9rem;
+      font-size: 0.93rem;
+      font-weight: 600;
+      color: var(--st-heading);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #ffffff;
+    }
+    details.st-expander > summary:hover { color: var(--st-primary); }
+    details.st-expander > summary::-webkit-details-marker { display: none; }
+    details.st-expander > summary::before {
+      content: "▸";
+      font-size: 0.95rem;
+      color: var(--st-muted);
+      transition: transform 0.15s;
+      display: inline-block;
+    }
+    details.st-expander[open] > summary::before { transform: rotate(90deg); }
+    details.st-expander[open] > summary { border-bottom: 1px solid var(--st-border-soft); }
+    .st-expander-content {
+      padding: 0.75rem 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .trans-rule-block { display: flex; flex-direction: column; gap: 0.25rem; }
+    .trans-rule-lbl { font-size: 0.85rem; color: var(--st-muted); font-family: var(--mono); font-weight: 600; }
+
+    /* String Transitions Sidebar Widget */
+    .str-rules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .str-rule-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.4rem 0.65rem;
+      border-radius: 0.45rem;
+      background: #ffffff;
+      border: 1px solid var(--st-border-soft);
+      font-family: var(--mono);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--st-heading);
+    }
+    .str-rule-del {
+      border: 0;
+      background: #fee2e2;
+      color: #b91c1c;
+      border-radius: 5px;
+      padding: 2px 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .str-rule-del:hover { background: #fecaca; }
+    .str-add-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      gap: 0.4rem;
+      align-items: end;
+    }
+
+    /* Main Content Canvas */
+    .st-main {
+      flex: 1;
+      min-width: 0;
+      padding: 1.45rem 2.5rem 3rem;
+      background: #ffffff;
+    }
+    @media (max-width: 980px) {
+      .st-app-shell { flex-direction: column; }
+      .st-sidebar {
+        width: 100%; min-width: 100%; max-width: 100%;
+        height: auto; position: relative; top: 0;
+      }
+      body.sidebar-collapsed .st-sidebar { margin-left: 0; display: none; }
+      .st-main { padding: 1.4rem 1.1rem 3rem; }
+    }
+
+    .st-hero-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.45rem;
+    }
+    .st-title {
+      font-size: 2.28rem;
+      font-weight: 700;
+      color: var(--st-heading);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .st-lead {
+      font-size: 1.02rem;
+      color: var(--st-text);
+      margin-bottom: 0.85rem;
+    }
+    .st-top-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .st-badge-pill {
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      background: var(--st-sidebar-bg);
+      border: 1px solid var(--st-border-soft);
+      font-size: 0.85rem;
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--st-heading);
+    }
+
+    .st-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.7rem;
+      border-bottom: 1px solid var(--st-border-soft);
+      margin-bottom: 0.85rem;
+    }
+    .st-tab {
+      background: transparent;
+      border: 0;
+      border-bottom: 3px solid transparent;
+      padding: 0.6rem 0.15rem 0.7rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--st-muted);
+      cursor: pointer;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .st-tab:hover { color: var(--st-primary); }
+    .st-tab.active {
+      color: var(--st-primary);
+      border-bottom-color: var(--st-primary);
+    }
+
+    .st-h3 {
+      font-size: 1.48rem;
+      font-weight: 700;
+      color: var(--st-heading);
+      letter-spacing: -0.01em;
+      margin-bottom: 0.25rem;
+    }
+    .st-h4 {
+      font-size: 1.14rem;
+      font-weight: 700;
+      color: var(--st-heading);
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+    .st-caption {
+      font-size: 0.92rem;
+      color: var(--st-muted);
+      margin-bottom: 0.8rem;
+    }
+
+    .st-banner {
+      padding: 0.8rem 1rem;
+      border-radius: 0.55rem;
+      font-size: 0.93rem;
+      margin-bottom: 0.8rem;
+      line-height: 1.5;
+    }
+    .st-banner-info { background: var(--st-info-bg); color: var(--st-info-text); border: 1px solid #cbe2fa; }
+    .st-banner-success { background: var(--st-success-bg); color: var(--st-success-text); border: 1px solid #b8e6cc; }
+    .st-banner-warn { background: var(--st-warn-bg); color: var(--st-warn-text); border: 1px solid #f5dfa3; }
+    .st-banner-error { background: var(--st-error-bg); color: var(--st-error-text); border: 1px solid #f7c2c7; }
+
+    .st-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.9rem;
+      padding: 0.45rem 0;
+      margin-bottom: 0.7rem;
+    }
+    .st-checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.94rem;
+      font-weight: 500;
+      color: var(--st-heading);
+      cursor: pointer;
+      user-select: none;
+    }
+    .st-checkbox-label input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--st-primary);
+      cursor: pointer;
+    }
+    .legend-and-zoom {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.9rem;
+      font-size: 0.86rem;
+      color: var(--st-text);
+    }
+    .legend-dot {
+      width: 13px; height: 13px; border-radius: 999px; display: inline-block; vertical-align: middle; margin-right: 4px;
+    }
+    .zoom-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--st-sidebar-bg);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--st-border-soft);
+    }
+    .zoom-btn {
+      border: 0;
+      background: transparent;
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--st-muted);
+    }
+    .zoom-btn.active { background: #ffffff; color: var(--st-heading); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+
+    /* Interactive Conversion Stepper Pill Bar */
+    .conv-nav-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.55rem;
+      margin-bottom: 0.7rem;
+    }
+    .conv-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.42rem;
+      margin-bottom: 0.95rem;
+    }
+    .conv-pill {
+      border: 1px solid var(--st-border-soft);
+      background: var(--st-surface);
+      color: var(--st-muted);
+      border-radius: 999px;
+      padding: 0.3rem 0.82rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .conv-pill:hover { border-color: var(--st-primary); color: var(--st-heading); }
+    .conv-pill.active {
+      background: var(--st-primary);
+      border-color: var(--st-primary);
+      color: #ffffff;
+    }
+
+    /* Sub-step Explorer Bar & Trace Cards */
+    .substep-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.38rem;
+      padding: 0.5rem 0.65rem;
+      background: var(--st-surface);
+      border: 1px solid var(--st-border-soft);
+      border-radius: 0.55rem;
+      margin-bottom: 0.85rem;
+    }
+    .substep-pill {
+      border: 1px solid var(--st-border-soft);
+      background: #ffffff;
+      color: var(--st-muted);
+      border-radius: 6px;
+      padding: 0.22rem 0.62rem;
+      font-size: 0.81rem;
+      font-family: var(--mono);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .substep-pill:hover { border-color: var(--st-blue); color: var(--st-heading); }
+    .substep-pill.active {
+      background: var(--st-blue);
+      border-color: var(--st-blue);
+      color: #ffffff;
+    }
+    .substep-nav-mini {
+      border: 1px solid var(--st-border);
+      background: #ffffff;
+      color: var(--st-heading);
+      border-radius: 6px;
+      padding: 0.22rem 0.6rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .substep-nav-mini:hover:not(:disabled) { border-color: var(--st-blue); color: var(--st-blue); }
+    .substep-nav-mini:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .substep-trace-card {
+      padding: 0.85rem 1.05rem;
+      border-radius: 0.55rem;
+      background: #f8fafc;
+      border: 1px solid #dbeafe;
+      border-left: 4px solid var(--st-blue);
+      margin-bottom: 0.8rem;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    .trace-step-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.35rem;
+    }
+    .hop-chip-move {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 5px;
+      background: #fff1f2;
+      border: 1px solid #fda4af;
+      color: #be123c;
+      font-family: var(--mono);
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+    .hop-chip-eps {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 5px;
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      color: #15803d;
+      font-family: var(--mono);
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+    .hop-chip-origin {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 5px;
+      background: #fef9c3;
+      border: 1px solid #fde047;
+      color: #854d0e;
+      font-family: var(--mono);
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+    .hop-chip-src {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 5px;
+      background: #dbeafe;
+      border: 1px solid #93c5fd;
+      color: #1e40af;
+      font-family: var(--mono);
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+    .mini-graph-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      font-size: 0.81rem;
+      color: var(--st-muted);
+      margin-top: 0.45rem;
+      padding: 0.35rem 0.55rem;
+      background: var(--st-surface);
+      border-radius: 6px;
+    }
+
+    .conv-split-grid {
+      display: grid;
+      grid-template-columns: 1.06fr 1.24fr;
+      gap: 1.4rem;
+      align-items: start;
+      margin-top: 0.4rem;
+    }
+    .conv-two-equal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.4rem;
+      align-items: start;
+      margin-top: 0.4rem;
+    }
+    @media (max-width: 1180px) {
+      .conv-split-grid, .conv-two-equal { grid-template-columns: 1fr; }
+    }
+
+    .overview-grid {
+      display: grid;
+      gap: 1.4rem;
+      align-items: start;
+      margin-bottom: 1.5rem;
+    }
+    .overview-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .overview-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .overview-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (max-width: 1200px) {
+      .overview-cols-2, .overview-cols-3, .overview-cols-4 { grid-template-columns: 1fr; }
+    }
+
+    .state-count-code {
+      font-family: var(--mono);
+      font-size: 0.84rem;
+      font-weight: 600;
+      padding: 0.15rem 0.55rem;
+      border-radius: 6px;
+      background: var(--st-sidebar-bg);
+      color: #0068c9;
+    }
+
+    .st-graph-frame {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid var(--st-border-soft);
+      border-radius: 0.65rem;
+      padding: 0.9rem 0.85rem;
+      min-height: 225px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: auto;
+    }
+    .st-graph-frame svg {
+      width: auto;
+      max-width: calc(100% * var(--diagram-scale));
+      height: auto;
+      min-height: 185px;
+      max-height: calc(285px * var(--diagram-scale));
+      display: block;
+    }
+    #stepperGraphContainer {
+      min-height: 275px;
+      padding: 1.15rem;
+    }
+    #stepperGraphContainer svg {
+      width: auto;
+      max-width: 100%;
+      height: calc(270px * var(--diagram-scale));
+      min-height: 210px;
+      max-height: calc(390px * var(--diagram-scale));
+    }
+
+    .formula-card {
+      padding: 0.95rem 1.15rem;
+      border-radius: 0.55rem;
+      background: var(--st-surface);
+      border-left: 4px solid var(--st-blue);
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      color: var(--st-heading);
+      line-height: 1.62;
+    }
+
+    .st-table-wrap {
+      overflow-x: auto;
+      max-height: 280px;
+      overflow-y: auto;
+      border: 1px solid var(--st-border-soft);
+      border-radius: 0.45rem;
+    }
+    table.st-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+      text-align: left;
+    }
+    table.st-table th {
+      background: var(--st-surface);
+      color: var(--st-muted);
+      font-weight: 600;
+      padding: 0.48rem 0.55rem;
+      border-bottom: 1px solid var(--st-border-soft);
+      position: sticky;
+      top: 0;
+      white-space: nowrap;
+      z-index: 2;
+    }
+    table.st-table td {
+      padding: 0.46rem 0.55rem;
+      border-bottom: 1px solid #f1f3f8;
+      font-family: var(--mono);
+      color: var(--st-heading);
+    }
+    table.st-table tr.clickable-row { cursor: pointer; transition: background 0.1s; }
+    table.st-table tr.clickable-row:hover td { background: #f1f7fe; }
+    table.st-table tr.active-substep-row td {
+      background: #e8f2fc !important;
+      border-top: 1px solid #93c5fd;
+      border-bottom: 1px solid #93c5fd;
+    }
+    table.st-table tr.pending-substep-row td {
+      opacity: 0.48;
+    }
+
+    .stepper-top-grid {
+      display: grid;
+      grid-template-columns: 2fr 1.1fr;
+      gap: 1.5rem;
+      align-items: end;
+      margin-top: 0.85rem;
+    }
+    @media (max-width: 820px) { .stepper-top-grid { grid-template-columns: 1fr; } }
+    .st-radio-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      min-height: 38px;
+      align-items: center;
+      font-size: 0.94rem;
+      font-weight: 500;
+    }
+    .st-radio-row label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      cursor: pointer;
+    }
+    .st-radio-row input[type="radio"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--st-primary);
+    }
+    .stepper-btn-bar {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(145px, 190px)) 1fr;
+      gap: 0.75rem;
+      align-items: center;
+      margin-top: 1.1rem;
+    }
+    @media (max-width: 900px) { .stepper-btn-bar { grid-template-columns: 1fr 1fr; } }
+
+    .stepper-status-line {
+      margin-top: 1.1rem;
+      font-size: 1.02rem;
+      color: var(--st-heading);
+    }
+    .inline-code {
+      font-family: var(--mono);
+      background: var(--st-sidebar-bg);
+      color: #09ab3b;
+      padding: 0.15rem 0.5rem;
+      border-radius: 5px;
+      font-size: 0.93rem;
+      font-weight: 600;
+    }
+    .tape-line {
+      margin-top: 0.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 1rem;
+    }
+    .tape-char-done {
+      background: #dcfce7; color: #166534; padding: 4px 11px; border-radius: 6px;
+      font-family: var(--mono); font-size: 1.02rem; font-weight: 700; border: 1px solid #86efac;
+    }
+    .tape-char-curr {
+      background: #fde047; color: #0f172a; padding: 4px 11px; border-radius: 6px;
+      font-family: var(--mono); font-size: 1.02rem; font-weight: 700; border: 1px solid #eab308;
+    }
+    .tape-char-wait {
+      background: #f8fafc; color: #94a3b8; padding: 4px 11px; border-radius: 6px;
+      font-family: var(--mono); font-size: 1.02rem; border: 1px solid var(--st-border-soft);
+    }
+
+    .st-alert-success {
+      margin-top: 1.1rem;
+      padding: 0.95rem 1.15rem;
+      border-radius: 0.5rem;
+      background: var(--st-success-bg);
+      color: var(--st-success-text);
+      font-size: 0.98rem;
+    }
+    .st-alert-error {
+      margin-top: 1.1rem;
+      padding: 0.95rem 1.15rem;
+      border-radius: 0.5rem;
+      background: var(--st-error-bg);
+      color: var(--st-error-text);
+      font-size: 0.98rem;
+    }
+    .st-alert-warn {
+      margin-top: 1.1rem;
+      padding: 0.95rem 1.15rem;
+      border-radius: 0.5rem;
+      background: var(--st-warn-bg);
+      color: var(--st-warn-text);
+      font-size: 0.98rem;
+    }
+
+    .st-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem;
+      margin: 1.1rem 0 1.6rem;
+    }
+    .st-metric-box {
+      padding: 1.1rem 1.25rem;
+      border-radius: 0.6rem;
+      border: 1px solid var(--st-border-soft);
+      background: var(--st-surface);
+    }
+    .st-metric-lbl { font-size: 0.94rem; color: var(--st-muted); font-weight: 500; }
+    .st-metric-val { font-size: 2.15rem; font-weight: 700; color: var(--st-heading); line-height: 1.2; margin-top: 0.25rem; }
+
+    .st-code-block {
+      margin-top: 0.6rem;
+      padding: 1.1rem 1.25rem;
+      border-radius: 0.55rem;
+      background: #f8f9fb;
+      border: 1px solid var(--st-border-soft);
+      color: var(--st-heading);
+      font-size: 0.92rem;
+      overflow-x: auto;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="st-top-ribbon"></div>
+
+  <button type="button" class="sidebar-open-fab" onclick="toggleSidebar(false)" title="Expand Sidebar">
+    <span>»</span> <span>Controls</span>
+  </button>
+
+  <div class="st-app-shell">
+    <!-- Left Sidebar -->
+    <aside class="st-sidebar" id="stSidebar">
+      <button type="button" class="sidebar-collapse-btn" onclick="toggleSidebar(true)" title="Collapse Sidebar">«</button>
+
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.55rem;">
+          <h2>⚙️ Experiment Controls</h2>
+          <span id="resetStatusToast" class="hidden" style="font-size:0.82rem;font-weight:700;color:#059669;">✓ Reset</span>
+        </div>
+        <label class="st-label" for="participantIdInput">Participant ID (Optional)</label>
+        <input id="participantIdInput" type="text" placeholder="e.g., SZE-XXXXXX" class="st-input mono" />
+        <div class="st-btn-row" style="margin-top:0.65rem;">
+          <button type="button" id="btnSidebarResetDefault" onclick="resetToDefault()" class="st-btn">🔄 Reset Default</button>
+          <button type="button" id="btnSidebarResetPreset" onclick="resetCurrentPreset()" class="st-btn">↺ Reset Preset</button>
+        </div>
+      </div>
+
+      <hr class="st-divider" />
+
+      <div style="display:flex;flex-direction:column;gap:0.6rem;">
+        <h2>📚 Scenarios &amp; Presets</h2>
+        <div>
+          <label class="st-label" for="presetSelect">Select Scenario Preset:</label>
+          <select id="presetSelect" class="st-select">
+            <option value="Custom Automaton">Custom Automaton</option>
+            <option value="NFA → DFA: Example 1">NFA → DFA: Example 1</option>
+            <option value="NFA → DFA: Example 2">NFA → DFA: Example 2</option>
+            <option value="NFA → DFA: Example 3">NFA → DFA: Example 3</option>
+            <option value="NFA → DFA: Example 4">NFA → DFA: Example 4</option>
+            <option value="NFA → DFA: Example 5">NFA → DFA: Example 5</option>
+          </select>
+        </div>
+        <div id="scenarioDescriptionBox" class="st-info-box"></div>
+      </div>
+
+      <hr class="st-divider" />
+
+      <div style="display:flex;flex-direction:column;gap:0.75rem;">
+        <h3>NFA Formal Specification</h3>
+        <div>
+          <label class="st-label" for="statesInput">States K (comma-separated)</label>
+          <input id="statesInput" type="text" value="q1, q2, q3" class="st-input mono" />
+        </div>
+        <div>
+          <label class="st-label" for="alphabetInput">Alphabet Σ (single symbols, 'e' for ε)</label>
+          <input id="alphabetInput" type="text" value="a, b, e" class="st-input mono" />
+        </div>
+        <div>
+          <label class="st-label" for="startStateSelect">Initial State (s)</label>
+          <select id="startStateSelect" class="st-select mono"></select>
+        </div>
+        <div>
+          <label class="st-label">Final States (F)</label>
+          <div id="acceptStatesContainer" class="st-multiselect-box"></div>
+        </div>
+      </div>
+
+      <hr class="st-divider" />
+
+      <div style="display:flex;flex-direction:column;gap:0.55rem;">
+        <h4>Single-Symbol &amp; ε Transitions</h4>
+        <div id="transitionsBuilderContainer" class="st-expander-stack"></div>
+      </div>
+
+      <hr class="st-divider" />
+
+      <div style="display:flex;flex-direction:column;gap:0.55rem;">
+        <h4>Multi-Symbol / String Transitions</h4>
+        <p style="font-size:0.82rem;color:var(--st-muted);line-height:1.4;">
+          Add string edges (length ≥ 2, e.g., <code>ab</code>, <code>aa</code>, <code>ba</code>, <code>bb</code>) to trigger Step 1 string splitting.
+        </p>
+        <div id="stringRulesListContainer" class="str-rules-list"></div>
+        <div class="str-add-grid">
+          <div>
+            <label class="st-label" for="strFromSelect" style="font-size:0.8rem;">From</label>
+            <select id="strFromSelect" class="st-select mono" style="padding:0.35rem 0.45rem;"></select>
+          </div>
+          <div>
+            <label class="st-label" for="strLabelInput" style="font-size:0.8rem;">String</label>
+            <input id="strLabelInput" type="text" placeholder="ab" class="st-input mono" style="padding:0.35rem 0.5rem;" />
+          </div>
+          <div>
+            <label class="st-label" for="strToSelect" style="font-size:0.8rem;">To</label>
+            <select id="strToSelect" class="st-select mono" style="padding:0.35rem 0.45rem;"></select>
+          </div>
+        </div>
+        <button type="button" id="btnAddStringTransition" onclick="addStringTransitionRule()" class="st-btn" style="width:100%;">
+          ➕ Add String Transition
+        </button>
+        <div id="stringRuleErrorBox" class="st-banner st-banner-error hidden" style="margin-bottom:0;font-size:0.84rem;padding:0.55rem 0.75rem;"></div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="st-main">
+      <div class="st-hero-row">
+        <h1 class="st-title">🧠 Automata Studio: Interactive Learning Laboratory</h1>
+        <div class="st-top-meta">
+          <span class="st-badge-pill" id="headerSessionBadge">Actions: 0</span>
+          <button type="button" onclick="resetToDefault()" class="st-btn" style="min-height:34px;padding:0.3rem 0.75rem;font-size:0.86rem;">
+            🔄 Reset to Default
+          </button>
+        </div>
+      </div>
+      <p class="st-lead">
+        Master <strong>NFA → DFA Conversion</strong> through <strong>Auto-Detected Lecture 5 Steps (Slide 100)</strong>,
+        <strong>Multi-Symbol String Transition Splitting</strong>, <strong>E-Set Union Derivations</strong>, and <strong>Step-by-Step String Tracing</strong>.
+      </p>
+
+      <!-- Tabs (Strictly 3 Tabs) -->
+      <nav class="st-tabs">
+        <button type="button" id="tabBtnPipeline" onclick="switchTab('pipeline')" class="st-tab active">
+          📊 1. NFA ➔ DFA Step-by-Step Conversion
+        </button>
+        <button type="button" id="tabBtnStepper" onclick="switchTab('stepper')" class="st-tab">
+          ⏯️ 2. Step-by-Step String Stepper
+        </button>
+        <button type="button" id="tabBtnTelemetry" onclick="switchTab('telemetry')" class="st-tab">
+          📋 3. Research Telemetry &amp; Activity Log
+        </button>
+      </nav>
+
+      <div id="globalValidationErrorBanner" class="st-banner st-banner-error hidden"></div>
+
+      <!-- TAB 1: CONVERSION PIPELINE -->
+      <section id="tabPanelPipeline">
+        <div class="st-toolbar">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem;">
+            <div class="st-radio-row">
+              <strong style="font-size:0.92rem;color:var(--st-muted);">Mode:</strong>
+              <label>
+                <input type="radio" name="pipelineViewMode" value="interactive" checked onchange="setPipelineViewMode(this.value)" />
+                <span>Interactive Step-by-Step Walkthrough</span>
+              </label>
+              <label>
+                <input type="radio" name="pipelineViewMode" value="overview" onchange="setPipelineViewMode(this.value)" />
+                <span>Full Pipeline Overview</span>
+              </label>
+            </div>
+
+            <label class="st-checkbox-label">
+              <input type="checkbox" id="chkOptionalMinDfa" onchange="toggleOptionalMinDfa(this.checked)" />
+              <span>Show Optional Bonus Stage: Minimized DFA</span>
+            </label>
+          </div>
+
+          <div class="legend-and-zoom">
+            <span><span class="legend-dot" style="background:#dbeafe;border:2px solid #1d4ed8;"></span>Initial State</span>
+            <span><span class="legend-dot" style="background:#fef08a;border:2px solid #ca8a04;"></span>Origin / Direct Move</span>
+            <span><span class="legend-dot" style="background:#86efac;border:2px solid #15803d;"></span>ε-Closure / Introduced</span>
+            <span><span class="legend-dot" style="background:#ffffff;border:3px double #334155;"></span>Final State</span>
+            <span><span class="legend-dot" style="background:#fee2e2;border:2px solid #b91c1c;"></span>Ø (Empty / Trap)</span>
+            <div class="zoom-group" title="Adjust diagram magnification">
+              <span style="font-size:0.8rem;padding:0 6px;color:var(--st-muted);">🔍 Scale:</span>
+              <button type="button" class="zoom-btn active" onclick="setDiagramScale(1, this)">100%</button>
+              <button type="button" class="zoom-btn" onclick="setDiagramScale(1.2, this)">120%</button>
+              <button type="button" class="zoom-btn" onclick="setDiagramScale(1.4, this)">140%</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode A: Interactive Step-by-Step Walkthrough -->
+        <div id="interactiveWalkthroughWrap">
+          <div class="conv-nav-bar">
+            <button type="button" id="btnConvGiven" onclick="convStepAction('reset')" class="st-btn">⏮️ Given NFA</button>
+            <button type="button" id="btnConvPrev" onclick="convStepAction('prev')" class="st-btn">◀️ Prev Step</button>
+            <button type="button" id="btnConvNext" onclick="convStepAction('next')" class="st-btn st-btn-primary">Next Step ▶️</button>
+            <button type="button" id="btnConvSkipMajor" onclick="convStepAction('next_major')" class="st-btn hidden" title="Skip remaining sub-steps and advance to the next major step">⏭️ Next Major Step</button>
+            <span id="convCurrentStageLabel" style="font-weight:700;color:var(--st-heading);margin-left:0.35rem;"></span>
+          </div>
+          <div id="convStagePillsContainer" class="conv-pills-row"></div>
+          <div id="convActiveStageContent"></div>
+        </div>
+
+        <!-- Mode B: Full Pipeline Overview -->
+        <div id="fullOverviewWrap" class="hidden">
+          <div id="overviewGraphsGrid" class="overview-grid overview-cols-2"></div>
+          <h4 class="st-h4" style="margin-bottom:0.75rem;">Complete Step-by-Step Mathematical Derivations (Slide 100)</h4>
+          <div id="overviewStepsStack" class="st-expander-stack"></div>
+        </div>
+      </section>
+
+      <!-- TAB 2: STEP-BY-STEP STRING STEPPER -->
+      <section id="tabPanelStepper" class="hidden">
+        <h3 class="st-h3">Interactive Step-by-Step String Stepper</h3>
+        <p class="st-caption">Trace character-by-character transitions on the Converted DFA one click at a time.</p>
+
+        <div class="stepper-top-grid">
+          <div>
+            <label class="st-label" for="stepperStringInput">Input String to Trace:</label>
+            <input id="stepperStringInput" type="text" value="" placeholder="Enter a string over Σ (e.g., abba)..." class="st-input mono" style="font-size:1.05rem;" />
+          </div>
+          <div>
+            <span class="st-label">Target Automaton:</span>
+            <div id="stepperTargetRadioWrap" class="st-radio-row">
+              <label>
+                <input type="radio" name="stepperTargetMachine" value="Converted DFA" checked />
+                <span>Converted DFA (M')</span>
+              </label>
+              <label id="lblStepperMinDfaOption" class="hidden">
+                <input type="radio" name="stepperTargetMachine" value="Minimized DFA" />
+                <span>Minimized DFA</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div id="stepperBlankCustomPrompt" class="st-banner st-banner-info hidden" style="margin-top:1.1rem;">
+          ℹ️ Add transitions to your Custom Automaton in the sidebar and enter a test string above to trace step-by-step execution.
+        </div>
+
+        <div id="stepperExecutionArea">
+          <div class="stepper-btn-bar">
+            <button type="button" id="btnStepReset" onclick="stepperAction('reset')" class="st-btn">⏮️ Reset Stepper</button>
+            <button type="button" id="btnStepPrev" onclick="stepperAction('prev')" class="st-btn">◀️ Prev Step</button>
+            <button type="button" id="btnStepNext" onclick="stepperAction('next')" class="st-btn st-btn-primary">Next Step ▶️</button>
+            <div></div>
+          </div>
+
+          <div class="stepper-status-line">
+            <strong id="stepperProgressLabel">Step 0 of 0</strong>
+            <span> &nbsp;|&nbsp; Active State: </span>
+            <span class="inline-code" id="stepperActiveStateBadge">{q1}</span>
+            <span> &nbsp;|&nbsp; Path: </span>
+            <span class="inline-code" id="stepperTraceSequence" style="color:#0068c9;">{q1}</span>
+          </div>
+
+          <div class="tape-line">
+            <strong>String Progress:</strong>
+            <div id="stepperTapeContainer" style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;"></div>
+          </div>
+
+          <div id="stepperGraphContainer" class="st-graph-frame" style="margin-top:1.1rem;"></div>
+          <div id="stepperResultBanner" class="hidden"></div>
+        </div>
+      </section>
+
+      <!-- TAB 3: RESEARCH TELEMETRY & ACTIVITY LOG -->
+      <section id="tabPanelTelemetry" class="hidden">
+        <h3 class="st-h3">📋 Educational Interaction Telemetry</h3>
+        <p class="st-caption">Verifiable interaction log recorded during this learning session. Useful for research validation.</p>
+
+        <div class="st-metrics-grid">
+          <div class="st-metric-box">
+            <div class="st-metric-lbl">Active Session Time</div>
+            <div id="metricSessionTime" class="st-metric-val">0.0 mins</div>
+          </div>
+          <div class="st-metric-box">
+            <div class="st-metric-lbl">Total User Actions</div>
+            <div id="metricTotalActions" class="st-metric-val">0 events</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+            <div>
+              <h4 class="st-h4">Session Verification Code</h4>
+              <p class="st-caption" style="margin-bottom:0.4rem;">You can copy this JSON string as proof of active participation if requested by your instructor:</p>
+            </div>
+            <button type="button" id="btnCopyTelemetry" onclick="copyTelemetryJson()" class="st-btn">📋 Copy JSON</button>
+          </div>
+          <pre id="telemetryJsonPre" class="st-code-block"></pre>
+        </div>
+
+        <div style="margin-top:1.5rem;">
+          <label class="st-checkbox-label">
+            <input type="checkbox" id="chkDetailedEventLog" onchange="updateTelemetryView()" />
+            <span>Show Detailed Action Event Log</span>
+          </label>
+          <div id="detailedEventLogContainer" class="st-table-wrap hidden" style="margin-top:0.85rem;">
+            <table class="st-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>timestamp_sec</th>
+                  <th>action</th>
+                  <th>details</th>
+                </tr>
+              </thead>
+              <tbody id="detailedEventLogBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const DEFAULT_PRESET_NAME = "Custom Automaton";
+
+    const PREBUILT_SCENARIOS = {
+      "NFA → DFA: Example 1": {
+        states: "q1, q2, q3, q4",
+        alphabet: "a, b, e",
+        start: "q1",
+        accept: ["q3"],
+        transitions: {
+          "q1": { "b": ["q2"] },
+          "q2": { "a": ["q3"] },
+          "q3": { "e": ["q2", "q4"] },
+          "q4": { "a": ["q2"] }
+        },
+        stringTransitions: [
+          { from: "q4", label: "ab", to: "q1" }
+        ],
+        sampleStr: "baabba",
+        description: "NFA → DFA: Example 1 (Slides 101–106)"
+      },
+      "NFA → DFA: Example 2": {
+        states: "q1, q2, q3",
+        alphabet: "a, b, e",
+        start: "q1",
+        accept: ["q3"],
+        transitions: {
+          "q1": { "b": ["q2"] },
+          "q2": { "b": ["q3"] },
+          "q3": { "e": ["q1"] }
+        },
+        stringTransitions: [
+          { from: "q1", label: "aa", to: "q2" },
+          { from: "q1", label: "ba", to: "q2" }
+        ],
+        sampleStr: "bab",
+        description: "NFA → DFA: Example 2 (Slides 107–112)"
+      },
+      "NFA → DFA: Example 3": {
+        states: "q1, q2, q3, q4, q5, q6, q7, q8",
+        alphabet: "a, b, e",
+        start: "q1",
+        accept: ["q8"],
+        transitions: {
+          "q1": { "a": ["q2"] },
+          "q2": { "e": ["q3", "q4"] },
+          "q3": { "a": ["q5"] },
+          "q4": { "b": ["q6"] },
+          "q5": { "e": ["q7"] },
+          "q6": { "e": ["q7"] },
+          "q7": { "b": ["q8"] },
+          "q8": {}
+        },
+        stringTransitions: [],
+        sampleStr: "aab",
+        description: "NFA → DFA: Example 3 (Slides 113–117)"
+      },
+      "NFA → DFA: Example 4": {
+        states: "q1, q2, q3, q4, q5, q6",
+        alphabet: "a, b, e",
+        start: "q1",
+        accept: ["q6"],
+        transitions: {
+          "q1": { "b": ["q2"] },
+          "q2": { "b": ["q3"] },
+          "q3": { "b": ["q6"] },
+          "q4": { "e": ["q3"] },
+          "q5": { "a": ["q1", "q4"] },
+          "q6": { "e": ["q4", "q5"] }
+        },
+        stringTransitions: [
+          { from: "q1", label: "ab", to: "q4" }
+        ],
+        sampleStr: "abb",
+        description: "NFA → DFA: Example 4 (Slides 118–124)"
+      },
+      "NFA → DFA: Example 5": {
+        states: "q1, q2, q3, q4, q5, q6, q7",
+        alphabet: "a, b, e",
+        start: "q1",
+        accept: ["q7"],
+        transitions: {
+          "q1": { "a": ["q2"], "e": ["q4"] },
+          "q2": { "b": ["q3"] },
+          "q3": { "a": ["q4"] },
+          "q4": { "e": ["q5", "q7"] },
+          "q5": { "a": ["q3"], "e": ["q6"] },
+          "q6": { "b": ["q3"], "a": ["q7"] },
+          "q7": {}
+        },
+        stringTransitions: [
+          { from: "q7", label: "bb", to: "q1" }
+        ],
+        sampleStr: "bba",
+        description: "NFA → DFA: Example 5 (Slides 125–132)"
+      }
+    };
+
+    const appState = {
+      sessionStartTime: Date.now(),
+      userActionsLog: [],
+      simStepIndex: 0,
+      convStageIndex: 0,
+      eSetSubIndex: 0,
+      transSubIndex: 0,
+      pipelineViewMode: "interactive",
+      showOptionalMinDfa: false,
+      presetName: DEFAULT_PRESET_NAME,
+      states: ["q1", "q2", "q3"],
+      alphabet: ["a", "b", "e"],
+      startState: "q1",
+      acceptStates: ["q3"],
+      transitions: { "q1": {}, "q2": {}, "q3": {} },
+      stringTransitions: [],
+      openBuilderStates: new Set(),
+      originalNfa: null,
+      expandedNfa: null,
+      dfaDef: null,
+      pipelineData: null,
+      minDfaDef: null,
+      minMapping: []
+    };
+
+    function asciiCompare(a, b) {
+      return a < b ? -1 : (a > b ? 1 : 0);
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function toggleSidebar(collapse) {
+      document.body.classList.toggle("sidebar-collapsed", collapse);
+    }
+
+    function setDiagramScale(scale, btnEl) {
+      document.documentElement.style.setProperty("--diagram-scale", String(scale));
+      document.querySelectorAll(".zoom-btn").forEach(b => b.classList.remove("active"));
+      if (btnEl) btnEl.classList.add("active");
+      logAction("zoom_diagram", `${Math.round(scale * 100)}%`);
+    }
+
+    function logAction(actionType, details = "") {
+      const elapsed = Number(((Date.now() - appState.sessionStartTime) / 1000).toFixed(1));
+      appState.userActionsLog.push({ timestamp_sec: elapsed, action: actionType, details });
+      document.getElementById("headerSessionBadge").textContent = `Actions: ${appState.userActionsLog.length}`;
+      updateTelemetryView();
+    }
+
+    function flashResetToast(msg = "✓ Reset") {
+      const toast = document.getElementById("resetStatusToast");
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 2000);
+    }
+
+    function setPipelineViewMode(mode) {
+      appState.pipelineViewMode = mode;
+      document.getElementById("interactiveWalkthroughWrap").classList.toggle("hidden", mode !== "interactive");
+      document.getElementById("fullOverviewWrap").classList.toggle("hidden", mode !== "overview");
+      logAction("pipeline_view_mode", mode);
+      recomputeAndRenderAll();
+    }
+
+    function toggleOptionalMinDfa(checked) {
+      appState.showOptionalMinDfa = checked;
+      const minOpt = document.getElementById("lblStepperMinDfaOption");
+      if (minOpt) minOpt.classList.toggle("hidden", !checked);
+      if (!checked) {
+        const convRadio = document.querySelector("input[name='stepperTargetMachine'][value='Converted DFA']");
+        if (convRadio) convRadio.checked = true;
+      }
+      logAction("toggle_optional_min_dfa", String(checked));
+      recomputeAndRenderAll();
+    }
+
+    function resetToDefault() {
+      document.getElementById("presetSelect").value = DEFAULT_PRESET_NAME;
+      const convRadio = document.querySelector("input[name='stepperTargetMachine'][value='Converted DFA']");
+      if (convRadio) convRadio.checked = true;
+      logAction("reset_to_default", DEFAULT_PRESET_NAME);
+      loadPreset(DEFAULT_PRESET_NAME);
+      flashResetToast("✓ Default");
+    }
+
+    function resetCurrentPreset() {
+      const current = document.getElementById("presetSelect").value;
+      if (current === "Custom Automaton") {
+        resetToDefault();
+        return;
+      }
+      logAction("reset_current_preset", current);
+      loadPreset(current);
+      flashResetToast("✓ Restored");
+    }
+
+    // ==========================================
+    // FORMAL ALGORITHM ENGINES (SLIDE 100 + SUB-STEP TRACING)
+    // ==========================================
+    function stateSortKey(stateName, stateOrderMap = null) {
+      if (stateOrderMap && Object.prototype.hasOwnProperty.call(stateOrderMap, stateName)) {
+        return { tier: 0, num: stateOrderMap[stateName], prefix: "" };
+      }
+      const m = /^([A-Za-z_]+)(\d+)$/.exec(stateName);
+      if (m) return { tier: 1, num: parseInt(m[2], 10), prefix: m[1] };
+      return { tier: 2, num: 0, prefix: stateName };
+    }
+
+    function sortStates(stateIterable, stateOrderMap = null) {
+      return Array.from(stateIterable).sort((a, b) => {
+        const ka = stateSortKey(a, stateOrderMap);
+        const kb = stateSortKey(b, stateOrderMap);
+        if (ka.tier !== kb.tier) return ka.tier - kb.tier;
+        if (ka.num !== kb.num) return ka.num - kb.num;
+        return asciiCompare(ka.prefix, kb.prefix);
+      });
+    }
+
+    function formatStateName(stateArray, stateOrderMap = null) {
+      if (!stateArray || stateArray.length === 0) return "Ø";
+      if (stateArray.length === 1 && stateArray[0] === "Ø") return "Ø";
+      return "{" + sortStates(stateArray, stateOrderMap).join(", ") + "}";
+    }
+
+    function validateAlphabetAndStrings(alphabetList, statesList, stringTransitions) {
+      const errors = [];
+      const atomicSymbols = alphabetList.filter(s => s !== "e");
+      const invalidAlpha = atomicSymbols.filter(s => s.length !== 1);
+      if (invalidAlpha.length > 0) {
+        errors.push(
+          `Formal Alphabet Error: Symbols [${invalidAlpha.join(", ")}] in Alphabet must be single characters (use 'Multi-Symbol / String Transitions' below for strings like 'ab').`
+        );
+      }
+      const validSigma = new Set(atomicSymbols.filter(s => s.length === 1));
+      const validStates = new Set(statesList);
+
+      stringTransitions.forEach((rule, idx) => {
+        const src = (rule.from || "").trim();
+        const lbl = (rule.label || "").trim();
+        const dst = (rule.to || "").trim();
+        if (!validStates.has(src) || !validStates.has(dst)) {
+          errors.push(`String Rule #${idx + 1}: State '${src}' or '${dst}' is not in declared States K.`);
+          return;
+        }
+        if (lbl.length < 2) {
+          errors.push(`String Rule #${idx + 1} ('${src} ──${lbl}──▶ ${dst}'): Multi-symbol string label must have length ≥ 2.`);
+          return;
+        }
+        if (lbl.includes("e") && !validSigma.has("e")) {
+          errors.push(`String Rule #${idx + 1} ('${src} ──${lbl}──▶ ${dst}'): Epsilon ('e') cannot be mixed inside a multi-symbol string.`);
+          return;
+        }
+        const unknown = Array.from(new Set(lbl.split("").filter(ch => !validSigma.has(ch)))).sort();
+        if (unknown.length > 0) {
+          const sigmaDisp = "{" + Array.from(validSigma).sort().join(", ") + "}";
+          errors.push(`String Rule #${idx + 1} ('${src} ──${lbl}──▶ ${dst}'): Character(s) [${unknown.join(", ")}] do not belong to declared Alphabet Σ = ${sigmaDisp}.`);
+        }
+      });
+      return errors;
+    }
+
+    function buildCombinedOriginalNfa(statesList, alphabetList, startState, acceptStates, singleTrans, stringTransitions) {
+      const combined = {};
+      statesList.forEach(s => { combined[s] = {}; });
+      for (const [s, row] of Object.entries(singleTrans || {})) {
+        if (!combined[s]) continue;
+        for (const [sym, targets] of Object.entries(row || {})) {
+          if (targets && targets.length > 0) combined[s][sym] = [...targets];
+        }
+      }
+      for (const rule of stringTransitions) {
+        const { from: src, label: lbl, to: dst } = rule;
+        if (combined[src] && statesList.includes(dst) && lbl) {
+          if (!combined[src][lbl]) combined[src][lbl] = [];
+          if (!combined[src][lbl].includes(dst)) combined[src][lbl].push(dst);
+        }
+      }
+      return {
+        states: [...statesList],
+        alphabet: [...alphabetList],
+        start_state: startState,
+        accept_states: [...acceptStates],
+        transitions: combined
+      };
+    }
+
+    function expandStringTransitions(statesList, alphabetList, startState, acceptStates, singleTrans, stringTransitions) {
+      const existing = new Set(statesList);
+      let maxQ = 0;
+      statesList.forEach(s => {
+        const m = /^q(\d+)$/.exec(s);
+        if (m) maxQ = Math.max(maxQ, parseInt(m[1], 10));
+      });
+      let nextQ = maxQ + 1;
+
+      function allocateNewState() {
+        while (existing.has(`q${nextQ}`)) nextQ += 1;
+        const name = `q${nextQ}`;
+        existing.add(name);
+        nextQ += 1;
+        return name;
+      }
+
+      const expandedStates = [...statesList];
+      const expandedTrans = {};
+      statesList.forEach(s => { expandedTrans[s] = {}; });
+
+      for (const [s, row] of Object.entries(singleTrans || {})) {
+        if (!expandedTrans[s]) continue;
+        for (const [sym, targets] of Object.entries(row || {})) {
+          for (const t of (targets || [])) {
+            if (!expandedTrans[s][sym]) expandedTrans[s][sym] = [];
+            if (!expandedTrans[s][sym].includes(t)) expandedTrans[s][sym].push(t);
+          }
+        }
+      }
+
+      const splitLog = [];
+      const introducedStates = [];
+      for (const srcState of statesList) {
+        const rules = stringTransitions.filter(r => r.from === srcState);
+        for (const rule of rules) {
+          const { from: src, label: lbl, to: dst } = rule;
+          if (!lbl || lbl.length < 2) continue;
+          let curr = src;
+          const chainParts = [src];
+          const ruleNewStates = [];
+          for (let i = 0; i < lbl.length; i++) {
+            const ch = lbl[i];
+            if (i < lbl.length - 1) {
+              const mid = allocateNewState();
+              expandedStates.push(mid);
+              expandedTrans[mid] = {};
+              introducedStates.push(mid);
+              ruleNewStates.push(mid);
+              if (!expandedTrans[curr][ch]) expandedTrans[curr][ch] = [];
+              expandedTrans[curr][ch].push(mid);
+              chainParts.push(`──${ch}──▶ ${mid}`);
+              curr = mid;
+            } else {
+              if (!expandedTrans[curr][ch]) expandedTrans[curr][ch] = [];
+              if (!expandedTrans[curr][ch].includes(dst)) expandedTrans[curr][ch].push(dst);
+              chainParts.push(`──${ch}──▶ ${dst}`);
+            }
+          }
+          splitLog.push({
+            original: `${src} ──${lbl}──▶ ${dst}`,
+            introduced: ruleNewStates.join(", "),
+            chain: chainParts.join(" ")
+          });
+        }
+      }
+
+      return {
+        expandedNfa: {
+          states: expandedStates,
+          alphabet: [...alphabetList],
+          start_state: startState,
+          accept_states: [...acceptStates],
+          transitions: expandedTrans
+        },
+        splitLog,
+        introducedStates
+      };
+    }
+
+    function traceEpsilonClosureBfs(seedStates, transitions, stateOrderMap) {
+      const closureSet = new Set(seedStates);
+      const bfsQueue = [...seedStates];
+      const hops = [];
+      const epsEdges = [];
+      while (bfsQueue.length > 0) {
+        const u = bfsQueue.shift();
+        const epsTargets = (transitions[u] && transitions[u]["e"]) ? transitions[u]["e"] : [];
+        for (const v of epsTargets) {
+          const isNew = !closureSet.has(v);
+          hops.push({ from: u, to: v, isNew });
+          epsEdges.push({ src: u, dest: v, symbol: "e", role: "eps" });
+          if (isNew) {
+            closureSet.add(v);
+            bfsQueue.push(v);
+          }
+        }
+      }
+      const members = sortStates(closureSet, stateOrderMap);
+      return { members, hops, epsEdges };
+    }
+
+    function nfaToDfaSlide100Pipeline(expandedNfa, splitLog, introducedStates) {
+      const alphabet = expandedNfa.alphabet.filter(s => s !== "e" && s.length === 1);
+      const nfaTrans = expandedNfa.transitions;
+      const startState = expandedNfa.start_state;
+      const nfaAccept = new Set(expandedNfa.accept_states);
+      const stateOrderMap = {};
+      expandedNfa.states.forEach((s, idx) => { stateOrderMap[s] = idx; });
+
+      const hasStringSplits = splitLog.length > 0;
+      const totalSteps = hasStringSplits ? 5 : 4;
+
+      const pipelineData = {
+        hasStringSplits,
+        totalSteps,
+        splitLog,
+        introducedStates,
+        eSetsRows: [],
+        eSetMap: {},
+        initialStateLabel: null,
+        initialStateMembers: [],
+        initialStateEpsEdges: [],
+        initialStateFormula: "",
+        qAliases: {},
+        transitionsLog: [],
+        finalStates: [],
+        finalStatesFormula: "",
+        steps: []
+      };
+
+      if (!startState) return { dfaDef: null, pipelineData };
+
+      expandedNfa.states.forEach((st, idx) => {
+        const { members, hops, epsEdges } = traceEpsilonClosureBfs([st], nfaTrans, stateOrderMap);
+        const esetStr = formatStateName(members, stateOrderMap);
+        const epsReachedStates = members.filter(x => x !== st);
+        pipelineData.eSetMap[st] = esetStr;
+        pipelineData.eSetsRows.push({
+          subIndex: idx,
+          state: st,
+          members,
+          epsReachedStates,
+          hops,
+          epsEdges,
+          esetStr,
+          formula: `E(${st}) = ${esetStr}`
+        });
+      });
+
+      const initTrace = traceEpsilonClosureBfs([startState], nfaTrans, stateOrderMap);
+      const initialClosure = initTrace.members;
+      const initialLabel = formatStateName(initialClosure, stateOrderMap);
+      pipelineData.initialStateMembers = initialClosure;
+      pipelineData.initialStateEpsEdges = initTrace.epsEdges;
+      pipelineData.initialStateLabel = initialLabel;
+      pipelineData.qAliases[initialLabel] = "Q1";
+      pipelineData.initialStateFormula = `s' = E(${startState}) = ${initialLabel} = Q1`;
+
+      const dfaTransitions = {};
+      const dfaClosures = [initialClosure];
+      const seenLabels = new Set([initialLabel]);
+      const queue = [initialClosure];
+      let transSubCounter = 0;
+
+      while (queue.length > 0) {
+        const curr = queue.shift();
+        const currLabel = formatStateName(curr, stateOrderMap);
+        const currAlias = pipelineData.qAliases[currLabel];
+        dfaTransitions[currLabel] = {};
+
+        for (const sym of alphabet) {
+          const moveHops = [];
+          const moveEdges = [];
+          const directSet = new Set();
+
+          for (const u of curr) {
+            const targets = (nfaTrans[u] && nfaTrans[u][sym]) ? nfaTrans[u][sym] : [];
+            for (const v of targets) {
+              directSet.add(v);
+              moveHops.push({ from: u, symbol: sym, to: v });
+              moveEdges.push({ src: u, dest: v, symbol: sym, role: "move" });
+            }
+          }
+
+          const mSorted = sortStates(directSet, stateOrderMap);
+          let targetClosure = [];
+          let targetLabel = "Ø";
+          let unionExpr = "Ø";
+          let epsHops = [];
+          let epsEdges = [];
+          let epsOnlyStates = [];
+          let esetComponents = [];
+
+          if (mSorted.length > 0) {
+            const cTrace = traceEpsilonClosureBfs(mSorted, nfaTrans, stateOrderMap);
+            targetClosure = cTrace.members;
+            epsHops = cTrace.hops;
+            epsEdges = cTrace.epsEdges;
+            epsOnlyStates = targetClosure.filter(x => !directSet.has(x));
+            targetLabel = formatStateName(targetClosure, stateOrderMap);
+            unionExpr = mSorted.map(p => `E(${p})`).join(" ∪ ");
+            esetComponents = mSorted.map(p => ({ state: p, esetStr: pipelineData.eSetMap[p] }));
+          }
+
+          const isNewlyDiscovered = !seenLabels.has(targetLabel);
+          if (isNewlyDiscovered) {
+            seenLabels.add(targetLabel);
+            dfaClosures.push(targetClosure);
+            pipelineData.qAliases[targetLabel] = `Q${dfaClosures.length}`;
+            queue.push(targetClosure);
+          }
+
+          const targetAlias = pipelineData.qAliases[targetLabel];
+          dfaTransitions[currLabel][sym] = targetLabel;
+
+          const fullFormula = mSorted.length > 0
+            ? `δ(${currLabel}, ${sym}) = ${unionExpr} = ${targetLabel} = ${targetAlias}`
+            : `δ(${currLabel}, ${sym}) = Ø = ${targetAlias}`;
+
+          pipelineData.transitionsLog.push({
+            subIndex: transSubCounter++,
+            currMembers: [...curr],
+            currLabel,
+            currAlias,
+            stateWithAlias: `${currLabel} (${currAlias})`,
+            symbol: sym,
+            moveHops,
+            moveStates: mSorted,
+            moveEdges,
+            epsHops,
+            epsOnlyStates,
+            epsEdges,
+            esetComponents,
+            unionExpr,
+            targetClosure,
+            targetLabel,
+            targetAlias,
+            targetWithAlias: `${targetLabel} = ${targetAlias}`,
+            isNewlyDiscovered,
+            fullFormula
+          });
+        }
+      }
+
+      const dfaStateLabels = dfaClosures.map(c => formatStateName(c, stateOrderMap));
+      const dfaAcceptList = [];
+      for (const c of dfaClosures) {
+        if (c.some(s => nfaAccept.has(s))) {
+          dfaAcceptList.push(formatStateName(c, stateOrderMap));
+        }
+      }
+      pipelineData.finalStates = dfaAcceptList;
+      pipelineData.finalStatesFormula = dfaAcceptList.length > 0
+        ? `F' = {${dfaAcceptList.join(", ")}}`
+        : "F' = Ø";
+
+      const steps = [];
+      if (hasStringSplits) {
+        steps.push({
+          key: "string_elim",
+          title: "Eliminating string transitions by introducing new states"
+        });
+      }
+      steps.push({ key: "e_sets", title: "Definition of E-sets" });
+      steps.push({ key: "initial_state", title: "Definition of new initial state" });
+      steps.push({ key: "transition_fn", title: "Definition of transition function" });
+      steps.push({ key: "final_states", title: "Definition of final states" });
+      steps.forEach((s, idx) => { s.stepNum = idx + 1; });
+      pipelineData.steps = steps;
+
+      return {
+        dfaDef: {
+          states: dfaStateLabels,
+          alphabet,
+          start_state: initialLabel,
+          accept_states: dfaAcceptList,
+          transitions: dfaTransitions
+        },
+        pipelineData
+      };
+    }
+
+    function minimizeDfa(dfaDef) {
+      if (!dfaDef || !dfaDef.states || dfaDef.states.length === 0) return { minDfa: null, mapping: [] };
+      const states = dfaDef.states;
+      const acceptSet = new Set(dfaDef.accept_states);
+      const nonAccept = states.filter(s => !acceptSet.has(s));
+      const accept = states.filter(s => acceptSet.has(s));
+      const alphabet = dfaDef.alphabet;
+      const transitions = dfaDef.transitions;
+
+      let partitions = [];
+      if (nonAccept.length > 0) partitions.push(nonAccept);
+      if (accept.length > 0) partitions.push(accept);
+
+      while (true) {
+        const newPartitions = [];
+        for (const part of partitions) {
+          const sigMap = new Map();
+          for (const st of part) {
+            const sig = alphabet.map(sym => {
+              const target = (transitions[st] && transitions[st][sym]) ? transitions[st][sym] : "Ø";
+              return partitions.findIndex(p => p.includes(target));
+            });
+            const sigKey = JSON.stringify(sig);
+            if (!sigMap.has(sigKey)) sigMap.set(sigKey, { vec: sig, members: [] });
+            sigMap.get(sigKey).members.push(st);
+          }
+          const entries = Array.from(sigMap.values()).sort((a, b) => {
+            for (let i = 0; i < Math.min(a.vec.length, b.vec.length); i++) {
+              if (a.vec[i] !== b.vec[i]) return a.vec[i] - b.vec[i];
+            }
+            return a.vec.length - b.vec.length;
+          });
+          for (const entry of entries) newPartitions.push(entry.members);
+        }
+        if (newPartitions.length === partitions.length) break;
+        partitions = newPartitions;
+      }
+
+      const startState = dfaDef.start_state;
+      function partitionRank(p) {
+        if (p.includes(startState)) return { tier: 0, key: "" };
+        if (p.length === 1 && p[0] === "Ø") return { tier: 2, key: "Ø" };
+        return { tier: 1, key: [...p].sort(asciiCompare)[0] || "" };
+      }
+
+      partitions.sort((a, b) => {
+        const ra = partitionRank(a);
+        const rb = partitionRank(b);
+        if (ra.tier !== rb.tier) return ra.tier - rb.tier;
+        return asciiCompare(ra.key, rb.key);
+      });
+
+      const stateMap = {};
+      const mapping = [];
+      partitions.forEach((p, idx) => {
+        const label = `M${idx}`;
+        const sortedMembers = [...p].sort(asciiCompare);
+        sortedMembers.forEach(s => { stateMap[s] = label; });
+        mapping.push({ group: label, members: sortedMembers.join(", ") });
+      });
+
+      const minStates = partitions.map((_, idx) => `M${idx}`);
+      const minStart = stateMap[startState];
+      const minAccept = Array.from(new Set(accept.map(s => stateMap[s]).filter(Boolean)))
+        .sort((a, b) => parseInt(a.slice(1), 10) - parseInt(b.slice(1), 10));
+      const minTrans = {};
+
+      for (const s of states) {
+        const srcGroup = stateMap[s];
+        if (!minTrans[srcGroup]) minTrans[srcGroup] = {};
+        for (const sym of alphabet) {
+          const t = transitions[s] ? transitions[s][sym] : null;
+          if (t && stateMap[t]) minTrans[srcGroup][sym] = stateMap[t];
+        }
+      }
+
+      return {
+        minDfa: {
+          states: minStates,
+          alphabet,
+          start_state: minStart,
+          accept_states: minAccept,
+          transitions: minTrans
+        },
+        mapping
+      };
+    }
+
+    function simulateString(dfaDef, inputStr) {
+      const currStart = dfaDef.start_state;
+      const path = [{ state: currStart, symbol: "Start" }];
+      if (!currStart) return { isAccepted: false, path, msg: "No initial state defined." };
+
+      let curr = currStart;
+      for (const ch of inputStr) {
+        if (!dfaDef.alphabet.includes(ch)) {
+          return { isAccepted: false, path, msg: `Invalid symbol '${ch}' not in alphabet {${dfaDef.alphabet.join(", ")}}.` };
+        }
+        const nextSt = (dfaDef.transitions[curr] && dfaDef.transitions[curr][ch]) ? dfaDef.transitions[curr][ch] : "Ø";
+        path.push({ state: nextSt, symbol: ch });
+        curr = nextSt;
+      }
+      return { isAccepted: dfaDef.accept_states.includes(curr), path, msg: "Success" };
+    }
+
+    // ==========================================
+    // HIGH-VISIBILITY LAYERED SVG GRAPH RENDERER WITH PATH CUEING
+    // ==========================================
+    function computeLayeredLayout(automatonDef) {
+      const states = automatonDef.states;
+      const start = automatonDef.start_state;
+      const adj = new Map();
+      states.forEach(s => adj.set(s, new Set()));
+
+      for (const [src, row] of Object.entries(automatonDef.transitions || {})) {
+        if (!adj.has(src)) continue;
+        for (const dests of Object.values(row || {})) {
+          const list = Array.isArray(dests) ? dests : [dests];
+          for (const d of list) {
+            if (adj.has(d) && d !== src) adj.get(src).add(d);
+          }
+        }
+      }
+
+      const rankMap = new Map();
+      if (start && states.includes(start)) {
+        rankMap.set(start, 0);
+        const q = [start];
+        while (q.length > 0) {
+          const u = q.shift();
+          const r = rankMap.get(u);
+          for (const v of adj.get(u) || []) {
+            if (v === "Ø") continue;
+            if (!rankMap.has(v)) {
+              rankMap.set(v, r + 1);
+              q.push(v);
+            }
+          }
+        }
+      }
+
+      let maxRank = 0;
+      for (const r of rankMap.values()) if (r > maxRank) maxRank = r;
+
+      for (const st of states) {
+        if (st !== "Ø" && !rankMap.has(st)) {
+          maxRank += 1;
+          rankMap.set(st, maxRank);
+        }
+      }
+
+      if (states.includes("Ø")) {
+        rankMap.set("Ø", states.length > 1 ? maxRank + 1 : 0);
+      }
+
+      const layers = new Map();
+      for (const st of states) {
+        const r = rankMap.get(st) || 0;
+        if (!layers.has(r)) layers.set(r, []);
+        layers.get(r).push(st);
+      }
+
+      const hasLongSubsets = states.some(s => s.length > 8);
+      const sortedRanks = Array.from(layers.keys()).sort((a, b) => a - b);
+      const colGap = hasLongSubsets ? 162 : 136;
+      const rowGap = hasLongSubsets ? 124 : 106;
+
+      const coords = {};
+      sortedRanks.forEach((rk, colIdx) => {
+        const colStates = layers.get(rk);
+        const m = colStates.length;
+        const x = colIdx * colGap;
+        colStates.forEach((st, rowIdx) => {
+          const startY = -((m - 1) * rowGap) / 2;
+          const stagger = (m === 1 && sortedRanks.length >= 3 && colIdx % 2 === 1 && st !== "Ø") ? -18 : 0;
+          coords[st] = { x, y: startY + rowIdx * rowGap + stagger, col: colIdx, row: rowIdx, colSize: m };
+        });
+      });
+
+      return coords;
+    }
+
+    function splitNodeLabelLines(st) {
+      if (st.length <= 11 || !st.includes(",")) return [st];
+      const inner = (st.startsWith("{") && st.endsWith("}")) ? st.slice(1, -1) : st;
+      const parts = inner.split(",").map(x => x.trim());
+      if (parts.length <= 3) return [st];
+      const mid = Math.ceil(parts.length / 2);
+      return [
+        "{" + parts.slice(0, mid).join(", ") + ",",
+        parts.slice(mid).join(", ") + "}"
+      ];
+    }
+
+    function normalizeHighlightConfig(highlightSpec, activeEdge) {
+      if (Array.isArray(highlightSpec) || !highlightSpec) {
+        return {
+          greenStates: new Set(highlightSpec || []),
+          originStates: new Set(),
+          moveStates: new Set(),
+          sourceHaloStates: new Set(),
+          edges: activeEdge ? [{ src: activeEdge.src, dest: activeEdge.dest, symbol: activeEdge.symbol, role: "move" }] : [],
+          dimInactive: false
+        };
+      }
+      return {
+        greenStates: new Set(highlightSpec.greenStates || []),
+        originStates: new Set(highlightSpec.originStates || []),
+        moveStates: new Set(highlightSpec.moveStates || []),
+        sourceHaloStates: new Set(highlightSpec.sourceHaloStates || []),
+        edges: highlightSpec.edges || [],
+        dimInactive: Boolean(highlightSpec.dimInactive)
+      };
+    }
+
+    function renderAutomatonSvg(automatonDef, highlightSpec = [], activeEdge = null) {
+      if (!automatonDef || !automatonDef.states || automatonDef.states.length === 0) {
+        return `<div style="font-size:0.95rem;color:#94a3b8;padding:16px;">No states to display</div>`;
+      }
+      const states = automatonDef.states;
+      const acceptSet = new Set(automatonDef.accept_states || []);
+      const cfg = normalizeHighlightConfig(highlightSpec, activeEdge);
+      const coords = computeLayeredLayout(automatonDef);
+
+      const nodeRadius = {};
+      for (const st of states) {
+        const lines = splitNodeLabelLines(st);
+        nodeRadius[st] = lines.length > 1 ? 39 : (st.length > 6 ? 35 : 31);
+      }
+
+      const edgeGroups = new Map();
+      for (const [src, row] of Object.entries(automatonDef.transitions || {})) {
+        for (const [sym, dests] of Object.entries(row || {})) {
+          const list = Array.isArray(dests) ? dests : [dests];
+          for (const dest of list) {
+            if (!coords[src] || !coords[dest]) continue;
+            const key = `${src}|||${dest}`;
+            if (!edgeGroups.has(key)) edgeGroups.set(key, []);
+            edgeGroups.get(key).push(sym);
+          }
+        }
+      }
+
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      function expandBounds(x, y, pad = 0) {
+        if (x - pad < minX) minX = x - pad;
+        if (x + pad > maxX) maxX = x + pad;
+        if (y - pad < minY) minY = y - pad;
+        if (y + pad > maxY) maxY = y + pad;
+      }
+
+      for (const st of states) {
+        const extraHalo = cfg.sourceHaloStates.has(st) ? 7 : 0;
+        expandBounds(coords[st].x, coords[st].y, nodeRadius[st] + 5 + extraHalo);
+      }
+
+      const uid = "g" + Math.random().toString(36).slice(2, 8);
+      let bodySvg = "";
+
+      const startPos = coords[automatonDef.start_state];
+      if (startPos) {
+        const r0 = nodeRadius[automatonDef.start_state];
+        const sx1 = startPos.x - (r0 + 34);
+        const sx2 = startPos.x - (r0 + 3);
+        expandBounds(sx1, startPos.y, 4);
+        const startStroke = cfg.dimInactive ? "#93c5fd" : "#2563eb";
+        bodySvg += `<line x1="${sx1}" y1="${startPos.y}" x2="${sx2}" y2="${startPos.y}" stroke="${startStroke}" stroke-width="2.4" marker-end="url(#arrow-start-${uid})" />`;
+      }
+
+      for (const [key, syms] of edgeGroups.entries()) {
+        const [src, dest] = key.split("|||");
+        const p1 = coords[src], p2 = coords[dest];
+        const r1 = nodeRadius[src], r2 = nodeRadius[dest];
+
+        const matchedMoveSyms = new Set(
+          cfg.edges.filter(e => e.src === src && e.dest === dest && e.role === "move").map(e => e.symbol)
+        );
+        const matchedEpsSyms = new Set(
+          cfg.edges.filter(e => e.src === src && e.dest === dest && e.role === "eps").map(e => e.symbol)
+        );
+        const isMoveHit = syms.some(s => matchedMoveSyms.has(s));
+        const isEpsHit = !isMoveHit && syms.some(s => matchedEpsSyms.has(s));
+
+        let strokeColor = "#475569";
+        let strokeWidth = "1.8";
+        let marker = `url(#arrow-${uid})`;
+        let pillBg = "white";
+        let pillStroke = "#e2e8f0";
+
+        if (isMoveHit) {
+          strokeColor = "#dc2626";
+          strokeWidth = "3.4";
+          marker = `url(#arrow-active-${uid})`;
+          pillBg = "#fff1f2";
+          pillStroke = "#fda4af";
+        } else if (isEpsHit) {
+          strokeColor = "#16a34a";
+          strokeWidth = "3.3";
+          marker = `url(#arrow-eps-${uid})`;
+          pillBg = "#f0fdf4";
+          pillStroke = "#86efac";
+        } else if (cfg.dimInactive) {
+          strokeColor = "#cbd5e1";
+          strokeWidth = "1.35";
+          marker = `url(#arrow-dim-${uid})`;
+        }
+
+        const plainLabel = syms.map(s => s === "e" ? "ε" : s).join(", ");
+        const pillW = Math.max(22, plainLabel.length * 8.4 + 12);
+
+        const labelSpansHtml = syms.map((s, idx) => {
+          const disp = escapeHtml(s === "e" ? "ε" : s);
+          const sep = idx < syms.length - 1 ? ", " : "";
+          let fillCol = cfg.dimInactive ? "#94a3b8" : "#0f172a";
+          if (matchedMoveSyms.has(s)) fillCol = "#dc2626";
+          else if (matchedEpsSyms.has(s)) fillCol = "#15803d";
+          return `<tspan fill="${fillCol}">${disp}</tspan>${sep ? `<tspan fill="#94a3b8">${sep}</tspan>` : ""}`;
+        }).join("");
+
+        if (src === dest) {
+          const lx = p1.x, ly = p1.y - r1;
+          expandBounds(lx, ly - 48, pillW / 2 + 4);
+          bodySvg += `<path d="M ${lx - 12} ${ly + 2} C ${lx - 28} ${ly - 44}, ${lx + 28} ${ly - 44}, ${lx + 12} ${ly + 2}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
+          bodySvg += `<rect x="${lx - pillW / 2}" y="${ly - 50}" width="${pillW}" height="18" rx="4" fill="${pillBg}" fill-opacity="0.96" stroke="${pillStroke}" stroke-width="0.9" />`;
+          bodySvg += `<text x="${lx}" y="${ly - 37}" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="700">${labelSpansHtml}</text>`;
+        } else {
+          const hasReverse = edgeGroups.has(`${dest}|||${src}`);
+          const colSpan = Math.abs((p2.col || 0) - (p1.col || 0));
+          const rowSpan = Math.abs((p2.row || 0) - (p1.row || 0));
+          const isBackEdge = (p2.col || 0) < (p1.col || 0);
+          const dx = p2.x - p1.x, dy = p2.y - p1.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          const ux = dx / dist, uy = dy / dist;
+          const nx = -uy, ny = ux;
+
+          const midY = (p1.y + p2.y) / 2;
+          let cx = (p1.x + p2.x) / 2;
+          let cy = midY;
+          let offX = 0, offY = 0;
+
+          if (hasReverse) {
+            offX = nx * 30;
+            offY = ny * 30;
+          } else if (colSpan === 0 && rowSpan > 1) {
+            offX = 44;
+          } else if (colSpan > 1 || isBackEdge) {
+            const laneMag = 42 + 22 * Math.max(0, colSpan - 1);
+            let bowSign;
+            if (midY < -8) {
+              bowSign = -1;
+            } else if (midY > 8) {
+              bowSign = 1;
+            } else {
+              bowSign = isBackEdge ? 1 : -1;
+            }
+            offY = bowSign * laneMag;
+          }
+
+          cx += offX;
+          cy += offY;
+          const sx = p1.x + ux * r1 + offX * 0.18;
+          const sy = p1.y + uy * r1 + offY * 0.18;
+          const ex = p2.x - ux * (r2 + 3) + offX * 0.18;
+          const ey = p2.y - uy * (r2 + 3) + offY * 0.18;
+
+          const tx = 0.25 * sx + 0.5 * cx + 0.25 * ex;
+          const ty = 0.25 * sy + 0.5 * cy + 0.25 * ey;
+          expandBounds(tx, ty, Math.max(15, pillW / 2));
+
+          bodySvg += `<path d="M ${sx} ${sy} Q ${cx} ${cy} ${ex} ${ey}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${marker}" />`;
+          bodySvg += `<rect x="${tx - pillW / 2}" y="${ty - 10}" width="${pillW}" height="19" rx="4" fill="${pillBg}" fill-opacity="0.96" stroke="${pillStroke}" stroke-width="0.9" />`;
+          bodySvg += `<text x="${tx}" y="${ty + 4}" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="700">${labelSpansHtml}</text>`;
+        }
+      }
+
+      for (const st of states) {
+        const { x, y } = coords[st];
+        const R = nodeRadius[st];
+
+        if (cfg.sourceHaloStates.has(st)) {
+          bodySvg += `<circle cx="${x}" cy="${y}" r="${R + 5}" fill="none" stroke="#2563eb" stroke-width="2.3" stroke-dasharray="5,3" />`;
+        }
+
+        let fill = "#ffffff", stroke = cfg.dimInactive ? "#94a3b8" : "#64748b", sw = "1.8";
+        if (cfg.originStates.has(st) || cfg.moveStates.has(st)) {
+          fill = "#fef08a"; stroke = "#ca8a04"; sw = "3.3";
+        } else if (cfg.greenStates.has(st)) {
+          fill = "#86efac"; stroke = "#15803d"; sw = "3.3";
+        } else if (cfg.sourceHaloStates.has(st)) {
+          fill = "#dbeafe"; stroke = "#1d4ed8"; sw = "2.5";
+        } else if (!cfg.dimInactive && st === automatonDef.start_state) {
+          fill = "#dbeafe"; stroke = "#1d4ed8"; sw = "2.4";
+        } else if (st === "Ø") {
+          fill = "#fee2e2"; stroke = "#b91c1c"; sw = "2.0";
+        }
+
+        bodySvg += `<circle cx="${x}" cy="${y}" r="${R}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" />`;
+        if (acceptSet.has(st)) {
+          bodySvg += `<circle cx="${x}" cy="${y}" r="${R - 5}" fill="none" stroke="${stroke}" stroke-width="1.7" />`;
+        }
+
+        const textFill = (cfg.dimInactive && fill === "#ffffff") ? "#64748b" : "#0f172a";
+        const lines = splitNodeLabelLines(st);
+        if (lines.length === 1) {
+          const fontSize = st.length > 9 ? 11.2 : (st.length > 5 ? 12.6 : 14.6);
+          bodySvg += `<text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="${fontSize}" font-family="Arial, sans-serif" font-weight="700" fill="${textFill}">${escapeHtml(lines[0])}</text>`;
+        } else {
+          bodySvg += `<text x="${x}" y="${y - 3}" text-anchor="middle" font-size="10.4" font-family="Arial, sans-serif" font-weight="700" fill="${textFill}">
+            <tspan x="${x}" dy="0">${escapeHtml(lines[0])}</tspan>
+            <tspan x="${x}" dy="13">${escapeHtml(lines[1])}</tspan>
+          </text>`;
+        }
+      }
+
+      const margin = 14;
+      const vbX = Math.floor(minX - margin);
+      const vbY = Math.floor(minY - margin);
+      const vbW = Math.max(170, Math.ceil((maxX - minX) + margin * 2));
+      const vbH = Math.max(120, Math.ceil((maxY - minY) + margin * 2));
+
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.round(vbW * 1.12)}" viewBox="${vbX} ${vbY} ${vbW} ${vbH}">
+        <defs>
+          <marker id="arrow-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+          </marker>
+          <marker id="arrow-dim-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#cbd5e1"/>
+          </marker>
+          <marker id="arrow-active-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+          </marker>
+          <marker id="arrow-eps-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+          </marker>
+          <marker id="arrow-start-${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+          </marker>
+        </defs>
+        ${bodySvg}
+      </svg>`;
+    }
+
+    // ==========================================
+    // UI CONTROLLERS & SUB-STEP EXPLORERS
+    // ==========================================
+    function clearStringRuleError() {
+      const box = document.getElementById("stringRuleErrorBox");
+      if (box) { box.textContent = ""; box.classList.add("hidden"); }
+    }
+
+    function addStringTransitionRule() {
+      clearStringRuleError();
+      const fromSt = document.getElementById("strFromSelect").value;
+      const lbl = document.getElementById("strLabelInput").value.trim();
+      const toSt = document.getElementById("strToSelect").value;
+      const candidate = [{ from: fromSt, label: lbl, to: toSt }];
+      const errs = validateAlphabetAndStrings(appState.alphabet, appState.states, candidate);
+      if (errs.length > 0) {
+        const box = document.getElementById("stringRuleErrorBox");
+        box.textContent = errs[0];
+        box.classList.remove("hidden");
+        return;
+      }
+      const exists = appState.stringTransitions.some(r => r.from === fromSt && r.label === lbl && r.to === toSt);
+      if (!exists) {
+        appState.stringTransitions.push({ from: fromSt, label: lbl, to: toSt });
+        document.getElementById("strLabelInput").value = "";
+        appState.convStageIndex = 0;
+        appState.eSetSubIndex = 0;
+        appState.transSubIndex = 0;
+        logAction("add_string_transition", `${fromSt}--${lbl}-->${toSt}`);
+        rebuildSidebarControls();
+        recomputeAndRenderAll();
+      }
+    }
+
+    function removeStringTransitionRule(idx) {
+      const removed = appState.stringTransitions.splice(idx, 1)[0];
+      appState.convStageIndex = 0;
+      appState.eSetSubIndex = 0;
+      appState.transSubIndex = 0;
+      if (removed) logAction("remove_string_transition", `${removed.from}--${removed.label}-->${removed.to}`);
+      rebuildSidebarControls();
+      recomputeAndRenderAll();
+    }
+
+    function loadPreset(presetName) {
+      appState.presetName = presetName;
+      clearStringRuleError();
+      const descBox = document.getElementById("scenarioDescriptionBox");
+      if (presetName !== "Custom Automaton" && PREBUILT_SCENARIOS[presetName]) {
+        const p = PREBUILT_SCENARIOS[presetName];
+        document.getElementById("statesInput").value = p.states;
+        document.getElementById("alphabetInput").value = p.alphabet;
+        appState.states = p.states.split(",").map(s => s.trim()).filter(Boolean);
+        appState.alphabet = p.alphabet.split(",").map(s => s.trim()).filter(Boolean);
+        appState.startState = p.start;
+        appState.acceptStates = [...p.accept];
+        appState.transitions = JSON.parse(JSON.stringify(p.transitions));
+        appState.stringTransitions = p.stringTransitions.map(r => ({ ...r }));
+        appState.openBuilderStates = new Set(appState.states);
+        document.getElementById("stepperStringInput").value = p.sampleStr || "";
+        descBox.innerHTML = `ℹ️ <strong>Scenario Note:</strong> ${escapeHtml(p.description)}`;
+      } else {
+        appState.states = ["q1", "q2", "q3"];
+        appState.alphabet = ["a", "b", "e"];
+        appState.startState = "q1";
+        appState.acceptStates = ["q3"];
+        appState.transitions = { "q1": {}, "q2": {}, "q3": {} };
+        appState.stringTransitions = [];
+        appState.openBuilderStates = new Set();
+        document.getElementById("statesInput").value = "q1, q2, q3";
+        document.getElementById("alphabetInput").value = "a, b, e";
+        document.getElementById("stepperStringInput").value = "";
+        descBox.innerHTML = `ℹ️ <strong>Custom Mode:</strong> Define states, single-symbol alphabet, and transitions below (including multi-symbol strings like <code>ab</code>) to practice active conversion.`;
+      }
+      appState.simStepIndex = 0;
+      appState.convStageIndex = 0;
+      appState.eSetSubIndex = 0;
+      appState.transSubIndex = 0;
+      rebuildSidebarControls();
+      recomputeAndRenderAll();
+    }
+
+    function rebuildSidebarControls() {
+      const startSel = document.getElementById("startStateSelect");
+      const strFromSel = document.getElementById("strFromSelect");
+      const strToSel = document.getElementById("strToSelect");
+      const prevFrom = strFromSel.value;
+      const prevTo = strToSel.value;
+
+      startSel.innerHTML = "";
+      strFromSel.innerHTML = "";
+      strToSel.innerHTML = "";
+
+      appState.states.forEach((st, idx) => {
+        const opt = document.createElement("option");
+        opt.value = st; opt.textContent = st;
+        if (st === appState.startState) opt.selected = true;
+        startSel.appendChild(opt);
+
+        const of = document.createElement("option");
+        of.value = st; of.textContent = st;
+        if (st === prevFrom || (!prevFrom && idx === 0)) of.selected = true;
+        strFromSel.appendChild(of);
+
+        const ot = document.createElement("option");
+        ot.value = st; ot.textContent = st;
+        if (st === prevTo || (!prevTo && idx === appState.states.length - 1)) ot.selected = true;
+        strToSel.appendChild(ot);
+      });
+
+      const accContainer = document.getElementById("acceptStatesContainer");
+      accContainer.innerHTML = "";
+      appState.states.forEach(st => {
+        const isAcc = appState.acceptStates.includes(st);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `st-tag ${isAcc ? "selected" : ""}`;
+        btn.textContent = isAcc ? `${st} ×` : `+ ${st}`;
+        btn.addEventListener("click", () => {
+          if (appState.acceptStates.includes(st)) {
+            appState.acceptStates = appState.acceptStates.filter(x => x !== st);
+          } else {
+            appState.acceptStates.push(st);
+          }
+          logAction("toggle_accept_state", st);
+          rebuildSidebarControls();
+          recomputeAndRenderAll();
+        });
+        accContainer.appendChild(btn);
+      });
+
+      const transBuilder = document.getElementById("transitionsBuilderContainer");
+      transBuilder.innerHTML = "";
+      appState.states.forEach(st => {
+        if (!appState.transitions[st]) appState.transitions[st] = {};
+        const det = document.createElement("details");
+        det.className = "st-expander";
+        if (appState.openBuilderStates.has(st)) det.open = true;
+        det.addEventListener("toggle", () => {
+          if (det.open) appState.openBuilderStates.add(st);
+          else appState.openBuilderStates.delete(st);
+        });
+
+        const sum = document.createElement("summary");
+        sum.textContent = `Transitions from '${st}'`;
+        det.appendChild(sum);
+
+        const body = document.createElement("div");
+        body.className = "st-expander-content";
+
+        appState.alphabet.forEach(sym => {
+          const blk = document.createElement("div");
+          blk.className = "trans-rule-block";
+          const lbl = document.createElement("div");
+          lbl.className = "trans-rule-lbl";
+          lbl.textContent = `Read '${sym === "e" ? "ε (e)" : sym}' ➔ Go to:`;
+          blk.appendChild(lbl);
+
+          const targetsWrap = document.createElement("div");
+          targetsWrap.className = "st-multiselect-box";
+          const currentTargets = appState.transitions[st][sym] || [];
+
+          appState.states.forEach(targetSt => {
+            const active = currentTargets.includes(targetSt);
+            const chip = document.createElement("button");
+            chip.type = "button";
+            chip.className = `st-tag ${active ? "selected" : ""}`;
+            chip.textContent = active ? `${targetSt} ×` : `+ ${targetSt}`;
+            chip.addEventListener("click", () => {
+              const arr = appState.transitions[st][sym] || [];
+              if (arr.includes(targetSt)) {
+                appState.transitions[st][sym] = arr.filter(x => x !== targetSt);
+              } else {
+                appState.transitions[st][sym] = [...arr, targetSt];
+              }
+              logAction("toggle_transition", `${st} --${sym}--> ${targetSt}`);
+              rebuildSidebarControls();
+              recomputeAndRenderAll();
+            });
+            targetsWrap.appendChild(chip);
+          });
+
+          blk.appendChild(targetsWrap);
+          body.appendChild(blk);
+        });
+
+        det.appendChild(body);
+        transBuilder.appendChild(det);
+      });
+
+      const strListEl = document.getElementById("stringRulesListContainer");
+      appState.stringTransitions = appState.stringTransitions.filter(
+        r => appState.states.includes(r.from) && appState.states.includes(r.to)
+      );
+      if (appState.stringTransitions.length === 0) {
+        strListEl.innerHTML = `<div style="font-size:0.82rem;color:var(--st-muted);font-style:italic;">No multi-symbol string transitions active.</div>`;
+      } else {
+        strListEl.innerHTML = appState.stringTransitions.map((r, idx) => `
+          <div class="str-rule-item">
+            <span>${escapeHtml(r.from)} ──${escapeHtml(r.label)}──▶ ${escapeHtml(r.to)}</span>
+            <button type="button" class="str-rule-del" onclick="removeStringTransitionRule(${idx})" title="Remove string transition">✕</button>
+          </div>
+        `).join("");
+      }
+    }
+
+    function setESetSubStep(val) {
+      appState.eSetSubIndex = val;
+      logAction("select_eset_substep", String(val));
+      renderPipelineTab();
+    }
+
+    function setTransSubStep(val) {
+      appState.transSubIndex = val;
+      logAction("select_trans_substep", String(val));
+      renderPipelineTab();
+    }
+
+    function getActiveStepObject() {
+      const pd = appState.pipelineData;
+      if (!pd) return null;
+      const idx = appState.convStageIndex;
+      if (idx >= 1 && idx <= pd.steps.length) return pd.steps[idx - 1];
+      return null;
+    }
+
+    function convStepAction(type, explicitIdx = null) {
+      const pd = appState.pipelineData;
+      if (!pd) return;
+      const steps = pd.steps;
+      const maxStage = steps.length + (appState.showOptionalMinDfa ? 1 : 0);
+      const activeStep = getActiveStepObject();
+
+      if (type === "goto" && explicitIdx !== null) {
+        appState.convStageIndex = Math.max(0, Math.min(maxStage, explicitIdx));
+        const targetStep = getActiveStepObject();
+        if (targetStep && targetStep.key === "e_sets") appState.eSetSubIndex = 0;
+        if (targetStep && targetStep.key === "transition_fn") appState.transSubIndex = 0;
+      } else if (type === "reset") {
+        appState.convStageIndex = 0;
+        appState.eSetSubIndex = 0;
+        appState.transSubIndex = 0;
+      } else if (type === "next_major") {
+        appState.convStageIndex = Math.min(maxStage, appState.convStageIndex + 1);
+        const targetStep = getActiveStepObject();
+        if (targetStep && targetStep.key === "e_sets") appState.eSetSubIndex = 0;
+        if (targetStep && targetStep.key === "transition_fn") appState.transSubIndex = 0;
+      } else if (type === "next") {
+        if (activeStep && activeStep.key === "e_sets" && appState.eSetSubIndex !== "all" && appState.eSetSubIndex < pd.eSetsRows.length - 1) {
+          appState.eSetSubIndex += 1;
+        } else if (activeStep && activeStep.key === "transition_fn" && appState.transSubIndex !== "all" && appState.transSubIndex < pd.transitionsLog.length - 1) {
+          appState.transSubIndex += 1;
+        } else {
+          appState.convStageIndex = Math.min(maxStage, appState.convStageIndex + 1);
+          const nextStep = getActiveStepObject();
+          if (nextStep && nextStep.key === "e_sets") appState.eSetSubIndex = 0;
+          if (nextStep && nextStep.key === "transition_fn") appState.transSubIndex = 0;
+        }
+      } else if (type === "prev") {
+        if (activeStep && activeStep.key === "e_sets" && typeof appState.eSetSubIndex === "number" && appState.eSetSubIndex > 0) {
+          appState.eSetSubIndex -= 1;
+        } else if (activeStep && activeStep.key === "transition_fn" && typeof appState.transSubIndex === "number" && appState.transSubIndex > 0) {
+          appState.transSubIndex -= 1;
+        } else {
+          appState.convStageIndex = Math.max(0, appState.convStageIndex - 1);
+          const prevStep = getActiveStepObject();
+          if (prevStep && prevStep.key === "e_sets") appState.eSetSubIndex = Math.max(0, pd.eSetsRows.length - 1);
+          if (prevStep && prevStep.key === "transition_fn") appState.transSubIndex = Math.max(0, pd.transitionsLog.length - 1);
+        }
+      }
+
+      logAction(`conv_stage_${type}`, `Stage_${appState.convStageIndex}_eSub_${appState.eSetSubIndex}_tSub_${appState.transSubIndex}`);
+      renderPipelineTab();
+    }
+
+    function renderStepBodyHtml(stepObj, pd, originalNfa, expandedNfa, dfaDef) {
+      if (stepObj.key === "string_elim") {
+        const rowsHtml = pd.splitLog.map(r => `
+          <tr>
+            <td style="font-weight:700;">${escapeHtml(r.original)}</td>
+            <td style="font-weight:700;color:#15803d;">${escapeHtml(r.introduced)}</td>
+            <td>${escapeHtml(r.chain)}</td>
+          </tr>
+        `).join("");
+        return `
+          <div class="conv-two-equal">
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">
+                <span>Original NFA M</span>
+                <span class="state-count-code">${originalNfa.states.length} states</span>
+              </h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(originalNfa)}</div>
+            </div>
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">
+                <span>Expanded Single-Symbol NFA</span>
+                <span class="state-count-code">${expandedNfa.states.length} states</span>
+              </h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, pd.introducedStates)}</div>
+            </div>
+          </div>
+          <div class="st-table-wrap" style="margin-top:0.9rem;">
+            <table class="st-table">
+              <thead>
+                <tr>
+                  <th>Original Multi-Symbol Transition</th>
+                  <th>Introduced State(s)</th>
+                  <th>Expanded Single-Symbol Chain</th>
+                </tr>
+              </thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      if (stepObj.key === "e_sets") {
+        const totalSub = pd.eSetsRows.length;
+        const isAll = (appState.eSetSubIndex === "all");
+        const subIdx = isAll ? (totalSub - 1) : Math.max(0, Math.min(totalSub - 1, Number(appState.eSetSubIndex) || 0));
+        if (!isAll) appState.eSetSubIndex = subIdx;
+        const activeRow = pd.eSetsRows[subIdx];
+
+        const pillsHtml = pd.eSetsRows.map((r, i) => `
+          <button type="button" class="substep-pill ${(!isAll && i === subIdx) ? 'active' : ''}" onclick="setESetSubStep(${i})">
+            E(${escapeHtml(r.state)})
+          </button>
+        `).join("");
+
+        let highlightCfg = [];
+        let traceCardHtml = "";
+
+        if (isAll || !activeRow) {
+          highlightCfg = [];
+          traceCardHtml = `
+            <div class="substep-trace-card">
+              <strong>Complete Summary — All ${totalSub} E-sets Computed:</strong>
+              Click any <code>E(qi)</code> button above or any row in the table below to inspect its step-by-step ε-path highlight on the NFA diagram.
+            </div>
+          `;
+        } else {
+          highlightCfg = {
+            originStates: [activeRow.state],
+            greenStates: activeRow.epsReachedStates,
+            edges: activeRow.epsEdges,
+            dimInactive: true
+          };
+
+          const hopsMarkup = activeRow.hops.length === 0
+            ? `<span style="color:var(--st-muted);font-style:italic;">No outgoing ε-transitions from <code>${escapeHtml(activeRow.state)}</code> — only the origin state itself is included.</span>`
+            : activeRow.hops.map(h => `<span class="hop-chip-eps">${escapeHtml(h.from)} ──ε──▶ ${escapeHtml(h.to)}</span>`).join(" ");
+
+          traceCardHtml = `
+            <div class="substep-trace-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem;">
+                <strong>Sub-step ${subIdx + 1} of ${totalSub} — Formation of <code>E(${escapeHtml(activeRow.state)})</code></strong>
+                <span style="font-family:var(--mono);font-weight:700;color:#0068c9;">${escapeHtml(activeRow.formula)}</span>
+              </div>
+              <div class="trace-step-line">
+                <strong>1. Start at origin state:</strong>
+                <span class="hop-chip-origin">${escapeHtml(activeRow.state)}</span>
+              </div>
+              <div class="trace-step-line">
+                <strong>2. Traverse ε-transitions:</strong>
+                ${hopsMarkup}
+              </div>
+              <div class="trace-step-line">
+                <strong>3. Resulting E-set:</strong>
+                <code style="font-weight:700;color:#0f5132;background:#e6f6ed;padding:2px 8px;border-radius:5px;">${escapeHtml(activeRow.formula)}</code>
+              </div>
+            </div>
+          `;
+        }
+
+        const rowsHtml = pd.eSetsRows.map((r, i) => {
+          const rowCls = isAll
+            ? "clickable-row"
+            : (i === subIdx ? "clickable-row active-substep-row" : (i < subIdx ? "clickable-row" : "clickable-row pending-substep-row"));
+          const statusMark = (!isAll && i === subIdx) ? "▶ " : ((!isAll && i < subIdx) || isAll ? "✓ " : "· ");
+          return `
+            <tr class="${rowCls}" onclick="setESetSubStep(${i})">
+              <td style="font-weight:700;">${statusMark}${escapeHtml(r.state)}</td>
+              <td style="font-weight:700;color:#0068c9;">${escapeHtml(r.formula)}</td>
+              <td style="font-size:0.81rem;color:var(--st-muted);">${r.hops.length > 0 ? r.hops.map(h => `${escapeHtml(h.from)}→${escapeHtml(h.to)}`).join(", ") : "self only"}</td>
+            </tr>
+          `;
+        }).join("");
+
+        return `
+          <div class="substep-bar">
+            <button type="button" class="substep-nav-mini" onclick="setESetSubStep(${Math.max(0, subIdx - 1)})" ${(!isAll && subIdx === 0) ? "disabled" : ""}>◀ Prev E-set</button>
+            <button type="button" class="substep-nav-mini" onclick="setESetSubStep(${Math.min(totalSub - 1, subIdx + 1)})" ${(!isAll && subIdx >= totalSub - 1) ? "disabled" : ""}>Next E-set ▶</button>
+            <span style="color:var(--st-border);margin:0 2px;">|</span>
+            ${pillsHtml}
+            <button type="button" class="substep-pill ${isAll ? 'active' : ''}" onclick="setESetSubStep('all')">📋 Show All</button>
+          </div>
+          <div class="conv-split-grid">
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.45rem;">Single-Symbol NFA — ε-Path Highlight</h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, highlightCfg)}</div>
+              <div class="mini-graph-legend">
+                <span><span class="legend-dot" style="background:#fef08a;border:2px solid #ca8a04;"></span>Origin State <code>qi</code></span>
+                <span><span class="legend-dot" style="background:#86efac;border:2px solid #15803d;"></span>ε-Reached States &amp; Green ε-Edges</span>
+              </div>
+            </div>
+            <div>
+              ${traceCardHtml}
+              <div class="st-table-wrap">
+                <table class="st-table">
+                  <thead><tr><th>State q</th><th>Definition of E-set</th><th>ε-Hops</th></tr></thead>
+                  <tbody>${rowsHtml}</tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (stepObj.key === "initial_state") {
+        const initHighlight = {
+          originStates: [expandedNfa.start_state],
+          greenStates: pd.initialStateMembers.filter(x => x !== expandedNfa.start_state),
+          edges: pd.initialStateEpsEdges,
+          dimInactive: true
+        };
+        return `
+          <div class="conv-split-grid">
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">Initial E-Closure Highlighted on NFA</h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, initHighlight)}</div>
+            </div>
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">Definition of new initial state</h4>
+              <div class="formula-card">${escapeHtml(pd.initialStateFormula)}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (stepObj.key === "transition_fn") {
+        const totalSub = pd.transitionsLog.length;
+        const isAll = (appState.transSubIndex === "all");
+        const subIdx = isAll ? (totalSub - 1) : Math.max(0, Math.min(totalSub - 1, Number(appState.transSubIndex) || 0));
+        if (!isAll) appState.transSubIndex = subIdx;
+        const activeRow = pd.transitionsLog[subIdx];
+
+        const pillsHtml = pd.transitionsLog.map((r, i) => `
+          <button type="button" class="substep-pill ${(!isAll && i === subIdx) ? 'active' : ''}" onclick="setTransSubStep(${i})" title="${escapeHtml(r.fullFormula)}">
+            ${i + 1}. δ(${escapeHtml(r.currAlias)}, ${escapeHtml(r.symbol)})
+          </button>
+        `).join("");
+
+        let highlightCfg = [];
+        let traceCardHtml = "";
+
+        if (isAll || !activeRow) {
+          highlightCfg = [];
+          traceCardHtml = `
+            <div class="substep-trace-card">
+              <strong>Complete Summary — All ${totalSub} Transition Evaluations (Q1..Q${dfaDef.states.length}):</strong>
+              Click any <code>δ(Qi, σ)</code> button above or any row in the table below to highlight its exact symbol move and ε-closure path on the NFA diagram.
+            </div>
+          `;
+        } else {
+          highlightCfg = {
+            sourceHaloStates: activeRow.currMembers,
+            moveStates: activeRow.moveStates,
+            greenStates: activeRow.epsOnlyStates,
+            edges: [...activeRow.moveEdges, ...activeRow.epsEdges],
+            dimInactive: true
+          };
+
+          const discoveryBadge = activeRow.isNewlyDiscovered
+            ? `<span style="background:#dcfce7;color:#166534;padding:1px 8px;border-radius:999px;font-size:0.78rem;font-weight:700;">🆕 New State ${escapeHtml(activeRow.targetAlias)}</span>`
+            : `<span style="background:#f1f5f9;color:#475569;padding:1px 8px;border-radius:999px;font-size:0.78rem;font-weight:600;">↪ Known ${escapeHtml(activeRow.targetAlias)}</span>`;
+
+          const srcMarkup = activeRow.currMembers.length === 0
+            ? `<span class="hop-chip-src">Ø (Empty Set — 0 NFA states)</span>`
+            : activeRow.currMembers.map(s => `<span class="hop-chip-src">${escapeHtml(s)}</span>`).join(" ");
+
+          let moveMarkup = "";
+          if (activeRow.currMembers.length === 0) {
+            moveMarkup = `<span style="color:var(--st-muted);font-style:italic;">From <code>Ø</code>, reading <code>'${escapeHtml(activeRow.symbol)}'</code> stays in <code>Ø</code>.</span>`;
+          } else if (activeRow.moveHops.length === 0) {
+            moveMarkup = `<span style="color:#b91c1c;font-weight:600;">No outgoing <code>'${escapeHtml(activeRow.symbol)}'</code> edge from ${escapeHtml(activeRow.currLabel)} ➔ Move = Ø.</span>`;
+          } else {
+            moveMarkup = activeRow.moveHops.map(h => `<span class="hop-chip-move">${escapeHtml(h.from)} ──${escapeHtml(h.symbol)}──▶ ${escapeHtml(h.to)}</span>`).join(" ")
+              + ` <span style="font-family:var(--mono);font-weight:700;">➔ {${escapeHtml(activeRow.moveStates.join(", "))}}</span>`;
+          }
+
+          let closureMarkup = "";
+          if (activeRow.esetComponents.length === 0) {
+            closureMarkup = `<code style="font-weight:700;color:#b91c1c;">Ø = ${escapeHtml(activeRow.targetAlias)}</code>`;
+          } else {
+            const parts = activeRow.esetComponents.map(c => `<span class="hop-chip-eps">E(${escapeHtml(c.state)}) = ${escapeHtml(c.esetStr)}</span>`).join(" ∪ ");
+            closureMarkup = `${parts}`;
+          }
+
+          traceCardHtml = `
+            <div class="substep-trace-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem;">
+                <strong>Sub-step ${subIdx + 1} of ${totalSub} — Evaluating <code>δ(${escapeHtml(activeRow.currLabel)}, ${escapeHtml(activeRow.symbol)})</code></strong>
+                ${discoveryBadge}
+              </div>
+              <div class="trace-step-line">
+                <strong>1. Source subset ${escapeHtml(activeRow.currAlias)}:</strong>
+                ${srcMarkup}
+              </div>
+              <div class="trace-step-line">
+                <strong>2. Read '${escapeHtml(activeRow.symbol)}':</strong>
+                ${moveMarkup}
+              </div>
+              <div class="trace-step-line">
+                <strong>3. E-set union:</strong>
+                ${closureMarkup}
+              </div>
+              <div class="trace-step-line" style="margin-top:0.45rem;">
+                <code style="font-weight:700;color:#004280;background:#e8f2fc;padding:3px 9px;border-radius:5px;font-size:0.89rem;">${escapeHtml(activeRow.fullFormula)}</code>
+              </div>
+            </div>
+          `;
+        }
+
+        const rowsHtml = pd.transitionsLog.map((r, i) => {
+          const rowCls = isAll
+            ? "clickable-row"
+            : (i === subIdx ? "clickable-row active-substep-row" : (i < subIdx ? "clickable-row" : "clickable-row pending-substep-row"));
+          const statusMark = (!isAll && i === subIdx) ? "▶ " : ((!isAll && i < subIdx) || isAll ? "✓ " : "· ");
+          return `
+            <tr class="${rowCls}" onclick="setTransSubStep(${i})">
+              <td>${statusMark}${escapeHtml(r.fullFormula)}</td>
+            </tr>
+          `;
+        }).join("");
+
+        return `
+          <div class="substep-bar">
+            <button type="button" class="substep-nav-mini" onclick="setTransSubStep(${Math.max(0, subIdx - 1)})" ${(!isAll && subIdx === 0) ? "disabled" : ""}>◀ Prev δ</button>
+            <button type="button" class="substep-nav-mini" onclick="setTransSubStep(${Math.min(totalSub - 1, subIdx + 1)})" ${(!isAll && subIdx >= totalSub - 1) ? "disabled" : ""}>Next δ ▶</button>
+            <span style="color:var(--st-border);margin:0 2px;">|</span>
+            ${pillsHtml}
+            <button type="button" class="substep-pill ${isAll ? 'active' : ''}" onclick="setTransSubStep('all')">📋 Show All</button>
+          </div>
+          <div class="conv-split-grid">
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.45rem;">Single-Symbol NFA — Transition &amp; ε-Closure Highlight</h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, highlightCfg)}</div>
+              <div class="mini-graph-legend">
+                <span><span class="legend-dot" style="background:#dbeafe;border:2px dashed #2563eb;"></span>Source Set <code>S</code></span>
+                <span><span class="legend-dot" style="background:#fef08a;border:2px solid #dc2626;"></span>Read <code>σ</code> (Red Edge ➔ Gold Node)</span>
+                <span><span class="legend-dot" style="background:#86efac;border:2px solid #16a34a;"></span>Follow-up <code>ε</code>-Closure</span>
+              </div>
+            </div>
+            <div>
+              ${traceCardHtml}
+              <div class="st-table-wrap">
+                <table class="st-table">
+                  <thead><tr><th>Slide Derivation Formula (Click any row to highlight)</th></tr></thead>
+                  <tbody>${rowsHtml}</tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (stepObj.key === "final_states") {
+        return `
+          <div class="formula-card" style="margin-bottom:1rem;border-left-color:#15803d;">
+            <strong>Definition of final states:</strong> ${escapeHtml(pd.finalStatesFormula)}
+          </div>
+          <h4 class="st-h4" style="margin-bottom:0.55rem;">
+            <span>Resulting Converted DFA M'</span>
+            <span class="state-count-code">${dfaDef.states.length} states</span>
+          </h4>
+          <div class="st-graph-frame">${renderAutomatonSvg(dfaDef, dfaDef.accept_states.filter(s => s !== dfaDef.start_state))}</div>
+        `;
+      }
+      return "";
+    }
+
+    function renderPipelineTab() {
+      const pd = appState.pipelineData;
+      const originalNfa = appState.originalNfa;
+      const expandedNfa = appState.expandedNfa;
+      const dfaDef = appState.dfaDef;
+      const minDfa = appState.minDfaDef;
+      if (!pd || !dfaDef) return;
+
+      const steps = pd.steps;
+      const maxStage = steps.length + (appState.showOptionalMinDfa ? 1 : 0);
+      appState.convStageIndex = Math.min(appState.convStageIndex, maxStage);
+      const stageIdx = appState.convStageIndex;
+      const activeStep = getActiveStepObject();
+
+      const atVeryStart = (stageIdx === 0);
+      const onLastESetSub = activeStep && activeStep.key === "e_sets" && (appState.eSetSubIndex === "all" || appState.eSetSubIndex >= pd.eSetsRows.length - 1);
+      const onLastTransSub = activeStep && activeStep.key === "transition_fn" && (appState.transSubIndex === "all" || appState.transSubIndex >= pd.transitionsLog.length - 1);
+      const atVeryEnd = (stageIdx >= maxStage) && (!activeStep || (activeStep.key !== "e_sets" && activeStep.key !== "transition_fn") || onLastESetSub || onLastTransSub);
+
+      document.getElementById("btnConvPrev").disabled = atVeryStart;
+      document.getElementById("btnConvNext").disabled = atVeryEnd;
+
+      const skipBtn = document.getElementById("btnConvSkipMajor");
+      const showSkip = activeStep && ((activeStep.key === "e_sets" && !onLastESetSub) || (activeStep.key === "transition_fn" && !onLastTransSub));
+      skipBtn.classList.toggle("hidden", !showSkip);
+
+      const fullStageTitles = ["Given NFA M", ...steps.map(s => `Step ${s.stepNum}: ${s.title}`)];
+      const shortMap = {
+        string_elim: "Eliminate Strings",
+        e_sets: "E-sets",
+        initial_state: "Initial State",
+        transition_fn: "Transition δ",
+        final_states: "Final States & DFA"
+      };
+      const pillLabels = ["Given NFA M", ...steps.map(s => `Step ${s.stepNum}: ${shortMap[s.key] || s.title}`)];
+      if (appState.showOptionalMinDfa) {
+        fullStageTitles.push("Bonus: Minimized DFA");
+        pillLabels.push("Bonus: Min DFA");
+      }
+
+      document.getElementById("convCurrentStageLabel").textContent = fullStageTitles[stageIdx] || "";
+      document.getElementById("convStagePillsContainer").innerHTML = pillLabels.map((lbl, i) => `
+        <button type="button" class="conv-pill ${i === stageIdx ? 'active' : ''}" onclick="convStepAction('goto', ${i})">${escapeHtml(lbl)}</button>
+      `).join("");
+
+      const stageContainer = document.getElementById("convActiveStageContent");
+      if (stageIdx === 0) {
+        const planItems = steps.map(s => `<li style="margin-bottom:0.25rem;"><strong>Step ${s.stepNum}:</strong> ${escapeHtml(s.title)}</li>`).join("");
+        stageContainer.innerHTML = `
+          <div class="conv-split-grid">
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">
+                <span>Given NFA M</span>
+                <span class="state-count-code">${originalNfa.states.length} states</span>
+              </h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(originalNfa)}</div>
+            </div>
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.55rem;">Conversion Steps (${steps.length} Steps — Slide 100)</h4>
+              <div class="formula-card" style="font-family:var(--sans);">
+                <ol style="padding-left:1.25rem;">${planItems}</ol>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (stageIdx <= steps.length) {
+        stageContainer.innerHTML = `
+          <h3 class="st-h3" style="font-size:1.26rem;margin-bottom:0.55rem;">Step ${activeStep.stepNum} of ${steps.length} — ${escapeHtml(activeStep.title)}</h3>
+          ${renderStepBodyHtml(activeStep, pd, originalNfa, expandedNfa, dfaDef)}
+        `;
+        const activeTr = stageContainer.querySelector("tr.active-substep-row");
+        if (activeTr && activeTr.scrollIntoView) {
+          activeTr.scrollIntoView({ block: "nearest" });
+        }
+      } else if (minDfa) {
+        const mapRows = appState.minMapping.map(r => `
+          <tr>
+            <td style="font-weight:700;color:#059669;">${escapeHtml(r.group)}</td>
+            <td>${escapeHtml(r.members)}</td>
+          </tr>
+        `).join("");
+        stageContainer.innerHTML = `
+          <h3 class="st-h3" style="font-size:1.26rem;margin-bottom:0.55rem;">Optional Bonus Stage — Minimized DFA (${minDfa.states.length} states)</h3>
+          <div class="conv-split-grid">
+            <div class="st-graph-frame">${renderAutomatonSvg(minDfa)}</div>
+            <div class="st-table-wrap">
+              <table class="st-table">
+                <thead><tr><th>Minimized Group</th><th>Original DFA Subsets</th></tr></thead>
+                <tbody>${mapRows}</tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      // Render Full Pipeline Overview
+      const cards = [];
+      cards.push(`
+        <div>
+          <h4 class="st-h4" style="margin-bottom:0.5rem;"><span>Given NFA M</span><span class="state-count-code">${originalNfa.states.length} states</span></h4>
+          <div class="st-graph-frame">${renderAutomatonSvg(originalNfa)}</div>
+        </div>
+      `);
+      if (pd.hasStringSplits) {
+        cards.push(`
+          <div>
+            <h4 class="st-h4" style="margin-bottom:0.5rem;"><span>Step 1 Single-Symbol NFA</span><span class="state-count-code">${expandedNfa.states.length} states</span></h4>
+            <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, pd.introducedStates)}</div>
+          </div>
+        `);
+      }
+      cards.push(`
+        <div>
+          <h4 class="st-h4" style="margin-bottom:0.5rem;"><span>Converted DFA M'</span><span class="state-count-code">${dfaDef.states.length} states</span></h4>
+          <div class="st-graph-frame">${renderAutomatonSvg(dfaDef)}</div>
+        </div>
+      `);
+      if (appState.showOptionalMinDfa && minDfa) {
+        cards.push(`
+          <div>
+            <h4 class="st-h4" style="margin-bottom:0.5rem;"><span>Minimized DFA</span><span class="state-count-code">${minDfa.states.length} states</span></h4>
+            <div class="st-graph-frame">${renderAutomatonSvg(minDfa)}</div>
+          </div>
+        `);
+      }
+      const gridEl = document.getElementById("overviewGraphsGrid");
+      gridEl.className = `overview-grid overview-cols-${Math.min(4, Math.max(2, cards.length))}`;
+      gridEl.innerHTML = cards.join("");
+
+      document.getElementById("overviewStepsStack").innerHTML = steps.map(s => {
+        let inner = "";
+        if (s.key === "string_elim") {
+          inner = `<div class="st-table-wrap"><table class="st-table"><thead><tr><th>Original</th><th>Introduced State(s)</th><th>Expanded Chain</th></tr></thead><tbody>${pd.splitLog.map(r => `<tr><td>${escapeHtml(r.original)}</td><td>${escapeHtml(r.introduced)}</td><td>${escapeHtml(r.chain)}</td></tr>`).join("")}</tbody></table></div>`;
+        } else if (s.key === "e_sets") {
+          inner = `<div class="st-table-wrap"><table class="st-table"><thead><tr><th>State q</th><th>Definition of E-set</th></tr></thead><tbody>${pd.eSetsRows.map(r => `<tr><td>${escapeHtml(r.state)}</td><td>${escapeHtml(r.formula)}</td></tr>`).join("")}</tbody></table></div>`;
+        } else if (s.key === "initial_state") {
+          inner = `<div class="formula-card">${escapeHtml(pd.initialStateFormula)}</div>`;
+        } else if (s.key === "transition_fn") {
+          inner = `<div class="st-table-wrap"><table class="st-table"><thead><tr><th>State S</th><th>Symbol σ</th><th>E-set Union</th><th>Target = Qi</th><th>Slide Formula</th></tr></thead><tbody>${pd.transitionsLog.map(r => `<tr><td>${escapeHtml(r.stateWithAlias)}</td><td>${escapeHtml(r.symbol)}</td><td>${escapeHtml(r.unionExpr)}</td><td>${escapeHtml(r.targetWithAlias)}</td><td>${escapeHtml(r.fullFormula)}</td></tr>`).join("")}</tbody></table></div>`;
+        } else if (s.key === "final_states") {
+          inner = `<div class="formula-card">${escapeHtml(pd.finalStatesFormula)}</div>`;
+        }
+        return `<details class="st-expander" open><summary>Step ${s.stepNum} of ${steps.length} — ${escapeHtml(s.title)}</summary><div class="st-expander-content">${inner}</div></details>`;
+      }).join("");
+    }
+
+    function recomputeAndRenderAll() {
+      const valErrors = validateAlphabetAndStrings(appState.alphabet, appState.states, appState.stringTransitions);
+      const errBanner = document.getElementById("globalValidationErrorBanner");
+      if (valErrors.length > 0) {
+        errBanner.innerHTML = valErrors.map(e => `<div>⚠️ ${escapeHtml(e)}</div>`).join("");
+        errBanner.classList.remove("hidden");
+        return;
+      }
+      errBanner.classList.add("hidden");
+
+      const originalNfa = buildCombinedOriginalNfa(
+        appState.states, appState.alphabet, appState.startState, appState.acceptStates,
+        appState.transitions, appState.stringTransitions
+      );
+      const { expandedNfa, splitLog, introducedStates } = expandStringTransitions(
+        appState.states, appState.alphabet, appState.startState, appState.acceptStates,
+        appState.transitions, appState.stringTransitions
+      );
+      const { dfaDef, pipelineData } = nfaToDfaSlide100Pipeline(expandedNfa, splitLog, introducedStates);
+      const { minDfa, mapping } = minimizeDfa(dfaDef);
+
+      appState.originalNfa = originalNfa;
+      appState.expandedNfa = expandedNfa;
+      appState.dfaDef = dfaDef;
+      appState.pipelineData = pipelineData;
+      appState.minDfaDef = minDfa;
+      appState.minMapping = mapping;
+
+      renderPipelineTab();
+      renderStepperView();
+      updateTelemetryView();
+    }
+
+    function renderStepperView() {
+      const targetStr = document.getElementById("stepperStringInput").value.trim();
+      const machineChoice = document.querySelector("input[name='stepperTargetMachine']:checked")?.value || "Converted DFA";
+      const chosenMachine = (machineChoice === "Minimized DFA" && appState.showOptionalMinDfa && appState.minDfaDef)
+        ? appState.minDfaDef
+        : appState.dfaDef;
+
+      if (!chosenMachine) return;
+
+      const hasAnySingle = Object.values(appState.transitions).some(row => Object.values(row).some(arr => arr && arr.length > 0));
+      const isBlankCustom = (appState.presetName === "Custom Automaton") && !hasAnySingle && appState.stringTransitions.length === 0;
+      const blankPrompt = document.getElementById("stepperBlankCustomPrompt");
+      const execArea = document.getElementById("stepperExecutionArea");
+
+      if (isBlankCustom && targetStr.length === 0) {
+        blankPrompt.classList.remove("hidden");
+        execArea.classList.add("hidden");
+        return;
+      }
+      blankPrompt.classList.add("hidden");
+      execArea.classList.remove("hidden");
+
+      const { isAccepted, path, msg } = simulateString(chosenMachine, targetStr);
+      const banner = document.getElementById("stepperResultBanner");
+
+      if (msg !== "Success") {
+        banner.className = "st-alert-warn";
+        banner.textContent = `⚠️ Simulation Alert: ${msg}`;
+        banner.classList.remove("hidden");
+        return;
+      }
+
+      const maxSteps = path.length - 1;
+      appState.simStepIndex = Math.min(appState.simStepIndex, maxSteps);
+      const currIdx = appState.simStepIndex;
+      const currState = path[currIdx].state;
+      const consumedSym = path[currIdx].symbol;
+
+      document.getElementById("stepperProgressLabel").textContent = `Step ${currIdx} of ${maxSteps}`;
+      document.getElementById("stepperActiveStateBadge").textContent = currState;
+
+      const tape = document.getElementById("stepperTapeContainer");
+      if (targetStr.length === 0) {
+        tape.innerHTML = `<span style="color:#64748b;font-style:italic;">ε (empty string)</span>`;
+      } else {
+        tape.innerHTML = targetStr.split("").map((ch, i) => {
+          const safeCh = escapeHtml(ch);
+          if (i < currIdx) return `<span class="tape-char-done">${safeCh}</span>`;
+          if (i === currIdx) return `<span class="tape-char-curr">${safeCh}</span>`;
+          return `<span class="tape-char-wait">${safeCh}</span>`;
+        }).join("");
+      }
+
+      const visitedTrace = path.slice(0, currIdx + 1).map(p => p.state).join(" ➔ ");
+      document.getElementById("stepperTraceSequence").textContent = visitedTrace;
+
+      let activeEdge = null;
+      if (currIdx > 0) {
+        activeEdge = { src: path[currIdx - 1].state, dest: currState, symbol: consumedSym };
+      }
+
+      document.getElementById("stepperGraphContainer").innerHTML = renderAutomatonSvg(chosenMachine, [currState], activeEdge);
+
+      if (currIdx === maxSteps) {
+        const dispStr = targetStr.length > 0 ? targetStr : "ε";
+        banner.classList.remove("hidden");
+        if (isAccepted) {
+          banner.className = "st-alert-success";
+          banner.innerHTML = `🎉 Simulation Complete: The string <code>'${escapeHtml(dispStr)}'</code> is <strong>ACCEPTED</strong> (Ended in final state <code>${escapeHtml(currState)}</code>).`;
+        } else {
+          banner.className = "st-alert-error";
+          banner.innerHTML = `🛑 Simulation Complete: The string <code>'${escapeHtml(dispStr)}'</code> is <strong>REJECTED</strong> (Ended in non-final state <code>${escapeHtml(currState)}</code>).`;
+        }
+      } else {
+        banner.classList.add("hidden");
+      }
+    }
+
+    function stepperAction(type) {
+      const targetStr = document.getElementById("stepperStringInput").value.trim();
+      const maxSteps = targetStr.length;
+      if (type === "reset") {
+        appState.simStepIndex = 0;
+        logAction("stepper_reset");
+      } else if (type === "prev") {
+        appState.simStepIndex = maxSteps > 0 ? Math.max(0, appState.simStepIndex - 1) : 0;
+        logAction("stepper_prev", `Step_${appState.simStepIndex}`);
+      } else if (type === "next") {
+        appState.simStepIndex = Math.min(maxSteps, appState.simStepIndex + 1);
+        logAction("stepper_next", `Step_${appState.simStepIndex}`);
+      }
+      renderStepperView();
+    }
+
+    function switchTab(tabName) {
+      const tabs = ["pipeline", "stepper", "telemetry"];
+      tabs.forEach(t => {
+        const cap = t.charAt(0).toUpperCase() + t.slice(1);
+        const panel = document.getElementById(`tabPanel${cap}`);
+        const btn = document.getElementById(`tabBtn${cap}`);
+        if (t === tabName) {
+          panel.classList.remove("hidden");
+          btn.className = "st-tab active";
+        } else {
+          panel.classList.add("hidden");
+          btn.className = "st-tab";
+        }
+      });
+      logAction("switch_tab", tabName);
+    }
+
+    function updateTelemetryView() {
+      const elapsedSec = Number(((Date.now() - appState.sessionStartTime) / 1000).toFixed(1));
+      const elapsedMin = (elapsedSec / 60).toFixed(1);
+      document.getElementById("metricSessionTime").textContent = `${elapsedMin} mins`;
+      document.getElementById("metricTotalActions").textContent = `${appState.userActionsLog.length} events`;
+
+      const pid = document.getElementById("participantIdInput").value.trim() || "ANONYMOUS";
+      const payload = {
+        participant_id: pid,
+        elapsed_seconds: elapsedSec,
+        actions_summary_count: appState.userActionsLog.length,
+        recent_actions: appState.userActionsLog.slice(-10)
+      };
+      document.getElementById("telemetryJsonPre").textContent = JSON.stringify(payload, null, 2);
+
+      const showDetailed = document.getElementById("chkDetailedEventLog")?.checked;
+      const logContainer = document.getElementById("detailedEventLogContainer");
+      const logBody = document.getElementById("detailedEventLogBody");
+      if (showDetailed) {
+        logContainer.classList.remove("hidden");
+        if (appState.userActionsLog.length === 0) {
+          logBody.innerHTML = `<tr><td colspan="4" style="color:#64748b;text-align:center;">No interaction events recorded yet in this session.</td></tr>`;
+        } else {
+          logBody.innerHTML = appState.userActionsLog.map((ev, i) => `
+            <tr>
+              <td style="color:#64748b;">${i + 1}</td>
+              <td>${ev.timestamp_sec}</td>
+              <td style="font-weight:700;color:#0068c9;">${escapeHtml(ev.action)}</td>
+              <td>${escapeHtml(ev.details || "")}</td>
+            </tr>
+          `).join("");
+        }
+      } else {
+        logContainer.classList.add("hidden");
+      }
+    }
+
+    function copyTelemetryJson() {
+      const text = document.getElementById("telemetryJsonPre").textContent;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      const btn = document.getElementById("btnCopyTelemetry");
+      btn.textContent = "✓ Copied!";
+      setTimeout(() => { btn.textContent = "📋 Copy JSON"; }, 2000);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("presetSelect").addEventListener("change", (e) => {
+        logAction("select_preset", e.target.value);
+        loadPreset(e.target.value);
+      });
+
+      document.getElementById("statesInput").addEventListener("change", (e) => {
+        const list = Array.from(new Set(e.target.value.split(",").map(s => s.trim()).filter(Boolean)));
+        if (list.length > 0) {
+          appState.states = list;
+          if (!appState.states.includes(appState.startState)) appState.startState = appState.states[0];
+          appState.acceptStates = appState.acceptStates.filter(s => appState.states.includes(s));
+          appState.eSetSubIndex = 0;
+          appState.transSubIndex = 0;
+          logAction("edit_states", appState.states.join(","));
+          rebuildSidebarControls();
+          recomputeAndRenderAll();
+        }
+      });
+
+      document.getElementById("alphabetInput").addEventListener("change", (e) => {
+        const list = Array.from(new Set(e.target.value.split(",").map(s => s.trim()).filter(Boolean)));
+        if (list.length > 0) {
+          appState.alphabet = list;
+          appState.eSetSubIndex = 0;
+          appState.transSubIndex = 0;
+          logAction("edit_alphabet", appState.alphabet.join(","));
+          rebuildSidebarControls();
+          recomputeAndRenderAll();
+        }
+      });
+
+      document.getElementById("startStateSelect").addEventListener("change", (e) => {
+        appState.startState = e.target.value;
+        appState.eSetSubIndex = 0;
+        appState.transSubIndex = 0;
+        logAction("select_start_state", appState.startState);
+        recomputeAndRenderAll();
+      });
+
+      document.getElementById("strLabelInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          addStringTransitionRule();
+        }
+      });
+
+      document.getElementById("stepperStringInput").addEventListener("input", () => {
+        appState.simStepIndex = 0;
+        renderStepperView();
+      });
+
+      document.querySelectorAll("input[name='stepperTargetMachine']").forEach(r => {
+        r.addEventListener("change", () => {
+          appState.simStepIndex = 0;
+          logAction("switch_stepper_target", r.value);
+          renderStepperView();
+        });
+      });
+
+      document.getElementById("participantIdInput").addEventListener("input", updateTelemetryView);
+      loadPreset(DEFAULT_PRESET_NAME);
+    });
+  </script>
+</body>
+</html>

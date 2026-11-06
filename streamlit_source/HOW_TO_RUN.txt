@@ -1,44 +1,37 @@
 ========================================================================
-AUTOMATA STUDIO - QUICK START & HOW TO RUN GUIDE
+AUTOMATA STUDIO - OFFLINE & ONLINE QUICK START GUIDE
 ========================================================================
 
-This package provides two 100% synchronized versions of Automata Studio
-(Lecture 5 Slide 99-132 Edition: Custom Automaton Default + Examples 1-5
-+ Dynamic 4/5-Step Slide 100 Conversion Pipeline):
-1. Double-Click Python Streamlit App (Start_Automata_Studio.bat / .command)
-2. Zero-Install Offline/Online Web App (index.html)
+This package includes two 100% synchronized offline-ready editions of
+Automata Studio (Lecture 5 Slides 99-132 Edition + Single-Checkbox
+Optional DFA Minimization Extension):
+  1. Zero-Install Offline Web App: double-click "index.html" (no Python or internet needed!)
+  2. Double-Click Python Streamlit App: "Start_Automata_Studio.bat" / ".command" / ".sh"
+
+Tip: Leave "Extension: DFA Minimization" unchecked for the pure 4/5-step
+Lecture 5 NFA -> DFA workflow, or tick that single checkbox anytime to unlock
+step-by-step group-by-group DFA minimization!
 
 ------------------------------------------------------------------------
-OPTION 1: UNZIP & DOUBLE-CLICK STREAMLIT APP (RECOMMENDED FOR PYTHON)
+OPTION 1: ZERO-INSTALL 100% OFFLINE WEB APP (FASTEST FOR STUDENTS)
 ------------------------------------------------------------------------
-Prerequisite: Python 3.9 or newer installed (https://www.python.org/downloads/
--- on Windows, ensure "Add python.exe to PATH" is checked during installation).
-Note: Separate Graphviz system software is NOT required; graphs render directly
-in your browser!
-
-Step 1: Extract (Unzip) the downloaded ZIP folder completely (do not double-click
-        inside the compressed ZIP preview without extracting first).
-Step 2: Launch with a double-click:
-  - Windows : Double-click "Start_Automata_Studio.bat"
-  - macOS   : Double-click "Start_Automata_Studio.command" (Right-click -> Open on first run)
-  - Linux   : Run "./start_automata_studio.sh"
-
-On the first run, the launcher automatically builds a local ".venv" folder and
-installs Streamlit, Graphviz, and Pandas. On all future runs, double-clicking
-opens http://localhost:8501 in your browser within seconds!
+1. Extract (Unzip) this folder completely.
+2. Double-click "index.html" to open Automata Studio in Chrome, Edge,
+   Firefox, or Safari -- works 100% offline with zero internet connection!
+   ("stable.html" is also included as the classic reference layout.)
 
 ------------------------------------------------------------------------
-OPTION 2: RUN THE STANDALONE WEB VERSION (ZERO INSTALLATION, 100% OFFLINE)
+OPTION 2: UNZIP & DOUBLE-CLICK STREAMLIT DESKTOP APP (PYTHON EDITION)
 ------------------------------------------------------------------------
-1. Online via GitHub Pages:
-   https://lamthai2711-afk.github.io/automata-studio/
+Prerequisite: Python 3.9+ installed (https://www.python.org/downloads/ --
+on Windows, check "Add python.exe to PATH" during installation).
 
-2. Offline on any computer (even without internet or Python):
-   Simply double-click "index.html" to open it in Chrome, Edge, Firefox, or Safari.
+1. Extract (Unzip) the downloaded ZIP folder completely.
+2. Double-click the launcher for your OS:
+   - Windows : Double-click "Start_Automata_Studio.bat"
+   - macOS   : Double-click "Start_Automata_Studio.command" (Right-click -> Open first time)
+   - Linux   : Run "./start_automata_studio.sh"
 
-------------------------------------------------------------------------
-OPTION 3: DEPLOY ONLINE ON STREAMLIT COMMUNITY CLOUD
-------------------------------------------------------------------------
-1. Sign in at https://share.streamlit.io/ with your GitHub account.
-2. Select Repository: lamthai2711-afk/automata-studio | Branch: main
-3. Main file path: streamlit_source/NFA.py -> Click "Deploy!".
+First run creates a local ".venv" and installs Streamlit, Graphviz, and Pandas
+(requires internet once). Every run after that works 100% offline and opens
+http://localhost:8501 in seconds!

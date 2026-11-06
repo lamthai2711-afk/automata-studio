@@ -3,20 +3,65 @@ import time
 import json
 from collections import deque
 import streamlit as st
-import graphviz
+class _DotBuilder:
+    """Pure-Python Graphviz DOT string builder (zero external package/binary dependency)."""
+
+    def __init__(self, name="Automaton", graph_attr=None):
+        self._name = re.sub(r"[^A-Za-z0-9_]", "_", str(name))
+        self._lines = [f"digraph {self._name} {{"]
+        for k, v in (graph_attr or {}).items():
+            self._lines.append(f"  {k}={self._q(v)};")
+
+    @staticmethod
+    def _q(val):
+        s = str(val).replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+        return f'"{s}"'
+
+    def node(self, name, label=None, **attrs):
+        kv = []
+        if label is not None:
+            kv.append(f"label={self._q(label)}")
+        for k, v in attrs.items():
+            kv.append(f"{k}={self._q(v)}")
+        attr_str = f" [{', '.join(kv)}]" if kv else ""
+        self._lines.append(f"  {self._q(name)}{attr_str};")
+
+    def edge(self, src, dst, label=None, **attrs):
+        kv = []
+        if label is not None:
+            kv.append(f"label={self._q(label)}")
+        for k, v in attrs.items():
+            kv.append(f"{k}={self._q(v)}")
+        attr_str = f" [{', '.join(kv)}]" if kv else ""
+        self._lines.append(f"  {self._q(src)} -> {self._q(dst)}{attr_str};")
+
+    @property
+    def source(self):
+        return "\n".join(self._lines + ["}"])
 import pandas as pd
 
 # ==========================================
 # 1. PAGE CONFIGURATION & SESSION STATE
 # ==========================================
 st.set_page_config(
-    page_title="Automata Studio: Cognitive Learning Lab",
+    page_title="Automata Studio",
     page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 DEFAULT_PRESET_NAME = "Custom Automaton"
+
+GROUP_PALETTE = [
+    {"fill": "#e0f2fe", "stroke": "#0284c7", "sw": "2.4"},
+    {"fill": "#dcfce7", "stroke": "#15803d", "sw": "2.4"},
+    {"fill": "#fef9c3", "stroke": "#ca8a04", "sw": "2.4"},
+    {"fill": "#f3e8ff", "stroke": "#7e22ce", "sw": "2.4"},
+    {"fill": "#ffedd5", "stroke": "#c2410c", "sw": "2.4"},
+    {"fill": "#fce7f3", "stroke": "#be185d", "sw": "2.4"},
+    {"fill": "#e0e7ff", "stroke": "#4338ca", "sw": "2.4"},
+    {"fill": "#ccfbf1", "stroke": "#0f766e", "sw": "2.4"},
+]
 
 # ==========================================
 # 2. LECTURE 5 SCENARIOS LIBRARY (SLIDES 99-132)
@@ -31,13 +76,13 @@ PREBUILT_SCENARIOS = {
             "q1": {"b": ["q2"]},
             "q2": {"a": ["q3"]},
             "q3": {"e": ["q2", "q4"]},
-            "q4": {"a": ["q2"]}
+            "q4": {"a": ["q2"]},
         },
         "string_transitions": [
             {"from": "q4", "label": "ab", "to": "q1"}
         ],
         "sample_str": "baabba",
-        "description": "NFA → DFA: Example 1 (Slides 101–106)"
+        "description": "NFA → DFA: Example 1 (Slides 101–106)",
     },
     "NFA → DFA: Example 2": {
         "states": "q1, q2, q3",
@@ -47,14 +92,14 @@ PREBUILT_SCENARIOS = {
         "transitions": {
             "q1": {"b": ["q2"]},
             "q2": {"b": ["q3"]},
-            "q3": {"e": ["q1"]}
+            "q3": {"e": ["q1"]},
         },
         "string_transitions": [
             {"from": "q1", "label": "aa", "to": "q2"},
-            {"from": "q1", "label": "ba", "to": "q2"}
+            {"from": "q1", "label": "ba", "to": "q2"},
         ],
         "sample_str": "bab",
-        "description": "NFA → DFA: Example 2 (Slides 107–112)"
+        "description": "NFA → DFA: Example 2 (Slides 107–112)",
     },
     "NFA → DFA: Example 3": {
         "states": "q1, q2, q3, q4, q5, q6, q7, q8",
@@ -69,11 +114,11 @@ PREBUILT_SCENARIOS = {
             "q5": {"e": ["q7"]},
             "q6": {"e": ["q7"]},
             "q7": {"b": ["q8"]},
-            "q8": {}
+            "q8": {},
         },
         "string_transitions": [],
         "sample_str": "aab",
-        "description": "NFA → DFA: Example 3 (Slides 113–117)"
+        "description": "NFA → DFA: Example 3 (Slides 113–117)",
     },
     "NFA → DFA: Example 4": {
         "states": "q1, q2, q3, q4, q5, q6",
@@ -86,13 +131,13 @@ PREBUILT_SCENARIOS = {
             "q3": {"b": ["q6"]},
             "q4": {"e": ["q3"]},
             "q5": {"a": ["q1", "q4"]},
-            "q6": {"e": ["q4", "q5"]}
+            "q6": {"e": ["q4", "q5"]},
         },
         "string_transitions": [
             {"from": "q1", "label": "ab", "to": "q4"}
         ],
         "sample_str": "abb",
-        "description": "NFA → DFA: Example 4 (Slides 118–124)"
+        "description": "NFA → DFA: Example 4 (Slides 118–124)",
     },
     "NFA → DFA: Example 5": {
         "states": "q1, q2, q3, q4, q5, q6, q7",
@@ -106,37 +151,39 @@ PREBUILT_SCENARIOS = {
             "q4": {"e": ["q5", "q7"]},
             "q5": {"a": ["q3"], "e": ["q6"]},
             "q6": {"b": ["q3"], "a": ["q7"]},
-            "q7": {}
+            "q7": {},
         },
         "string_transitions": [
             {"from": "q7", "label": "bb", "to": "q1"}
         ],
         "sample_str": "bba",
-        "description": "NFA → DFA: Example 5 (Slides 125–132)"
-    }
+        "description": "NFA → DFA: Example 5 (Slides 125–132)",
+    },
 }
 
-# Initialize persistent session states for Telemetry & Controls
-if "user_actions_log" not in st.session_state:
-    st.session_state.user_actions_log = []
-if "session_start_time" not in st.session_state:
-    st.session_state.session_start_time = time.time()
-if "sim_step_index" not in st.session_state:
-    st.session_state.sim_step_index = 0
-if "conv_stage_index" not in st.session_state:
-    st.session_state.conv_stage_index = 0
-if "scenario_choice_key" not in st.session_state:
-    st.session_state.scenario_choice_key = DEFAULT_PRESET_NAME
-if "last_loaded_scenario" not in st.session_state:
-    st.session_state.last_loaded_scenario = DEFAULT_PRESET_NAME
-if "stepper_str_input" not in st.session_state:
-    st.session_state.stepper_str_input = ""
-if "string_transitions_list" not in st.session_state:
-    st.session_state.string_transitions_list = []
-if "show_optional_min_dfa" not in st.session_state:
-    st.session_state.show_optional_min_dfa = False
-if "reset_counter" not in st.session_state:
-    st.session_state.reset_counter = 0
+
+def init_session_state():
+    defaults = {
+        "user_actions_log": [],
+        "session_start_time": time.time(),
+        "sim_step_index": 0,
+        "conv_stage_index": 0,
+        "eset_sub_index": 0,
+        "trans_sub_index": 0,
+        "min_sub_index": 0,
+        "scenario_choice_key": DEFAULT_PRESET_NAME,
+        "last_loaded_scenario": DEFAULT_PRESET_NAME,
+        "stepper_str_input": "",
+        "string_transitions_list": [],
+        "show_optional_min_dfa": False,
+        "reset_counter": 0,
+    }
+    for k, v in defaults.items():
+        if k not in st.session_state:
+            st.session_state[k] = v
+
+
+init_session_state()
 
 
 def log_action(action_type, details=""):
@@ -145,7 +192,7 @@ def log_action(action_type, details=""):
     st.session_state.user_actions_log.append({
         "timestamp_sec": elapsed,
         "action": action_type,
-        "details": details
+        "details": details,
     })
 
 
@@ -162,6 +209,9 @@ def reset_to_default():
     st.session_state.last_loaded_scenario = DEFAULT_PRESET_NAME
     st.session_state.sim_step_index = 0
     st.session_state.conv_stage_index = 0
+    st.session_state.eset_sub_index = 0
+    st.session_state.trans_sub_index = 0
+    st.session_state.min_sub_index = 0
     st.session_state.stepper_str_input = ""
     st.session_state.string_transitions_list = []
     st.session_state.stepper_target_radio = "Converted DFA"
@@ -179,6 +229,9 @@ def reset_current_preset():
     preset = PREBUILT_SCENARIOS[current]
     st.session_state.sim_step_index = 0
     st.session_state.conv_stage_index = 0
+    st.session_state.eset_sub_index = 0
+    st.session_state.trans_sub_index = 0
+    st.session_state.min_sub_index = 0
     st.session_state.stepper_str_input = preset["sample_str"]
     st.session_state.string_transitions_list = [dict(item) for item in preset["string_transitions"]]
     st.session_state.reset_counter += 1
@@ -187,10 +240,9 @@ def reset_current_preset():
 
 
 # ==========================================
-# 3. FORMAL ALGORITHM ENGINES (SLIDE 100 ALIGNED)
+# 3. FORMAL ALGORITHM ENGINES (SLIDE 100 + SUB-STEP + M2)
 # ==========================================
 def state_sort_key(state_name, state_order_map=None):
-    """Orders states naturally by declared/introduced index or numeric suffix (q1, q2, ..., q10)."""
     if state_order_map and state_name in state_order_map:
         return (0, state_order_map[state_name], "")
     m = re.match(r"^([A-Za-z_]+)(\d+)$", state_name)
@@ -200,12 +252,10 @@ def state_sort_key(state_name, state_order_map=None):
 
 
 def sort_states(state_iterable, state_order_map=None):
-    """Returns a deterministically ordered list of NFA states."""
     return sorted(list(state_iterable), key=lambda s: state_sort_key(s, state_order_map))
 
 
 def format_state_name(state_set, state_order_map=None):
-    """Renders exact Lecture 5 subset notation ({q1, q2} and Ø for empty/sink state)."""
     if not state_set or state_set == frozenset({"Ø"}):
         return "Ø"
     ordered = sort_states(state_set, state_order_map)
@@ -213,7 +263,6 @@ def format_state_name(state_set, state_order_map=None):
 
 
 def validate_alphabet_and_strings(alphabet_list, states_list, string_transitions):
-    """Validates single-character alphabet Σ and multi-symbol string transition rules."""
     errors = []
     atomic_symbols = [s for s in alphabet_list if s != "e"]
 
@@ -221,7 +270,7 @@ def validate_alphabet_and_strings(alphabet_list, states_list, string_transitions
     if invalid_alpha:
         errors.append(
             f"Formal Alphabet Error: Symbols {invalid_alpha} in Alphabet must be single characters "
-            f"(use 'Multi-Symbol / String Transitions' below for strings like 'ab')."
+            f"(use 'String Transitions' below for multi-symbol strings like 'ab')."
         )
 
     valid_sigma = {s for s in atomic_symbols if len(s) == 1}
@@ -255,7 +304,6 @@ def validate_alphabet_and_strings(alphabet_list, states_list, string_transitions
 
 
 def build_combined_original_nfa(states_list, alphabet_list, start_state, accept_states, single_trans, string_transitions):
-    """Builds the Original NFA M including both single-symbol and unsplit string edges for visualization."""
     combined = {s: {} for s in states_list}
     for s, row in single_trans.items():
         if s not in combined:
@@ -274,15 +322,11 @@ def build_combined_original_nfa(states_list, alphabet_list, start_state, accept_
         "alphabet": list(alphabet_list),
         "start_state": start_state,
         "accept_states": list(accept_states),
-        "transitions": combined
+        "transitions": combined,
     }
 
 
 def expand_string_transitions(states_list, alphabet_list, start_state, accept_states, single_trans, string_transitions):
-    """
-    Slide 100 Phase 1: Eliminates multi-symbol string transitions (e.g., q4 --ab--> q1)
-    by introducing sequential intermediate states q_{max+1}, q_{max+2}, ...
-    """
     existing = set(states_list)
     q_nums = []
     for s in states_list:
@@ -309,7 +353,6 @@ def expand_string_transitions(states_list, alphabet_list, start_state, accept_st
                     if t not in expanded_trans[s].setdefault(sym, []):
                         expanded_trans[s][sym].append(t)
 
-    # Group string rules by source state in declared state order to match Heckl's slide numbering
     split_log = []
     introduced_states = []
     for src_state in states_list:
@@ -336,9 +379,9 @@ def expand_string_transitions(states_list, alphabet_list, start_state, accept_st
                         expanded_trans[curr][ch].append(dst)
                     chain_parts.append(f"──{ch}──▶ {dst}")
             split_log.append({
-                "Original Transition": f"{src} ──{lbl}──▶ {dst}",
-                "Introduced State(s)": ", ".join(rule_new_states),
-                "Expanded Single-Symbol Chain": " ".join(chain_parts)
+                "String Arc": f"{src} ──{lbl}──▶ {dst}",
+                "New State(s)": ", ".join(rule_new_states),
+                "Single-Symbol Chain": " ".join(chain_parts),
             })
 
     expanded_nfa = {
@@ -346,42 +389,45 @@ def expand_string_transitions(states_list, alphabet_list, start_state, accept_st
         "alphabet": list(alphabet_list),
         "start_state": start_state,
         "accept_states": list(accept_states),
-        "transitions": expanded_trans
+        "transitions": expanded_trans,
     }
     return expanded_nfa, split_log, introduced_states
 
 
+def trace_epsilon_closure_bfs(seed_states, transitions, state_order_map=None):
+    """Traces exact BFS epsilon-closure hops and traversed ε-edges."""
+    closure_set = set(seed_states)
+    bfs_queue = deque(seed_states)
+    hops = []
+    eps_edges = []
+    while bfs_queue:
+        u = bfs_queue.popleft()
+        for v in transitions.get(u, {}).get("e", []):
+            is_new = v not in closure_set
+            hops.append({"from": u, "to": v, "is_new": is_new})
+            eps_edges.append({"src": u, "dest": v, "symbol": "e", "role": "eps"})
+            if is_new:
+                closure_set.add(v)
+                bfs_queue.append(v)
+    members = sort_states(closure_set, state_order_map)
+    return members, hops, eps_edges
+
+
 def get_empty_closure(states, transitions):
-    """Computes formal E-set (epsilon-closure) via iterative depth reachability."""
-    closure = set(states)
-    stack = list(states)
-    while stack:
-        curr = stack.pop()
-        if curr in transitions and "e" in transitions[curr]:
-            for nxt in transitions[curr]["e"]:
-                if nxt not in closure:
-                    closure.add(nxt)
-                    stack.append(nxt)
-    return frozenset(closure)
+    members, _, _ = trace_epsilon_closure_bfs(states, transitions)
+    return frozenset(members)
 
 
 def move(states, symbol, transitions):
-    """Evaluates direct single-symbol reachable states before epsilon closure."""
     reachable = set()
     for s in states:
-        if s in transitions and symbol in transitions[s]:
-            for nxt in transitions[s][symbol]:
-                reachable.add(nxt)
+        for nxt in transitions.get(s, {}).get(symbol, []):
+            reachable.add(nxt)
     return frozenset(reachable)
 
 
 def nfa_to_dfa_slide100_pipeline(original_nfa, expanded_nfa, split_log, introduced_states):
-    """
-    Executes Lecture 5 (Slide 100) NFA -> DFA conversion with dynamic step count detection:
-      - 5 steps when multi-symbol string transitions exist
-      - 4 steps when no multi-symbol string transitions exist (matching Example 3, Slides 113-117)
-    Enqueues Ø immediately upon first discovery so Q1..Qn match Slides 104-130 verbatim.
-    """
+    """Executes Lecture 5 (Slide 100) NFA -> DFA conversion with sub-step path traces."""
     alphabet = [s for s in expanded_nfa["alphabet"] if s != "e" and len(s) == 1]
     nfa_trans = expanded_nfa["transitions"]
     start_state = expanded_nfa["start_state"]
@@ -400,29 +446,42 @@ def nfa_to_dfa_slide100_pipeline(original_nfa, expanded_nfa, split_log, introduc
         "e_sets_rows": [],
         "initial_state_label": None,
         "initial_state_formula": "",
+        "initial_state_members": [],
+        "initial_state_eps_edges": [],
         "q_aliases": {},
         "transitions_log": [],
         "final_states": [],
         "final_states_formula": "",
-        "steps": []
+        "steps": [],
     }
 
     if not start_state:
         return None, pipeline_data
 
-    # Phase: Definition of E-sets
+    # Phase: Definition of E-sets (with BFS path traces)
+    e_trace_by_state = {}
     for state in expanded_nfa["states"]:
-        eset_str = format_state_name(get_empty_closure([state], nfa_trans), state_order_map)
+        members, hops, eps_edges = trace_epsilon_closure_bfs([state], nfa_trans, state_order_map)
+        e_trace_by_state[state] = {"members": members, "hops": hops, "eps_edges": eps_edges}
+        eset_str = format_state_name(frozenset(members), state_order_map)
         pipeline_data["e_sets"][state] = eset_str
         pipeline_data["e_sets_rows"].append({
-            "State q": state,
-            "Definition of E-set": f"E({state}) = {eset_str}"
+            "state": state,
+            "eset_str": eset_str,
+            "formula": f"E({state}) = {eset_str}",
+            "members": members,
+            "eps_reached_states": [x for x in members if x != state],
+            "hops": hops,
+            "eps_edges": eps_edges,
         })
 
     # Phase: Definition of new initial state
-    initial_closure = get_empty_closure([start_state], nfa_trans)
+    init_trace = e_trace_by_state[start_state]
+    initial_closure = frozenset(init_trace["members"])
     initial_label = format_state_name(initial_closure, state_order_map)
     pipeline_data["initial_state_label"] = initial_label
+    pipeline_data["initial_state_members"] = list(init_trace["members"])
+    pipeline_data["initial_state_eps_edges"] = list(init_trace["eps_edges"])
     pipeline_data["q_aliases"][initial_label] = "Q1"
     pipeline_data["initial_state_formula"] = f"s' = E({start_state}) = {initial_label} = Q1"
 
@@ -434,27 +493,40 @@ def nfa_to_dfa_slide100_pipeline(original_nfa, expanded_nfa, split_log, introduc
 
     while queue:
         curr = queue.popleft()
+        curr_members = sort_states(curr, state_order_map) if curr else []
         curr_label = format_state_name(curr, state_order_map)
         curr_alias = pipeline_data["q_aliases"][curr_label]
         dfa_transitions[curr_label] = {}
 
         for sym in alphabet:
-            if curr:
-                m_set = move(curr, sym, nfa_trans)
-                m_sorted = sort_states(m_set, state_order_map)
-            else:
-                m_sorted = []
+            move_hops = []
+            move_edges = []
+            move_set = set()
+            for s in curr_members:
+                for dst in nfa_trans.get(s, {}).get(sym, []):
+                    move_hops.append({"from": s, "symbol": sym, "to": dst})
+                    move_edges.append({"src": s, "dest": dst, "symbol": sym, "role": "move"})
+                    move_set.add(dst)
+            m_sorted = sort_states(move_set, state_order_map)
 
             if m_sorted:
-                target_closure = get_empty_closure(m_sorted, nfa_trans)
+                t_members, _, eps_edges = trace_epsilon_closure_bfs(m_sorted, nfa_trans, state_order_map)
+                target_closure = frozenset(t_members)
                 target_label = format_state_name(target_closure, state_order_map)
                 union_expr = " ∪ ".join(f"E({p})" for p in m_sorted)
+                eset_components = [{"state": p, "eset_str": pipeline_data["e_sets"][p]} for p in m_sorted]
+                eps_only_states = [x for x in t_members if x not in move_set]
             else:
+                t_members = []
+                eps_edges = []
                 target_closure = frozenset()
                 target_label = "Ø"
                 union_expr = "Ø"
+                eset_components = []
+                eps_only_states = []
 
-            if target_label not in seen_labels:
+            is_newly_discovered = target_label not in seen_labels
+            if is_newly_discovered:
                 seen_labels[target_label] = target_closure
                 dfa_states_closures.append(target_closure)
                 pipeline_data["q_aliases"][target_label] = f"Q{len(dfa_states_closures)}"
@@ -469,55 +541,45 @@ def nfa_to_dfa_slide100_pipeline(original_nfa, expanded_nfa, split_log, introduc
                 full_formula = f"δ({curr_label}, {sym}) = Ø = {target_alias}"
 
             pipeline_data["transitions_log"].append({
-                "State S": f"{curr_label} ({curr_alias})",
-                "Symbol σ": sym,
-                "E-set Union": union_expr,
-                "Target = Qi": f"{target_label} = {target_alias}",
-                "Slide Formula": full_formula
+                "curr_label": curr_label,
+                "curr_alias": curr_alias,
+                "curr_members": curr_members,
+                "symbol": sym,
+                "move_states": m_sorted,
+                "move_hops": move_hops,
+                "move_edges": move_edges,
+                "eps_edges": eps_edges,
+                "eps_only_states": eps_only_states,
+                "eset_components": eset_components,
+                "union_expr": union_expr,
+                "target_label": target_label,
+                "target_alias": target_alias,
+                "is_newly_discovered": is_newly_discovered,
+                "Slide Formula": full_formula,
             })
 
-    # Phase: Definition of final states
     dfa_state_labels = [format_state_name(c, state_order_map) for c in dfa_states_closures]
-    dfa_accept_list = []
-    for c in dfa_states_closures:
-        if any(s in nfa_accept for s in c):
-            lbl = format_state_name(c, state_order_map)
-            dfa_accept_list.append(lbl)
+    dfa_accept_list = [
+        format_state_name(c, state_order_map)
+        for c in dfa_states_closures
+        if any(s in nfa_accept for s in c)
+    ]
 
     pipeline_data["final_states"] = dfa_accept_list
-    if dfa_accept_list:
-        pipeline_data["final_states_formula"] = "F' = {" + ", ".join(dfa_accept_list) + "}"
-    else:
-        pipeline_data["final_states_formula"] = "F' = Ø"
+    pipeline_data["final_states_formula"] = (
+        "F' = {" + ", ".join(dfa_accept_list) + "}" if dfa_accept_list else "F' = Ø"
+    )
 
-    # Build Dynamic Step Descriptor Array (4 or 5 steps)
     steps = []
     if has_string_splits:
         steps.append({
             "key": "string_elim",
             "title": "Eliminating string transitions by introducing new states",
-            "summary": f"Introduced {len(introduced_states)} intermediate state(s) ({', '.join(introduced_states)}) to split multi-symbol edges into single-character transitions."
         })
-    steps.append({
-        "key": "e_sets",
-        "title": "Definition of E-sets",
-        "summary": f"Computed ε-closure E(q) for all {len(expanded_nfa['states'])} single-symbol NFA states."
-    })
-    steps.append({
-        "key": "initial_state",
-        "title": "Definition of new initial state",
-        "summary": pipeline_data["initial_state_formula"]
-    })
-    steps.append({
-        "key": "transition_fn",
-        "title": "Definition of transition function",
-        "summary": f"Evaluated δ(S, σ) across {len(dfa_state_labels)} reachable subset state(s) (Q1..Q{len(dfa_state_labels)})."
-    })
-    steps.append({
-        "key": "final_states",
-        "title": "Definition of final states",
-        "summary": pipeline_data["final_states_formula"]
-    })
+    steps.append({"key": "e_sets", "title": "Definition of E-sets"})
+    steps.append({"key": "initial_state", "title": "Definition of new initial state"})
+    steps.append({"key": "transition_fn", "title": "Definition of transition function"})
+    steps.append({"key": "final_states", "title": "Definition of final states"})
     for idx, st_obj in enumerate(steps, start=1):
         st_obj["step_num"] = idx
     pipeline_data["steps"] = steps
@@ -527,76 +589,206 @@ def nfa_to_dfa_slide100_pipeline(original_nfa, expanded_nfa, split_log, introduc
         "alphabet": alphabet,
         "start_state": initial_label,
         "accept_states": dfa_accept_list,
-        "transitions": dfa_transitions
+        "transitions": dfa_transitions,
     }
     return final_dfa, pipeline_data
 
 
-def minimize_dfa(dfa_def):
-    """Minimizes DFA using Moore's Equivalence Partitioning algorithm (with Ø sink handling)."""
+def minimize_dfa(dfa_def, alias_map=None):
+    """Minimizes DFA using Moore's Equivalence Partitioning with full M2 group-by-group trace."""
     if not dfa_def or not dfa_def.get("states"):
-        return None, None
+        return None, None, {"sub_steps": [], "is_already_minimal": True}
 
-    states = dfa_def["states"]
-    accept_states = set(dfa_def["accept_states"])
-    non_accept_states = set(states) - accept_states
-    alphabet = dfa_def["alphabet"]
+    states = list(dfa_def["states"])
+    accept_set = set(dfa_def["accept_states"])
+    non_accept = [s for s in states if s not in accept_set]
+    accept = [s for s in states if s in accept_set]
+    alphabet = list(dfa_def["alphabet"])
     transitions = dfa_def["transitions"]
 
+    def get_alias(st):
+        if alias_map and st in alias_map:
+            return alias_map[st]
+        return f"Q{states.index(st) + 1}" if st in states else st
+
+    def fmt_compact(st):
+        al = get_alias(st)
+        return f"{al} {st}" if al != st else st
+
+    sub_steps = []
     partitions = []
-    if non_accept_states:
-        partitions.append(non_accept_states)
-    if accept_states:
-        partitions.append(accept_states)
+    if non_accept:
+        partitions.append(non_accept)
+    if accept:
+        partitions.append(accept)
 
+    p0_palette = {}
+    for b_idx, blk in enumerate(partitions):
+        pal = GROUP_PALETTE[b_idx % len(GROUP_PALETTE)]
+        for st_name in blk:
+            p0_palette[st_name] = pal
+
+    sub_steps.append({
+        "kind": "init_p0",
+        "pill": "1. P0",
+        "headline": f"P0 = {{ {', '.join(f'G{i}' for i in range(len(partitions)))} }}",
+        "badge": f"{len(partitions)} initial block{'s' if len(partitions) > 1 else ''}",
+        "help_tip": (
+            "Moore's algorithm starts at P0 by separating non-accepting DFA subsets (K' \\ F') "
+            "from accepting subsets (F'). Singleton blocks (1 state) can never split further."
+        ),
+        "highlight_cfg": {"node_palette_map": p0_palette, "dim_inactive": False},
+        "rows": [
+            {
+                "Block": f"G{b_idx} ({'Final' if all(s in accept_set for s in blk) else 'Non-Final'})",
+                "States Qi": ", ".join(get_alias(s) for s in blk),
+                "Subsets": ", ".join(blk),
+                "Status": f"{len(blk)} states → test" if len(blk) >= 2 else "Singleton (fixed)",
+            }
+            for b_idx, blk in enumerate(partitions)
+        ],
+    })
+
+    round_num = 1
     while True:
-        new_partitions = []
-        for part in partitions:
-            signatures = {}
-            for state in part:
-                sig = []
-                for sym in alphabet:
-                    target = transitions.get(state, {}).get(sym, "Ø")
-                    target_idx = -1
-                    for idx, p in enumerate(partitions):
-                        if target in p:
-                            target_idx = idx
-                            break
-                    sig.append(target_idx)
-                sig_tuple = tuple(sig)
-                signatures.setdefault(sig_tuple, set()).add(state)
-
-            for sig_key in sorted(signatures.keys()):
-                new_partitions.append(signatures[sig_key])
-
-        if len(new_partitions) == len(partitions):
+        if not any(len(p) >= 2 for p in partitions):
             break
+
+        new_partitions = []
+        any_split_in_round = False
+
+        for b_idx, part in enumerate(partitions):
+            if len(part) < 2:
+                new_partitions.append(part)
+                continue
+
+            sig_map = {}
+            state_details = []
+            for st_name in part:
+                per_sym = []
+                vec = []
+                for sym in alphabet:
+                    target = transitions.get(st_name, {}).get(sym, "Ø")
+                    g_idx = next((i for i, p in enumerate(partitions) if target in p), -1)
+                    per_sym.append({"sym": sym, "target": target, "target_alias": get_alias(target), "g_idx": g_idx})
+                    vec.append(g_idx)
+                vec_t = tuple(vec)
+                if vec_t not in sig_map:
+                    sig_map[vec_t] = {"vec": vec_t, "members": []}
+                sig_map[vec_t]["members"].append(st_name)
+                state_details.append({"st": st_name, "alias": get_alias(st_name), "per_sym": per_sym, "vec": vec_t})
+
+            entries = [sig_map[k] for k in sorted(sig_map.keys())]
+            did_split = len(entries) > 1
+            if did_split:
+                any_split_in_round = True
+            for entry in entries:
+                new_partitions.append(entry["members"])
+
+            splitting_syms = [
+                sym for s_idx, sym in enumerate(alphabet)
+                if len({e["vec"][s_idx] for e in entries}) > 1
+            ]
+
+            step_palette = {}
+            for o_idx, other_blk in enumerate(partitions):
+                if o_idx == b_idx:
+                    continue
+                for s in other_blk:
+                    step_palette[s] = {"fill": "#f8fafc", "stroke": "#94a3b8", "sw": "1.5"}
+            for sub_i, entry in enumerate(entries):
+                pal = GROUP_PALETTE[(sub_i + 1) % len(GROUP_PALETTE)] if did_split else GROUP_PALETTE[1]
+                for s in entry["members"]:
+                    step_palette[s] = pal
+
+            highlight_edges = []
+            for d in state_details:
+                for ps in d["per_sym"]:
+                    if did_split and ps["sym"] in splitting_syms:
+                        highlight_edges.append({"src": d["st"], "dest": ps["target"], "symbol": ps["sym"], "role": "move"})
+                    elif not did_split:
+                        highlight_edges.append({"src": d["st"], "dest": ps["target"], "symbol": ps["sym"], "role": "eps"})
+
+            step_no = len(sub_steps) + 1
+            sub_steps.append({
+                "kind": "test_block",
+                "pill": f"{step_no}. R{round_num}·G{b_idx}",
+                "did_split": did_split,
+                "headline": f"Round {round_num} · Test G{b_idx} = {{{', '.join(get_alias(s) for s in part)}}}",
+                "badge": f"✂️ Split → {len(entries)} groups" if did_split else "✓ Keep together",
+                "help_tip": (
+                    f"Testing G{b_idx} against Round {round_num - 1} blocks: symbol(s) {', '.join(splitting_syms)} "
+                    f"send members into different target blocks, splitting G{b_idx} into {len(entries)} sub-blocks."
+                    if did_split
+                    else f"Every state in G{b_idx} maps to the exact same Round {round_num - 1} target block on all symbols ({', '.join(alphabet)}), remaining equivalent."
+                ),
+                "highlight_cfg": {
+                    "source_halo_states": list(part),
+                    "node_palette_map": step_palette,
+                    "edges": highlight_edges,
+                    "dim_inactive": True,
+                },
+                "rows": [
+                    {
+                        f"Subset(s) in G{b_idx}": ", ".join(fmt_compact(s) for s in entry["members"]),
+                        f"Sig ({', '.join(alphabet)})": "(" + ", ".join(f"G{g}" for g in entry["vec"]) + ")",
+                        "Outcome": f"Split #{sub_i + 1}" if did_split else "Equivalent",
+                    }
+                    for sub_i, entry in enumerate(entries)
+                ],
+            })
+
         partitions = new_partitions
+        if not any_split_in_round:
+            break
+        round_num += 1
 
     start_state = dfa_def["start_state"]
 
     def partition_key(p):
         if start_state in p:
             return (0, "")
-        if p == {"Ø"}:
+        if len(p) == 1 and p[0] == "Ø":
             return (2, "Ø")
         return (1, min(sorted(list(p))))
 
     partitions.sort(key=partition_key)
 
     state_map = {}
+    orig_merge_palette = {}
+    min_merge_palette = {}
+    mapping_rows = []
+
     for idx, p in enumerate(partitions):
         label = f"M{idx}"
-        for s in p:
+        sorted_members = sorted(list(p))
+        for s in sorted_members:
             state_map[s] = label
+        if len(sorted_members) >= 2:
+            pal = GROUP_PALETTE[idx % len(GROUP_PALETTE)]
+            for s in sorted_members:
+                orig_merge_palette[s] = pal
+            min_merge_palette[label] = pal
+
+        is_start = start_state in sorted_members
+        is_acc = any(s in accept_set for s in sorted_members)
+        role_tag = (
+            "Start, Final" if (is_start and is_acc)
+            else ("Start" if is_start else ("Final" if is_acc else ("Trap Ø" if sorted_members == ["Ø"] else ("Merged" if len(sorted_members) >= 2 else "State"))))
+        )
+        mapping_rows.append({
+            "Class Mi": f"{label} ({role_tag})",
+            "group": label,
+            "is_merged": len(sorted_members) >= 2,
+            "DFA Subsets": f"{', '.join(get_alias(s) for s in sorted_members)} ({', '.join(sorted_members)})",
+        })
 
     min_states = [f"M{i}" for i in range(len(partitions))]
     min_start = state_map.get(start_state)
     min_accept = sorted(
-        list({state_map[s] for s in accept_states if s in state_map}),
-        key=lambda x: int(x[1:])
+        list({state_map[s] for s in accept_set if s in state_map}),
+        key=lambda x: int(x[1:]),
     )
-
     min_trans = {}
     for s in states:
         mapped_src = state_map[s]
@@ -606,23 +798,63 @@ def minimize_dfa(dfa_def):
             if target and target in state_map:
                 min_trans[mapped_src][sym] = state_map[target]
 
+    for r in mapping_rows:
+        grp = r["group"]
+        r["δ_min"] = ", ".join(f"{sym}→{min_trans.get(grp, {}).get(sym, 'Ø')}" for sym in alphabet)
+
     min_dfa = {
         "states": min_states,
         "alphabet": alphabet,
         "start_state": min_start,
         "accept_states": min_accept,
-        "transitions": min_trans
+        "transitions": min_trans,
     }
 
+    is_already_minimal = len(min_states) == len(states)
+    merged_groups = [r["group"] for r in mapping_rows if r["is_merged"]]
+    final_step_no = len(sub_steps) + 1
+
+    sub_steps.append({
+        "kind": "final_min",
+        "pill": f"{final_step_no}. Min DFA",
+        "is_already_minimal": is_already_minimal,
+        "headline": (
+            f"Fixed Point — Already Minimal ({len(min_states)} states)"
+            if is_already_minimal
+            else f"Fixed Point — Merged {len(states)} ➔ {len(min_states)} states"
+        ),
+        "badge": "✓ Already Minimal" if is_already_minimal else f"Merged {', '.join(merged_groups)}",
+        "help_tip": (
+            f"Every equivalence class is a singleton, so M' ({len(states)} states) is already minimal."
+            if is_already_minimal
+            else f"Equivalent states collapse into merged class(es) {', '.join(merged_groups)} to form the minimal DFA."
+        ),
+        "orig_highlight_cfg": {
+            "source_halo_states": [s for p in partitions if len(p) >= 2 for s in p],
+            "node_palette_map": orig_merge_palette,
+            "dim_inactive": False,
+        },
+        "min_highlight_cfg": {
+            "node_palette_map": min_merge_palette,
+            "dim_inactive": False,
+        },
+        "rows": [{k: v for k, v in r.items() if k in ("Class Mi", "DFA Subsets", "δ_min")} for r in mapping_rows],
+    })
+
     mapping_df = pd.DataFrame([
-        {"Minimized Group": f"M{i}", "Original DFA Subsets": ", ".join(sorted(list(p)))}
-        for i, p in enumerate(partitions)
+        {k: v for k, v in r.items() if k in ("Class Mi", "DFA Subsets", "δ_min")}
+        for r in mapping_rows
     ])
-    return min_dfa, mapping_df
+    m2_data = {
+        "sub_steps": sub_steps,
+        "is_already_minimal": is_already_minimal,
+        "orig_count": len(states),
+        "min_count": len(min_states),
+    }
+    return min_dfa, mapping_df, m2_data
 
 
 def simulate_string(dfa_def, input_string):
-    """Simulates character-by-character trace through a deterministic automaton."""
     curr = dfa_def["start_state"]
     path = [(curr, "Start")]
     if not curr:
@@ -640,10 +872,9 @@ def simulate_string(dfa_def, input_string):
 
 
 # ==========================================
-# 4. VISUALIZATION ENGINE (GRAPHVIZ DOT)
+# 4. VISUALIZATION ENGINE (GRAPHVIZ DOT WITH MULTI-ROLE CUES)
 # ==========================================
 def wrap_subset_label_for_dot(state_name):
-    """Wraps long subset state names across two balanced lines so Graphviz circles stay compact."""
     if len(state_name) <= 12 or "," not in state_name:
         return state_name
     inner = state_name[1:-1] if state_name.startswith("{") and state_name.endswith("}") else state_name
@@ -654,47 +885,84 @@ def wrap_subset_label_for_dot(state_name):
     return "{" + ", ".join(parts[:mid]) + ",\n" + ", ".join(parts[mid:]) + "}"
 
 
-def draw_automaton(automaton_def, name="Automaton", highlighted_states=None, active_edge=None):
-    """Generates styled topological DOT source with Mayer signaling cues and Ø sink notation."""
-    dot = graphviz.Digraph(name, graph_attr={
+def draw_automaton(automaton_def, name="Automaton", highlighted_states=None, active_edge=None, highlight_cfg=None):
+    """Generates styled topological DOT source with multi-role path & partition cues."""
+    dot = _DotBuilder(name, graph_attr={
         "rankdir": "LR",
         "bgcolor": "transparent",
-        "margin": "0.12"
+        "margin": "0.12",
     })
     if not automaton_def or not automaton_def.get("start_state"):
         return dot.source
 
-    dot.node("hidden_start", label="", shape="none", width="0", height="0")
-    dot.edge("hidden_start", automaton_def["start_state"], color="#2563eb", penwidth="2.2")
+    cfg = highlight_cfg or {}
+    green_states = set(cfg.get("green_states", highlighted_states or []))
+    origin_states = set(cfg.get("origin_states", []))
+    move_states = set(cfg.get("move_states", []))
+    source_halo_states = set(cfg.get("source_halo_states", []))
+    node_palette_map = cfg.get("node_palette_map", {})
+    cfg_edges = list(cfg.get("edges", []))
+    if active_edge:
+        cfg_edges.append({"src": active_edge[0], "dest": active_edge[1], "symbol": active_edge[2], "role": "move"})
+    dim_inactive = bool(cfg.get("dim_inactive", False))
 
-    highlighted_states = set(highlighted_states or [])
+    dot.node("hidden_start", label="", shape="none", width="0", height="0")
+    dot.edge("hidden_start", automaton_def["start_state"], color="#93c5fd" if dim_inactive else "#2563eb", penwidth="2.2")
 
     for state in automaton_def["states"]:
-        shape = "doublecircle" if state in automaton_def["accept_states"] else "circle"
+        is_accept = state in automaton_def["accept_states"]
+        shape = "doublecircle" if is_accept else "circle"
+        style_parts = ["filled"]
         fontcolor = "#0f172a"
 
-        if state in highlighted_states:
-            fillcolor = "#86efac"
+        if state in node_palette_map:
+            fillcolor = node_palette_map[state]["fill"]
+            color = node_palette_map[state]["stroke"]
+            penwidth = node_palette_map[state].get("sw", "2.4")
+        elif state in origin_states or state in move_states:
+            fillcolor = "#fef08a"
+            color = "#ca8a04"
             penwidth = "3.2"
+        elif state in green_states:
+            fillcolor = "#86efac"
             color = "#15803d"
-        elif state == automaton_def["start_state"]:
+            penwidth = "3.2"
+        elif state in source_halo_states:
             fillcolor = "#dbeafe"
-            penwidth = "2.0"
+            color = "#2563eb"
+            penwidth = "2.6"
+            style_parts.append("dashed")
+        elif not dim_inactive and state == automaton_def["start_state"]:
+            fillcolor = "#dbeafe"
             color = "#1d4ed8"
+            penwidth = "2.2"
         elif state == "Ø":
             fillcolor = "#fee2e2"
-            penwidth = "1.6"
             color = "#b91c1c"
+            penwidth = "1.8"
         else:
             fillcolor = "#ffffff"
-            penwidth = "1.3"
-            color = "#64748b"
+            color = "#94a3b8" if dim_inactive else "#64748b"
+            penwidth = "1.4"
+            if dim_inactive:
+                fontcolor = "#64748b"
+
+        if state in source_halo_states and "dashed" not in style_parts:
+            color = "#2563eb"
 
         disp_label = wrap_subset_label_for_dot(state)
         fontsize = "11" if len(state) > 12 else "13"
         dot.node(
-            state, disp_label, shape=shape, style="filled", fillcolor=fillcolor,
-            color=color, penwidth=penwidth, fontcolor=fontcolor, fontname="Arial", fontsize=fontsize
+            state,
+            disp_label,
+            shape=shape,
+            style=",".join(style_parts),
+            fillcolor=fillcolor,
+            color=color,
+            penwidth=penwidth,
+            fontcolor=fontcolor,
+            fontname="Arial",
+            fontsize=fontsize,
         )
 
     edge_groups = {}
@@ -705,28 +973,57 @@ def draw_automaton(automaton_def, name="Automaton", highlighted_states=None, act
                 edge_groups.setdefault((src, dest), []).append(symbol)
 
     for (src, dest), symbols in edge_groups.items():
-        is_hit = active_edge and (src == active_edge[0] and dest == active_edge[1] and active_edge[2] in symbols)
-        edge_color = "#dc2626" if is_hit else "#475569"
-        edge_width = "3.0" if is_hit else "1.4"
+        move_hits = {e["symbol"] for e in cfg_edges if e["src"] == src and e["dest"] == dest and e["role"] == "move"}
+        eps_hits = {e["symbol"] for e in cfg_edges if e["src"] == src and e["dest"] == dest and e["role"] == "eps"}
+
+        if any(s in move_hits for s in symbols):
+            edge_color = "#dc2626"
+            edge_width = "3.1"
+            fcolor = "#dc2626"
+        elif any(s in eps_hits for s in symbols):
+            edge_color = "#16a34a"
+            edge_width = "3.0"
+            fcolor = "#15803d"
+        elif dim_inactive:
+            edge_color = "#cbd5e1"
+            edge_width = "1.2"
+            fcolor = "#94a3b8"
+        else:
+            edge_color = "#475569"
+            edge_width = "1.5"
+            fcolor = "#0f172a"
+
         label_str = ", ".join("ε" if s == "e" else s for s in symbols)
         dot.edge(
-            src, dest, label=f" {label_str} ", fontcolor="#0f172a",
-            color=edge_color, penwidth=edge_width, fontname="Arial", fontsize="12"
+            src,
+            dest,
+            label=f" {label_str} ",
+            fontcolor=fcolor,
+            color=edge_color,
+            penwidth=edge_width,
+            fontname="Arial",
+            fontsize="12",
         )
     return dot.source
 
 
 # ==========================================
-# 5. USER INTERFACE ARCHITECTURE
+# 5. USER INTERFACE ARCHITECTURE (COMPACT + (?) TOOLTIPS)
 # ==========================================
 def main():
-    st.title("🧠 Automata Studio: Interactive Learning Laboratory")
-    st.markdown(
-        """
-        Master **NFA → DFA Conversion** through **Auto-Detected Lecture 5 Steps (Slide 100)**, 
-        **Multi-Symbol String Transition Splitting**, **E-Set Union Derivations**, and **Step-by-Step String Tracing**.
-        """
-    )
+    hdr_col1, hdr_col2 = st.columns([4, 1])
+    with hdr_col1:
+        st.title(
+            "🧠 Automata Studio",
+            help=(
+                "Interactive NFA → DFA conversion laboratory aligned with Lecture 5 (Slide 100): "
+                "automatic 4/5-step detection, E-set & δ path highlighting, character-by-character string tracing, "
+                "and an optional DFA Minimization extension."
+            ),
+        )
+    with hdr_col2:
+        st.write("")
+        st.caption(f"Actions: `{len(st.session_state.user_actions_log)}`")
 
     # --- SIDEBAR CONFIGURATION ---
     with st.sidebar:
@@ -740,19 +1037,22 @@ def main():
             st.button("↺ Reset Preset", use_container_width=True, type="secondary", on_click=reset_current_preset)
 
         st.divider()
-        st.header("📚 Scenarios & Presets")
+        st.header("📚 Presets")
         scenario_options = ["Custom Automaton"] + list(PREBUILT_SCENARIOS.keys())
         scenario_choice = st.selectbox(
-            "Select Scenario Preset:",
+            "Preset",
             scenario_options,
-            key="scenario_choice_key"
+            key="scenario_choice_key",
+            label_visibility="collapsed",
         )
 
-        # Synchronize state when switching presets
         if scenario_choice != st.session_state.last_loaded_scenario:
             st.session_state.last_loaded_scenario = scenario_choice
             st.session_state.sim_step_index = 0
             st.session_state.conv_stage_index = 0
+            st.session_state.eset_sub_index = 0
+            st.session_state.trans_sub_index = 0
+            st.session_state.min_sub_index = 0
             clear_automaton_widget_keys()
             if scenario_choice in PREBUILT_SCENARIOS:
                 p_load = PREBUILT_SCENARIOS[scenario_choice]
@@ -769,74 +1069,71 @@ def main():
             def_alpha = preset["alphabet"]
             def_start = preset["start"]
             def_acc = preset["accept"]
-            st.info(f"ℹ️ **Scenario Note:** {preset['description']}")
+            st.info(f"ℹ️ **{preset['description']}**")
         else:
             preset = None
             def_states = "q1, q2, q3"
             def_alpha = "a, b, e"
             def_start = "q1"
             def_acc = ["q3"]
-            st.info(
-                "ℹ️ **Custom Mode:** Define states, single-symbol alphabet, and transitions below "
-                "(including multi-symbol strings like `ab`) to practice active conversion."
+            st.caption(
+                "ℹ️ **Custom Automaton**",
+                help="Build your own NFA below using single-symbol, ε ('e'), or multi-symbol string edges (e.g. 'ab').",
             )
 
         rc = st.session_state.reset_counter
-        st.subheader("NFA Formal Specification")
-        raw_states = st.text_input(
-            "States K (comma-separated)",
-            value=def_states,
-            key=f"states_in_{scenario_choice}_{rc}"
+        st.subheader(
+            "NFA Tuple (K, Σ, Δ, s, F)",
+            help="Define finite states K (comma-separated) and single-character alphabet Σ (use 'e' for empty transition ε).",
         )
+        raw_states = st.text_input("States K", value=def_states, key=f"states_in_{scenario_choice}_{rc}")
         states_list = list(dict.fromkeys(s.strip() for s in raw_states.split(",") if s.strip()))
 
-        raw_alphabet = st.text_input(
-            "Alphabet Σ (single symbols, 'e' for ε)",
-            value=def_alpha,
-            key=f"alpha_in_{scenario_choice}_{rc}"
-        )
+        raw_alphabet = st.text_input("Alphabet Σ ('e' = ε)", value=def_alpha, key=f"alpha_in_{scenario_choice}_{rc}")
         alphabet_list = list(dict.fromkeys(a.strip() for a in raw_alphabet.split(",") if a.strip()))
 
         start_state = st.selectbox(
             "Initial State (s)",
             options=states_list,
             index=states_list.index(def_start) if def_start in states_list else 0,
-            key=f"start_sel_{scenario_choice}_{rc}"
+            key=f"start_sel_{scenario_choice}_{rc}",
         ) if states_list else None
 
         accept_states = st.multiselect(
             "Final States (F)",
             options=states_list,
             default=[a for a in def_acc if a in states_list],
-            key=f"acc_sel_{scenario_choice}_{rc}"
+            key=f"acc_sel_{scenario_choice}_{rc}",
         )
 
         st.divider()
-        st.markdown("#### Single-Symbol & ε Transitions")
+        st.markdown(
+            "#### Single-Symbol & ε Edges",
+            help="Expand any state qi below to toggle outgoing transitions for individual symbols in Σ or ε ('e').",
+        )
         single_transitions = {s: {} for s in states_list}
-
         for state in states_list:
             with st.expander(f"Transitions from '{state}'", expanded=(scenario_choice != "Custom Automaton")):
                 for sym in alphabet_list:
                     default_targets = []
                     if preset and state in preset["transitions"] and sym in preset["transitions"][state]:
                         default_targets = [t for t in preset["transitions"][state][sym] if t in states_list]
-
                     disp_sym = "ε (e)" if sym == "e" else sym
                     selected = st.multiselect(
                         f"Read '{disp_sym}' ➔ Go to:",
                         options=states_list,
                         default=default_targets,
-                        key=f"trans_{scenario_choice}_{rc}_{state}_{sym}"
+                        key=f"trans_{scenario_choice}_{rc}_{state}_{sym}",
                     )
                     if selected:
                         single_transitions[state][sym] = selected
 
         st.divider()
-        st.markdown("#### Multi-Symbol / String Transitions")
-        st.caption("Add string edges (length ≥ 2, e.g., `ab`, `aa`, `ba`, `bb`) to trigger Step 1 string splitting.")
+        st.markdown(
+            "#### String Transitions (|w| ≥ 2)",
+            help="Add multi-symbol string arcs (e.g. ab, aa, ba, bb). When ≥ 1 string arc exists, Slide 100 Step 1 splits it automatically.",
+        )
 
-        # Prune any string rules referencing deleted states
         st.session_state.string_transitions_list = [
             r for r in st.session_state.string_transitions_list
             if r.get("from") in states_list and r.get("to") in states_list
@@ -891,237 +1188,388 @@ def main():
 
     original_nfa = build_combined_original_nfa(
         states_list, alphabet_list, start_state, accept_states,
-        single_transitions, st.session_state.string_transitions_list
+        single_transitions, st.session_state.string_transitions_list,
     )
     expanded_nfa, split_log, introduced_states = expand_string_transitions(
         states_list, alphabet_list, start_state, accept_states,
-        single_transitions, st.session_state.string_transitions_list
+        single_transitions, st.session_state.string_transitions_list,
     )
     dfa_def, pipeline_data = nfa_to_dfa_slide100_pipeline(
-        original_nfa, expanded_nfa, split_log, introduced_states
+        original_nfa, expanded_nfa, split_log, introduced_states,
     )
-    min_dfa_def, min_mapping = minimize_dfa(dfa_def)
+    min_dfa_def, min_mapping, min_m2_data = minimize_dfa(dfa_def, pipeline_data["q_aliases"])
 
     # ==========================================
     # 6. MAIN APPLICATION TABS (STRICTLY 3 TABS)
     # ==========================================
     tab_pipeline, tab_stepper, tab_telemetry = st.tabs([
-        "📊 1. NFA ➔ DFA Step-by-Step Conversion",
-        "⏯️ 2. Step-by-Step String Stepper",
-        "📋 3. Research Telemetry & Activity Log"
+        "📊 1. NFA ➔ DFA Conversion",
+        "⏯️ 2. String Stepper",
+        "📋 3. Research Telemetry",
     ])
 
-    # --- TAB 1: LECTURE 5 STEP-BY-STEP CONVERSION & PIPELINE ---
+    # --- TAB 1: CONVERSION PIPELINE + SINGLE-CHECKBOX EXTENSION ---
     with tab_pipeline:
-        if is_blank_custom:
-            st.info(
-                "📝 **Blank Custom Automaton Ready for Practice:** Add single-symbol transitions or multi-symbol string "
-                "transitions (e.g., `ab`, `ba`) in the left sidebar — or select a **Lecture 5 Example (Slides 101–132)** "
-                "preset — to build your NFA and step through the conversion."
-            )
-
-        if pipeline_data["has_string_splits"]:
-            st.success(
-                f"🔍 **Auto-Detected {pipeline_data['total_steps']} Conversion Steps (Slide 100):** "
-                f"Detected **{len(split_log)}** multi-symbol string transition(s) — **Step 1** splits string transitions "
-                f"by introducing intermediate state(s) `{', '.join(introduced_states)}`."
-            )
-        else:
-            st.info(
-                f"🔍 **Auto-Detected {pipeline_data['total_steps']} Conversion Steps (Slide 100):** "
-                f"No multi-symbol string transitions detected — string-transition elimination is skipped automatically "
-                f"(starts directly at **Step 1: Definition of E-sets**, matching Example 3)."
-            )
-
-        tbar1, tbar2 = st.columns([1.6, 1.4])
+        tbar1, tbar2 = st.columns([1.5, 1.5])
         with tbar1:
             view_mode = st.radio(
-                "Presentation Mode:",
-                ["Interactive Step-by-Step Walkthrough", "Full Pipeline Overview"],
+                "Mode",
+                ["Step-by-Step", "Overview"],
                 horizontal=True,
-                key="pipeline_view_mode_radio"
+                key="pipeline_view_mode_radio",
+                label_visibility="collapsed",
             )
         with tbar2:
-            st.write("")
             show_min_dfa = st.checkbox(
-                "Show Optional Bonus Stage: Minimized DFA",
-                key="show_optional_min_dfa"
+                "🧩 Extension: DFA Minimization",
+                key="show_optional_min_dfa",
+                help=(
+                    "Single-click extension toggle: when unchecked, runs the pure 4–5 step Lecture 5 NFA → DFA workflow; "
+                    "when checked, appends group-by-group Moore DFA Minimization (P0 → Pr → Minimized DFA)."
+                ),
             )
-
-        st.caption(
-            "Legend: 🔵 Initial State (#dbeafe) | 🟢 Newly Introduced / Highlighted State (#86efac) "
-            "| ◎ Final State (Double Circle) | 🔴 Ø Empty / Trap State (#fee2e2)."
-        )
 
         steps_list = pipeline_data["steps"]
         max_stage = len(steps_list) + (1 if show_min_dfa else 0)
         st.session_state.conv_stage_index = min(st.session_state.conv_stage_index, max_stage)
+        stage_idx = st.session_state.conv_stage_index
 
-        if view_mode == "Interactive Step-by-Step Walkthrough":
-            nav1, nav2, nav3, nav4 = st.columns([1.1, 1.1, 1.2, 2.6])
+        if view_mode == "Step-by-Step":
+            short_map = {
+                "string_elim": "Eliminate Strings",
+                "e_sets": "E-sets",
+                "initial_state": "Initial State",
+                "transition_fn": "Transition δ",
+                "final_states": "Final States & DFA",
+            }
+            stage_pills = ["Given NFA M"] + [f"Step {s['step_num']}: {short_map.get(s['key'], s['title'])}" for s in steps_list]
+            if show_min_dfa:
+                stage_pills.append("🧩 Ext: Minimize DFA")
+
+            nav1, nav2, nav3, nav4 = st.columns([1, 1, 1, 2.5])
             with nav1:
                 if st.button("⏮️ Given NFA", use_container_width=True):
                     st.session_state.conv_stage_index = 0
+                    st.session_state.eset_sub_index = 0
+                    st.session_state.trans_sub_index = 0
+                    st.session_state.min_sub_index = 0
                     log_action("conv_step_reset")
+                    st.rerun()
             with nav2:
-                if st.button("◀️ Prev Step", use_container_width=True, disabled=(st.session_state.conv_stage_index == 0)):
-                    st.session_state.conv_stage_index = max(0, st.session_state.conv_stage_index - 1)
+                if st.button("◀️ Prev", use_container_width=True, disabled=(stage_idx == 0)):
+                    active_s = steps_list[stage_idx - 1] if 1 <= stage_idx <= len(steps_list) else None
+                    if active_s and active_s["key"] == "e_sets" and isinstance(st.session_state.eset_sub_index, int) and st.session_state.eset_sub_index > 0:
+                        st.session_state.eset_sub_index -= 1
+                    elif active_s and active_s["key"] == "transition_fn" and isinstance(st.session_state.trans_sub_index, int) and st.session_state.trans_sub_index > 0:
+                        st.session_state.trans_sub_index -= 1
+                    elif show_min_dfa and stage_idx == len(steps_list) + 1 and isinstance(st.session_state.min_sub_index, int) and st.session_state.min_sub_index > 0:
+                        st.session_state.min_sub_index -= 1
+                    else:
+                        st.session_state.conv_stage_index = max(0, stage_idx - 1)
                     log_action("conv_step_prev", f"Stage_{st.session_state.conv_stage_index}")
+                    st.rerun()
             with nav3:
-                if st.button("Next Step ▶️", use_container_width=True, type="primary", disabled=(st.session_state.conv_stage_index >= max_stage)):
-                    st.session_state.conv_stage_index = min(max_stage, st.session_state.conv_stage_index + 1)
-                    log_action("conv_step_next", f"Stage_{st.session_state.conv_stage_index}")
+                active_s = steps_list[stage_idx - 1] if 1 <= stage_idx <= len(steps_list) else None
+                min_total = len(min_m2_data["sub_steps"]) if min_m2_data else 0
+                on_last_sub = True
+                if active_s and active_s["key"] == "e_sets":
+                    on_last_sub = (st.session_state.eset_sub_index == "all") or (st.session_state.eset_sub_index >= len(pipeline_data["e_sets_rows"]) - 1)
+                elif active_s and active_s["key"] == "transition_fn":
+                    on_last_sub = (st.session_state.trans_sub_index == "all") or (st.session_state.trans_sub_index >= len(pipeline_data["transitions_log"]) - 1)
+                elif show_min_dfa and stage_idx == len(steps_list) + 1:
+                    on_last_sub = (st.session_state.min_sub_index == "all") or (st.session_state.min_sub_index >= min_total - 1)
+                at_end = (stage_idx >= max_stage) and on_last_sub
 
-            stage_idx = min(st.session_state.conv_stage_index, max_stage)
-            stage_labels = ["Given NFA M"] + [f"Step {s['step_num']}: {s['title']}" for s in steps_list]
-            if show_min_dfa:
-                stage_labels.append("Bonus: Minimized DFA")
-            nav4.markdown(f"**Current View:** `{stage_labels[stage_idx]}`")
+                if st.button("Next ▶️", use_container_width=True, type="primary", disabled=at_end):
+                    if active_s and active_s["key"] == "e_sets" and st.session_state.eset_sub_index != "all" and st.session_state.eset_sub_index < len(pipeline_data["e_sets_rows"]) - 1:
+                        st.session_state.eset_sub_index += 1
+                    elif active_s and active_s["key"] == "transition_fn" and st.session_state.trans_sub_index != "all" and st.session_state.trans_sub_index < len(pipeline_data["transitions_log"]) - 1:
+                        st.session_state.trans_sub_index += 1
+                    elif show_min_dfa and stage_idx == len(steps_list) + 1 and st.session_state.min_sub_index != "all" and st.session_state.min_sub_index < min_total - 1:
+                        st.session_state.min_sub_index += 1
+                    else:
+                        st.session_state.conv_stage_index = min(max_stage, stage_idx + 1)
+                        st.session_state.eset_sub_index = 0
+                        st.session_state.trans_sub_index = 0
+                        st.session_state.min_sub_index = 0
+                    log_action("conv_step_next", f"Stage_{st.session_state.conv_stage_index}")
+                    st.rerun()
+            with nav4:
+                picked_stage = st.selectbox(
+                    "Jump to Stage",
+                    options=list(range(len(stage_pills))),
+                    index=stage_idx,
+                    format_func=lambda i: stage_pills[i],
+                    label_visibility="collapsed",
+                )
+                if picked_stage != stage_idx:
+                    st.session_state.conv_stage_index = picked_stage
+                    st.session_state.eset_sub_index = 0
+                    st.session_state.trans_sub_index = 0
+                    st.session_state.min_sub_index = 0
+                    log_action("conv_stage_goto", stage_pills[picked_stage])
+                    st.rerun()
 
             if stage_idx == 0:
-                st.markdown(f"#### Given NFA M (`{len(original_nfa['states'])} states`)")
-                st.graphviz_chart(draw_automaton(original_nfa, "Given_NFA"), use_container_width=True)
-                st.markdown("**Detected Conversion Plan (Slide 100):**")
-                for s_obj in steps_list:
-                    st.markdown(f"- **Step {s_obj['step_num']}** — *{s_obj['title']}*")
+                c_left, c_right = st.columns([1.15, 1])
+                with c_left:
+                    st.markdown(f"**Given NFA M** (`{len(original_nfa['states'])} states`)")
+                    st.graphviz_chart(draw_automaton(original_nfa, "Given_NFA"), use_container_width=True)
+                with c_right:
+                    detect_help = (
+                        "Auto-detected multi-symbol string transition(s) → executing all 5 Slide 100 steps."
+                        if pipeline_data["has_string_splits"]
+                        else "No multi-symbol string transitions → string splitting skipped automatically (4 steps, matching Example 3)."
+                    )
+                    st.markdown(f"**Slide 100 Steps ({len(steps_list)})**", help=detect_help)
+                    for s_obj in steps_list:
+                        st.markdown(f"{s_obj['step_num']}. {s_obj['title']}")
+
             elif stage_idx <= len(steps_list):
                 active_step = steps_list[stage_idx - 1]
-                st.markdown(f"#### Step {active_step['step_num']} of {len(steps_list)} — {active_step['title']}")
 
                 if active_step["key"] == "string_elim":
                     sc_left, sc_right = st.columns(2)
                     with sc_left:
-                        st.markdown(f"**Original NFA M (`{len(original_nfa['states'])} states`)**")
+                        st.markdown(f"**Given NFA M** (`{len(original_nfa['states'])} states`)")
                         st.graphviz_chart(draw_automaton(original_nfa, "Orig_NFA_Step1"), use_container_width=True)
                     with sc_right:
-                        st.markdown(f"**Expanded Single-Symbol NFA (`{len(expanded_nfa['states'])} states`)**")
+                        st.markdown(
+                            f"**Single-Symbol NFA** (`{len(expanded_nfa['states'])} states`)",
+                            help="Multi-symbol edges (k ≥ 2) are decomposed into single-symbol chains by introducing k − 1 fresh states.",
+                        )
                         st.graphviz_chart(
                             draw_automaton(expanded_nfa, "Exp_NFA_Step1", highlighted_states=introduced_states),
-                            use_container_width=True
+                            use_container_width=True,
                         )
                     st.dataframe(pd.DataFrame(split_log), hide_index=True, use_container_width=True)
 
                 elif active_step["key"] == "e_sets":
-                    sc_left, sc_right = st.columns([1.2, 1])
+                    rows = pipeline_data["e_sets_rows"]
+                    sub_options = [f"E({r['state']})" for r in rows] + ["📋 All"]
+                    cur_sub = len(rows) if st.session_state.eset_sub_index == "all" else min(len(rows) - 1, int(st.session_state.eset_sub_index))
+                    picked_eset = st.radio(
+                        "E-set Sub-step",
+                        options=list(range(len(sub_options))),
+                        index=cur_sub,
+                        format_func=lambda i: sub_options[i],
+                        horizontal=True,
+                        label_visibility="collapsed",
+                    )
+                    new_eset_val = "all" if picked_eset == len(rows) else picked_eset
+                    if new_eset_val != st.session_state.eset_sub_index:
+                        st.session_state.eset_sub_index = new_eset_val
+                        log_action("select_eset_substep", str(new_eset_val))
+                        st.rerun()
+
+                    sc_left, sc_right = st.columns([1.1, 1.15])
+                    if st.session_state.eset_sub_index == "all":
+                        h_cfg = {}
+                    else:
+                        arow = rows[st.session_state.eset_sub_index]
+                        h_cfg = {
+                            "origin_states": [arow["state"]],
+                            "green_states": arow["eps_reached_states"],
+                            "edges": arow["eps_edges"],
+                            "dim_inactive": True,
+                        }
                     with sc_left:
-                        st.markdown("**Single-Symbol NFA Reference**")
-                        st.graphviz_chart(draw_automaton(expanded_nfa, "Ref_NFA_Esets"), use_container_width=True)
+                        st.graphviz_chart(draw_automaton(expanded_nfa, "Ref_NFA_Esets", highlight_cfg=h_cfg), use_container_width=True)
+                        st.caption("🟡 Origin `qi`  |  🟢 `ε`-Closure")
                     with sc_right:
-                        st.markdown("**Definition of E-sets:**")
-                        st.dataframe(pd.DataFrame(pipeline_data["e_sets_rows"]), hide_index=True, use_container_width=True)
+                        if st.session_state.eset_sub_index != "all":
+                            arow = rows[st.session_state.eset_sub_index]
+                            hops_str = "∅ ε-out" if not arow["hops"] else ", ".join(f"{h['from']}→{h['to']}" for h in arow["hops"])
+                            st.markdown(
+                                f"**[{st.session_state.eset_sub_index + 1}/{len(rows)}] `{arow['formula']}`**  \n"
+                                f"`{arow['state']} ──ε*──▶ {hops_str}`",
+                                help="E(qi) is the reflexive-transitive ε-closure: all states reachable from qi via 0 or more ε-transitions.",
+                            )
+                        df_esets = pd.DataFrame([{"State": r["state"], "E-set": r["formula"]} for r in rows])
+                        st.dataframe(df_esets, hide_index=True, use_container_width=True)
 
                 elif active_step["key"] == "initial_state":
-                    init_members = list(get_empty_closure([start_state], expanded_nfa["transitions"]))
-                    sc_left, sc_right = st.columns([1.2, 1])
+                    sc_left, sc_right = st.columns([1.15, 1])
+                    init_cfg = {
+                        "origin_states": [start_state],
+                        "green_states": [x for x in pipeline_data["initial_state_members"] if x != start_state],
+                        "edges": pipeline_data["initial_state_eps_edges"],
+                        "dim_inactive": True,
+                    }
                     with sc_left:
-                        st.markdown("**Initial E-Closure Highlighted on NFA**")
-                        st.graphviz_chart(
-                            draw_automaton(expanded_nfa, "Ref_NFA_Init", highlighted_states=init_members),
-                            use_container_width=True
-                        )
+                        st.graphviz_chart(draw_automaton(expanded_nfa, "Ref_NFA_Init", highlight_cfg=init_cfg), use_container_width=True)
                     with sc_right:
-                        st.markdown("**Definition of new initial state:**")
-                        st.success(f"`{pipeline_data['initial_state_formula']}`")
+                        st.markdown(
+                            f"**`{pipeline_data['initial_state_formula']}`**",
+                            help=f"The DFA start state s' is the E-set of NFA start state {start_state}, labeled Q1.",
+                        )
 
                 elif active_step["key"] == "transition_fn":
-                    sc_left, sc_right = st.columns([1.05, 1.35])
+                    t_rows = pipeline_data["transitions_log"]
+                    t_opts = [f"{i + 1}.{r['curr_alias']}·{r['symbol']}" for i, r in enumerate(t_rows)] + ["📋 All"]
+                    cur_t = len(t_rows) if st.session_state.trans_sub_index == "all" else min(len(t_rows) - 1, int(st.session_state.trans_sub_index))
+                    picked_t = st.selectbox(
+                        "Transition δ Sub-step",
+                        options=list(range(len(t_opts))),
+                        index=cur_t,
+                        format_func=lambda i: t_opts[i],
+                        label_visibility="collapsed",
+                    )
+                    new_t_val = "all" if picked_t == len(t_rows) else picked_t
+                    if new_t_val != st.session_state.trans_sub_index:
+                        st.session_state.trans_sub_index = new_t_val
+                        log_action("select_trans_substep", str(new_t_val))
+                        st.rerun()
+
+                    sc_left, sc_right = st.columns([1.05, 1.3])
+                    if st.session_state.trans_sub_index == "all":
+                        h_cfg = {}
+                    else:
+                        tr = t_rows[st.session_state.trans_sub_index]
+                        h_cfg = {
+                            "source_halo_states": tr["curr_members"],
+                            "move_states": tr["move_states"],
+                            "green_states": tr["eps_only_states"],
+                            "edges": tr["move_edges"] + tr["eps_edges"],
+                            "dim_inactive": True,
+                        }
                     with sc_left:
-                        st.markdown("**Single-Symbol NFA Reference**")
-                        st.graphviz_chart(draw_automaton(expanded_nfa, "Ref_NFA_Trans"), use_container_width=True)
+                        st.graphviz_chart(draw_automaton(expanded_nfa, "Ref_NFA_Trans", highlight_cfg=h_cfg), use_container_width=True)
+                        st.caption("🔵 Source `S`  |  🔴 `Move(σ)`  |  🟢 `ε`-Closure")
                     with sc_right:
-                        st.markdown("**Definition of transition function (BFS Order Q1..Qn):**")
-                        st.dataframe(
-                            pd.DataFrame(pipeline_data["transitions_log"])[["Slide Formula"]],
-                            hide_index=True,
-                            use_container_width=True
-                        )
+                        if st.session_state.trans_sub_index != "all":
+                            tr = t_rows[st.session_state.trans_sub_index]
+                            badge = f"🆕 {tr['target_alias']}" if tr["is_newly_discovered"] else f"↪ {tr['target_alias']}"
+                            move_txt = (
+                                "∅ ⇒ Ø" if not tr["move_hops"]
+                                else f"{', '.join(h['from'] + '→' + h['to'] for h in tr['move_hops'])} ⇒ {{{', '.join(tr['move_states'])}}}"
+                            )
+                            st.markdown(
+                                f"**[{st.session_state.trans_sub_index + 1}/{len(t_rows)}] `δ({tr['curr_alias']}, {tr['symbol']})`** — `{badge}`  \n"
+                                f"- `S = {tr['curr_alias']}` : `{tr['curr_label']}`  \n"
+                                f"- `Move({tr['symbol']})` : `{move_txt}`  \n"
+                                f"- `∪ E-set` : `{tr['Slide Formula']}`",
+                                help="Follow direct symbol edges from S (red arrows to yellow nodes), then take the union of their E-sets (green ε-closure).",
+                            )
+                        st.dataframe(pd.DataFrame(t_rows)[["Slide Formula"]], hide_index=True, use_container_width=True)
 
                 elif active_step["key"] == "final_states":
-                    st.success(f"**Definition of final states:** `{pipeline_data['final_states_formula']}`")
-                    st.markdown(f"#### Resulting Converted DFA M' (`{len(dfa_def['states'])} states`)")
+                    st.markdown(
+                        f"**`{pipeline_data['final_states_formula']}`**",
+                        help="Every DFA subset Qi containing at least one original NFA final state (Qi ∩ F ≠ Ø) is marked accepting.",
+                    )
+                    st.markdown(f"**Converted DFA M'** (`{len(dfa_def['states'])} states`)")
                     st.graphviz_chart(
                         draw_automaton(dfa_def, "Result_DFA", highlighted_states=[s for s in dfa_def["accept_states"] if s != dfa_def["start_state"]]),
-                        use_container_width=True
+                        use_container_width=True,
                     )
-            else:
-                st.markdown(f"#### Bonus Stage — Minimized DFA (`{len(min_dfa_def['states'])} states`)")
-                mc1, mc2 = st.columns([1.3, 1])
-                with mc1:
-                    st.graphviz_chart(draw_automaton(min_dfa_def, "Bonus_Min_DFA"), use_container_width=True)
-                with mc2:
-                    st.dataframe(min_mapping, hide_index=True, use_container_width=True)
+
+            elif show_min_dfa and min_dfa_def and min_m2_data:
+                m_steps = min_m2_data["sub_steps"]
+                m_opts = [s["pill"] for s in m_steps] + ["📋 All"]
+                cur_m = len(m_steps) if st.session_state.min_sub_index == "all" else min(len(m_steps) - 1, int(st.session_state.min_sub_index))
+                picked_m = st.radio(
+                    "M2 Minimization Sub-step",
+                    options=list(range(len(m_opts))),
+                    index=cur_m,
+                    format_func=lambda i: m_opts[i],
+                    horizontal=True,
+                    label_visibility="collapsed",
+                )
+                new_m_val = "all" if picked_m == len(m_steps) else picked_m
+                if new_m_val != st.session_state.min_sub_index:
+                    st.session_state.min_sub_index = new_m_val
+                    log_action("ext_min_dfa_substep", str(new_m_val))
+                    st.rerun()
+
+                active_m = m_steps[-1] if st.session_state.min_sub_index == "all" else m_steps[st.session_state.min_sub_index]
+                st.markdown(
+                    f"**`{active_m['headline']}`** — `{active_m['badge']}`",
+                    help=active_m["help_tip"],
+                )
+                if st.session_state.min_sub_index == "all" or active_m["kind"] == "final_min":
+                    fin = m_steps[-1]
+                    mc1, mc2 = st.columns(2)
+                    with mc1:
+                        st.markdown(f"**Converted DFA M'** (`{len(dfa_def['states'])} states`)")
+                        st.graphviz_chart(draw_automaton(dfa_def, "Orig_DFA_Min", highlight_cfg=fin["orig_highlight_cfg"]), use_container_width=True)
+                    with mc2:
+                        st.markdown(f"**Minimized DFA** (`{len(min_dfa_def['states'])} states`)")
+                        st.graphviz_chart(draw_automaton(min_dfa_def, "Final_Min_DFA", highlight_cfg=fin["min_highlight_cfg"]), use_container_width=True)
+                    st.dataframe(pd.DataFrame(fin["rows"]), hide_index=True, use_container_width=True)
+                else:
+                    mc1, mc2 = st.columns([1.1, 1.15])
+                    with mc1:
+                        st.graphviz_chart(draw_automaton(dfa_def, "Step_M2_DFA", highlight_cfg=active_m["highlight_cfg"]), use_container_width=True)
+                    with mc2:
+                        st.dataframe(pd.DataFrame(active_m["rows"]), hide_index=True, use_container_width=True)
 
         else:
-            # Full Pipeline Overview Mode
+            # Overview Mode
             num_graph_cols = 2 + (1 if pipeline_data["has_string_splits"] else 0) + (1 if show_min_dfa else 0)
             gcols = st.columns(num_graph_cols)
             col_ptr = 0
 
             with gcols[col_ptr]:
-                st.markdown(f"#### Given NFA (`{len(original_nfa['states'])} states`)")
+                st.markdown(f"**Given NFA M** (`{len(original_nfa['states'])} states`)")
                 st.graphviz_chart(draw_automaton(original_nfa, "Overview_Orig_NFA"), use_container_width=True)
             col_ptr += 1
 
             if pipeline_data["has_string_splits"]:
                 with gcols[col_ptr]:
-                    st.markdown(f"#### Step 1 NFA (`{len(expanded_nfa['states'])} states`)")
-                    st.graphviz_chart(
-                        draw_automaton(expanded_nfa, "Overview_Exp_NFA", highlighted_states=introduced_states),
-                        use_container_width=True
-                    )
+                    st.markdown(f"**Single-Symbol NFA** (`{len(expanded_nfa['states'])} states`)")
+                    st.graphviz_chart(draw_automaton(expanded_nfa, "Overview_Exp_NFA", highlighted_states=introduced_states), use_container_width=True)
                 col_ptr += 1
 
             with gcols[col_ptr]:
-                st.markdown(f"#### Converted DFA (`{len(dfa_def['states'])} states`)")
+                st.markdown(f"**Converted DFA M'** (`{len(dfa_def['states'])} states`)")
                 st.graphviz_chart(draw_automaton(dfa_def, "Overview_DFA"), use_container_width=True)
             col_ptr += 1
 
             if show_min_dfa and min_dfa_def:
                 with gcols[col_ptr]:
-                    st.markdown(f"#### Minimized DFA (`{len(min_dfa_def['states'])} states`)")
+                    st.markdown(f"**🧩 Minimized DFA** (`{len(min_dfa_def['states'])} states`)")
                     st.graphviz_chart(draw_automaton(min_dfa_def, "Overview_Min_DFA"), use_container_width=True)
 
-            st.markdown("#### Complete Step-by-Step Mathematical Derivations (Slide 100)")
+            st.markdown("#### Derivations (Slide 100)")
             for s_obj in steps_list:
-                with st.expander(f"Step {s_obj['step_num']} of {len(steps_list)} — {s_obj['title']}", expanded=True):
+                with st.expander(f"Step {s_obj['step_num']}: {s_obj['title']}", expanded=True):
                     if s_obj["key"] == "string_elim":
                         st.dataframe(pd.DataFrame(split_log), hide_index=True, use_container_width=True)
                     elif s_obj["key"] == "e_sets":
-                        st.dataframe(pd.DataFrame(pipeline_data["e_sets_rows"]), hide_index=True, use_container_width=True)
+                        st.dataframe(pd.DataFrame([{"State": r["state"], "E-set": r["formula"]} for r in pipeline_data["e_sets_rows"]]), hide_index=True, use_container_width=True)
                     elif s_obj["key"] == "initial_state":
                         st.markdown(f"`{pipeline_data['initial_state_formula']}`")
                     elif s_obj["key"] == "transition_fn":
-                        st.dataframe(
-                            pd.DataFrame(pipeline_data["transitions_log"])[["State S", "Symbol σ", "E-set Union", "Target = Qi", "Slide Formula"]],
-                            hide_index=True,
-                            use_container_width=True
-                        )
+                        st.dataframe(pd.DataFrame(pipeline_data["transitions_log"])[["Slide Formula"]], hide_index=True, use_container_width=True)
                     elif s_obj["key"] == "final_states":
                         st.markdown(f"`{pipeline_data['final_states_formula']}`")
 
             if show_min_dfa and min_mapping is not None:
-                with st.expander("Optional Bonus — Minimized DFA Equivalence Partition Map", expanded=True):
+                with st.expander(f"🧩 Extension: DFA Minimization ({len(dfa_def['states'])} ➔ {len(min_dfa_def['states'])} states)", expanded=True):
                     st.dataframe(min_mapping, hide_index=True, use_container_width=True)
 
     # --- TAB 2: STEP-BY-STEP STRING STEPPER ---
     with tab_stepper:
-        st.markdown("### Interactive Step-by-Step String Stepper")
-        st.caption("Trace character-by-character transitions on the Converted DFA one click at a time.")
+        st.markdown(
+            "### String Stepper",
+            help="Trace how the Converted DFA (or Minimized DFA when the Extension is enabled) processes an input string character-by-character.",
+        )
 
         sim_cols = st.columns([2, 1])
         with sim_cols[0]:
             target_str = st.text_input(
                 "Input String to Trace:",
                 placeholder="Enter a string over Σ (e.g., abba)...",
-                key="stepper_str_input"
+                key="stepper_str_input",
             ).strip()
         with sim_cols[1]:
             if st.session_state.show_optional_min_dfa:
                 machine_target = st.radio(
-                    "Select Target Automaton:",
+                    "Target Automaton:",
                     ["Converted DFA", "Minimized DFA"],
                     horizontal=True,
-                    key="stepper_target_radio"
+                    key="stepper_target_radio",
                 )
             else:
                 machine_target = "Converted DFA"
@@ -1129,9 +1577,7 @@ def main():
             chosen_machine = min_dfa_def if (machine_target == "Minimized DFA" and min_dfa_def) else dfa_def
 
         if is_blank_custom and not target_str:
-            st.info(
-                "ℹ️ Add transitions to your Custom Automaton in the sidebar and enter a test string above to trace execution."
-            )
+            st.info("ℹ️ Add transitions in the sidebar and enter a test string above to trace execution.")
         else:
             is_acc, path, msg = simulate_string(chosen_machine, target_str)
 
@@ -1181,13 +1627,8 @@ def main():
                     active_edge_tuple = (prev_state, current_state, consumed_symbol)
 
                 st.graphviz_chart(
-                    draw_automaton(
-                        chosen_machine,
-                        "Stepper_Graph",
-                        highlighted_states=[current_state],
-                        active_edge=active_edge_tuple
-                    ),
-                    use_container_width=True
+                    draw_automaton(chosen_machine, "Stepper_Graph", highlighted_states=[current_state], active_edge=active_edge_tuple),
+                    use_container_width=True,
                 )
 
                 if current_idx == max_steps:
@@ -1200,8 +1641,6 @@ def main():
     # --- TAB 3: RESEARCH TELEMETRY & AUDIT ---
     with tab_telemetry:
         st.markdown("### 📋 Educational Interaction Telemetry")
-        st.caption("Verifiable interaction log recorded during this learning session. Useful for research validation.")
-
         total_actions = len(st.session_state.user_actions_log)
         elapsed_sec = round(time.time() - st.session_state.session_start_time, 1)
         elapsed_min = round(elapsed_sec / 60, 1)
@@ -1214,11 +1653,10 @@ def main():
             "participant_id": participant_tag.strip() or "ANONYMOUS",
             "elapsed_seconds": elapsed_sec,
             "actions_summary_count": total_actions,
-            "recent_actions": st.session_state.user_actions_log[-10:]
+            "recent_actions": st.session_state.user_actions_log[-10:],
         }
 
         st.markdown("#### Session Verification Code")
-        st.caption("You can copy this JSON string as proof of active participation if requested by your instructor:")
         st.code(json.dumps(telemetry_payload, indent=2), language="json")
 
         if st.checkbox("Show Detailed Action Event Log"):

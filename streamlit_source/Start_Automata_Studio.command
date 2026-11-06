@@ -49,8 +49,7 @@ if [ "$USE_USER_PIP" -eq 0 ]; then
 else
   if ! python3 -c "import streamlit, graphviz, pandas" >/dev/null 2>&1; then
     echo "[2/2] Installing Streamlit, Graphviz, and Pandas into user site-packages..."
-    python3 -m pip install --user --disable-pip-version-check -r requirements.txt || \
-    python3 -m pip install --user --break-system-packages --disable-pip-version-check -r requirements.txt
+    python3 -m pip install --user --disable-pip-version-check -r requirements.txt ||     python3 -m pip install --user --break-system-packages --disable-pip-version-check -r requirements.txt
   fi
   PY_EXEC="python3"
 fi

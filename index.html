@@ -628,13 +628,178 @@
     .mini-graph-legend {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.8rem;
-      font-size: 0.81rem;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.8rem;
       color: var(--st-muted);
-      margin-top: 0.45rem;
-      padding: 0.35rem 0.55rem;
+      margin-top: 0.42rem;
+      padding: 0.32rem 0.6rem;
       background: var(--st-surface);
       border-radius: 6px;
+    }
+
+    /* (?) Hover + Tap-to-Pin Progressive Disclosure Tooltip */
+    .q-help {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      margin-left: 0.28rem;
+    }
+    .q-help-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 19px;
+      height: 19px;
+      border-radius: 999px;
+      border: 1px solid #93c5fd;
+      background: #eff6ff;
+      color: #0068c9;
+      font-family: var(--mono);
+      font-size: 0.74rem;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      padding: 0;
+      transition: all 0.14s ease;
+    }
+    .q-help:hover .q-help-btn,
+    .q-help:focus-within .q-help-btn,
+    .q-help.is-pinned .q-help-btn {
+      background: #0068c9;
+      border-color: #0068c9;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 104, 201, 0.26);
+    }
+    .q-help-pop {
+      display: none;
+      position: fixed;
+      left: 16px;
+      top: 16px;
+      width: 276px;
+      max-width: 78vw;
+      padding: 0.6rem 0.75rem;
+      border-radius: 0.5rem;
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      font-weight: 400;
+      line-height: 1.48;
+      text-align: left;
+      white-space: normal;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.26);
+      z-index: 80;
+      pointer-events: none;
+    }
+    .q-help-pop.pop-left {
+      right: auto;
+      left: 0;
+    }
+    .q-help-pop code {
+      background: rgba(255, 255, 255, 0.14);
+      color: #bae6fd;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-family: var(--mono);
+      font-size: 0.76rem;
+    }
+    .q-help:hover .q-help-pop,
+    .q-help:focus-within .q-help-pop,
+    .q-help.is-pinned .q-help-pop {
+      display: block;
+      pointer-events: auto;
+    }
+
+    /* Extension Badge & Pill Styling */
+    .ext-toggle-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.42rem;
+      padding: 0.24rem 0.68rem;
+      border-radius: 999px;
+      background: #f5f3ff;
+      border: 1px solid #ddd6fe;
+      color: #5b21b6;
+      font-size: 0.87rem;
+      font-weight: 600;
+    }
+    .ext-toggle-chip input[type="checkbox"] {
+      accent-color: #6d28d9;
+    }
+    .conv-pill.ext-pill {
+      border-color: #c4b5fd;
+      background: #f5f3ff;
+      color: #5b21b6;
+    }
+    .conv-pill.ext-pill:hover {
+      border-color: #7c3aed;
+      color: #4c1d95;
+    }
+    .conv-pill.ext-pill.active {
+      background: #6d28d9;
+      border-color: #6d28d9;
+      color: #ffffff;
+    }
+    .ext-launch-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.38rem;
+      padding: 0.3rem 0.78rem;
+      border-radius: 999px;
+      border: 1px solid #c4b5fd;
+      background: #f5f3ff;
+      color: #5b21b6;
+      font-size: 0.83rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .ext-launch-btn:hover {
+      background: #ede9fe;
+      border-color: #7c3aed;
+    }
+    .compact-math-card {
+      padding: 0.68rem 0.88rem;
+      border-radius: 0.55rem;
+      background: #f8fafc;
+      border: 1px solid #dbeafe;
+      border-left: 4px solid var(--st-blue);
+      margin-bottom: 0.7rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.42rem;
+    }
+    .compact-math-card.ext-card {
+      border-color: #ddd6fe;
+      border-left-color: #6d28d9;
+    }
+    .compact-math-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+    .compact-math-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.34rem 0.58rem;
+      border-radius: 6px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      font-family: var(--mono);
+      font-size: 0.83rem;
+    }
+    .compact-lhs {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.36rem;
     }
 
     .conv-split-grid {
@@ -914,11 +1079,10 @@
 
       <hr class="st-divider" />
 
-      <div style="display:flex;flex-direction:column;gap:0.6rem;">
-        <h2>📚 Scenarios &amp; Presets</h2>
+      <div style="display:flex;flex-direction:column;gap:0.55rem;">
+        <h2>📚 Presets</h2>
         <div>
-          <label class="st-label" for="presetSelect">Select Scenario Preset:</label>
-          <select id="presetSelect" class="st-select">
+          <select id="presetSelect" class="st-select" aria-label="Select Scenario Preset">
             <option value="Custom Automaton">Custom Automaton</option>
             <option value="NFA → DFA: Example 1">NFA → DFA: Example 1</option>
             <option value="NFA → DFA: Example 2">NFA → DFA: Example 2</option>
@@ -927,19 +1091,25 @@
             <option value="NFA → DFA: Example 5">NFA → DFA: Example 5</option>
           </select>
         </div>
-        <div id="scenarioDescriptionBox" class="st-info-box"></div>
+        <div id="scenarioDescriptionBox" class="st-info-box" style="padding:0.5rem 0.7rem;font-size:0.84rem;"></div>
       </div>
 
       <hr class="st-divider" />
 
-      <div style="display:flex;flex-direction:column;gap:0.75rem;">
-        <h3>NFA Formal Specification</h3>
+      <div style="display:flex;flex-direction:column;gap:0.65rem;">
+        <h3 style="display:flex;align-items:center;">
+          <span>NFA Tuple (K, Σ, Δ, s, F)</span>
+          <span class="q-help" onmouseenter="logHelpHover('sidebar_nfa_tuple', this)">
+            <button type="button" class="q-help-btn" onclick="toggleHelpPin(event, 'sidebar_nfa_tuple')" aria-label="NFA specification help">?</button>
+            <span class="q-help-pop pop-left">Define finite states <code>K</code> (comma-separated, e.g. <code>q1, q2, q3</code>) and single-character alphabet <code>Σ</code> (use <code>e</code> for empty transition <code>ε</code>).</span>
+          </span>
+        </h3>
         <div>
-          <label class="st-label" for="statesInput">States K (comma-separated)</label>
+          <label class="st-label" for="statesInput">States K</label>
           <input id="statesInput" type="text" value="q1, q2, q3" class="st-input mono" />
         </div>
         <div>
-          <label class="st-label" for="alphabetInput">Alphabet Σ (single symbols, 'e' for ε)</label>
+          <label class="st-label" for="alphabetInput">Alphabet Σ ('e' = ε)</label>
           <input id="alphabetInput" type="text" value="a, b, e" class="st-input mono" />
         </div>
         <div>
@@ -954,18 +1124,27 @@
 
       <hr class="st-divider" />
 
-      <div style="display:flex;flex-direction:column;gap:0.55rem;">
-        <h4>Single-Symbol &amp; ε Transitions</h4>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;">
+        <h4 style="display:flex;align-items:center;">
+          <span>Single-Symbol &amp; ε Edges</span>
+          <span class="q-help" onmouseenter="logHelpHover('sidebar_single_edges', this)">
+            <button type="button" class="q-help-btn" onclick="toggleHelpPin(event, 'sidebar_single_edges')" aria-label="Single-symbol edges help">?</button>
+            <span class="q-help-pop pop-left">Expand any state <code>qi</code> below to toggle outgoing transitions for individual symbols in <code>Σ</code> or <code>ε (e)</code>.</span>
+          </span>
+        </h4>
         <div id="transitionsBuilderContainer" class="st-expander-stack"></div>
       </div>
 
       <hr class="st-divider" />
 
-      <div style="display:flex;flex-direction:column;gap:0.55rem;">
-        <h4>Multi-Symbol / String Transitions</h4>
-        <p style="font-size:0.82rem;color:var(--st-muted);line-height:1.4;">
-          Add string edges (length ≥ 2, e.g., <code>ab</code>, <code>aa</code>, <code>ba</code>, <code>bb</code>) to trigger Step 1 string splitting.
-        </p>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;">
+        <h4 style="display:flex;align-items:center;">
+          <span>String Transitions (|w| ≥ 2)</span>
+          <span class="q-help" onmouseenter="logHelpHover('sidebar_string_edges', this)">
+            <button type="button" class="q-help-btn" onclick="toggleHelpPin(event, 'sidebar_string_edges')" aria-label="String transitions help">?</button>
+            <span class="q-help-pop pop-left">Add multi-symbol string arcs (e.g. <code>ab</code>, <code>aa</code>, <code>ba</code>, <code>bb</code>). When at least one string arc exists, Slide 100 Step 1 automatically splits it into single-symbol transitions via new states.</span>
+          </span>
+        </h4>
         <div id="stringRulesListContainer" class="str-rules-list"></div>
         <div class="str-add-grid">
           <div>
@@ -990,30 +1169,32 @@
 
     <!-- Main Content -->
     <main class="st-main">
-      <div class="st-hero-row">
-        <h1 class="st-title">🧠 Automata Studio: Interactive Learning Laboratory</h1>
+      <div class="st-hero-row" style="margin-bottom:0.55rem;">
+        <h1 class="st-title" style="display:flex;align-items:center;gap:0.4rem;">
+          <span>🧠 Automata Studio</span>
+          <span class="q-help" onmouseenter="logHelpHover('app_overview', this)">
+            <button type="button" class="q-help-btn" onclick="toggleHelpPin(event, 'app_overview')" aria-label="Application overview">?</button>
+            <span class="q-help-pop pop-left">Interactive NFA → DFA conversion laboratory aligned with Lecture 5 (Slide 100): automatic 4/5-step detection, E-set &amp; δ path highlighting, character-by-character string tracing, plus an optional DFA Minimization extension.</span>
+          </span>
+        </h1>
         <div class="st-top-meta">
           <span class="st-badge-pill" id="headerSessionBadge">Actions: 0</span>
           <button type="button" onclick="resetToDefault()" class="st-btn" style="min-height:34px;padding:0.3rem 0.75rem;font-size:0.86rem;">
-            🔄 Reset to Default
+            🔄 Reset
           </button>
         </div>
       </div>
-      <p class="st-lead">
-        Master <strong>NFA → DFA Conversion</strong> through <strong>Auto-Detected Lecture 5 Steps (Slide 100)</strong>,
-        <strong>Multi-Symbol String Transition Splitting</strong>, <strong>E-Set Union Derivations</strong>, and <strong>Step-by-Step String Tracing</strong>.
-      </p>
 
       <!-- Tabs (Strictly 3 Tabs) -->
       <nav class="st-tabs">
         <button type="button" id="tabBtnPipeline" onclick="switchTab('pipeline')" class="st-tab active">
-          📊 1. NFA ➔ DFA Step-by-Step Conversion
+          📊 1. NFA ➔ DFA Conversion
         </button>
         <button type="button" id="tabBtnStepper" onclick="switchTab('stepper')" class="st-tab">
-          ⏯️ 2. Step-by-Step String Stepper
+          ⏯️ 2. String Stepper
         </button>
         <button type="button" id="tabBtnTelemetry" onclick="switchTab('telemetry')" class="st-tab">
-          📋 3. Research Telemetry &amp; Activity Log
+          📋 3. Research Telemetry
         </button>
       </nav>
 
@@ -1021,38 +1202,36 @@
 
       <!-- TAB 1: CONVERSION PIPELINE -->
       <section id="tabPanelPipeline">
-        <div class="st-toolbar">
-          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem;">
-            <div class="st-radio-row">
-              <strong style="font-size:0.92rem;color:var(--st-muted);">Mode:</strong>
+        <div class="st-toolbar" style="justify-content:space-between;">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:1.1rem;">
+            <div class="st-radio-row" style="gap:0.9rem;">
               <label>
                 <input type="radio" name="pipelineViewMode" value="interactive" checked onchange="setPipelineViewMode(this.value)" />
-                <span>Interactive Step-by-Step Walkthrough</span>
+                <span>Step-by-Step</span>
               </label>
               <label>
                 <input type="radio" name="pipelineViewMode" value="overview" onchange="setPipelineViewMode(this.value)" />
-                <span>Full Pipeline Overview</span>
+                <span>Overview</span>
               </label>
             </div>
 
-            <label class="st-checkbox-label">
-              <input type="checkbox" id="chkOptionalMinDfa" onchange="toggleOptionalMinDfa(this.checked)" />
-              <span>Show Optional Bonus Stage: Minimized DFA</span>
-            </label>
+            <span class="ext-toggle-chip">
+              <label class="st-checkbox-label" style="font-size:0.86rem;color:#5b21b6;gap:0.4rem;">
+                <input type="checkbox" id="chkOptionalMinDfa" onchange="toggleOptionalMinDfa(this.checked)" />
+                <span>🧩 Extension: DFA Minimization</span>
+              </label>
+              <span class="q-help" onmouseenter="logHelpHover('ext_min_toggle', this)">
+                <button type="button" class="q-help-btn" onclick="toggleHelpPin(event, 'ext_min_toggle')" aria-label="Extension info">?</button>
+                <span class="q-help-pop pop-left">Optional extension beyond the core 4–5 NFA → DFA steps (Slide 100). Walks group-by-group through Moore partition refinement (<code>P0 → Pr → Minimized DFA</code>).</span>
+              </span>
+            </span>
           </div>
 
-          <div class="legend-and-zoom">
-            <span><span class="legend-dot" style="background:#dbeafe;border:2px solid #1d4ed8;"></span>Initial State</span>
-            <span><span class="legend-dot" style="background:#fef08a;border:2px solid #ca8a04;"></span>Origin / Direct Move</span>
-            <span><span class="legend-dot" style="background:#86efac;border:2px solid #15803d;"></span>ε-Closure / Introduced</span>
-            <span><span class="legend-dot" style="background:#ffffff;border:3px double #334155;"></span>Final State</span>
-            <span><span class="legend-dot" style="background:#fee2e2;border:2px solid #b91c1c;"></span>Ø (Empty / Trap)</span>
-            <div class="zoom-group" title="Adjust diagram magnification">
-              <span style="font-size:0.8rem;padding:0 6px;color:var(--st-muted);">🔍 Scale:</span>
-              <button type="button" class="zoom-btn active" onclick="setDiagramScale(1, this)">100%</button>
-              <button type="button" class="zoom-btn" onclick="setDiagramScale(1.2, this)">120%</button>
-              <button type="button" class="zoom-btn" onclick="setDiagramScale(1.4, this)">140%</button>
-            </div>
+          <div class="zoom-group" title="Adjust diagram magnification">
+            <span style="font-size:0.8rem;padding:0 6px;color:var(--st-muted);">🔍</span>
+            <button type="button" class="zoom-btn active" onclick="setDiagramScale(1, this)">100%</button>
+            <button type="button" class="zoom-btn" onclick="setDiagramScale(1.2, this)">120%</button>
+            <button type="button" class="zoom-btn" onclick="setDiagramScale(1.4, this)">140%</button>
           </div>
         </div>
 
@@ -1060,10 +1239,9 @@
         <div id="interactiveWalkthroughWrap">
           <div class="conv-nav-bar">
             <button type="button" id="btnConvGiven" onclick="convStepAction('reset')" class="st-btn">⏮️ Given NFA</button>
-            <button type="button" id="btnConvPrev" onclick="convStepAction('prev')" class="st-btn">◀️ Prev Step</button>
-            <button type="button" id="btnConvNext" onclick="convStepAction('next')" class="st-btn st-btn-primary">Next Step ▶️</button>
-            <button type="button" id="btnConvSkipMajor" onclick="convStepAction('next_major')" class="st-btn hidden" title="Skip remaining sub-steps and advance to the next major step">⏭️ Next Major Step</button>
-            <span id="convCurrentStageLabel" style="font-weight:700;color:var(--st-heading);margin-left:0.35rem;"></span>
+            <button type="button" id="btnConvPrev" onclick="convStepAction('prev')" class="st-btn">◀️ Prev</button>
+            <button type="button" id="btnConvNext" onclick="convStepAction('next')" class="st-btn st-btn-primary">Next ▶️</button>
+            <button type="button" id="btnConvSkipMajor" onclick="convStepAction('next_major')" class="st-btn hidden" title="Skip remaining sub-steps and jump to next major stage">⏭️ Next Stage</button>
           </div>
           <div id="convStagePillsContainer" class="conv-pills-row"></div>
           <div id="convActiveStageContent"></div>
@@ -1072,15 +1250,20 @@
         <!-- Mode B: Full Pipeline Overview -->
         <div id="fullOverviewWrap" class="hidden">
           <div id="overviewGraphsGrid" class="overview-grid overview-cols-2"></div>
-          <h4 class="st-h4" style="margin-bottom:0.75rem;">Complete Step-by-Step Mathematical Derivations (Slide 100)</h4>
+          <h4 class="st-h4" style="margin-bottom:0.65rem;">Derivations (Slide 100)</h4>
           <div id="overviewStepsStack" class="st-expander-stack"></div>
         </div>
       </section>
 
       <!-- TAB 2: STEP-BY-STEP STRING STEPPER -->
       <section id="tabPanelStepper" class="hidden">
-        <h3 class="st-h3">Interactive Step-by-Step String Stepper</h3>
-        <p class="st-caption">Trace character-by-character transitions on the Converted DFA one click at a time.</p>
+        <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+          <h3 class="st-h3" style="margin-bottom:0;">String Stepper</h3>
+          <span class="q-help" onmouseenter="logHelpHover('tab_stepper_help', this)">
+            <button type="button" class="q-help-btn" onclick="toggleHelpPin(event, 'tab_stepper_help')" aria-label="String stepper help">?</button>
+            <span class="q-help-pop pop-left">Trace how the Converted DFA (or Minimized DFA when the Extension is enabled) processes an input string character-by-character.</span>
+          </span>
+        </div>
 
         <div class="stepper-top-grid">
           <div>
@@ -1287,6 +1470,8 @@
       convStageIndex: 0,
       eSetSubIndex: 0,
       transSubIndex: 0,
+      minSubIndex: 0,
+      lastHelpLogByTopic: {},
       pipelineViewMode: "interactive",
       showOptionalMinDfa: false,
       presetName: DEFAULT_PRESET_NAME,
@@ -1302,7 +1487,8 @@
       dfaDef: null,
       pipelineData: null,
       minDfaDef: null,
-      minMapping: []
+      minMapping: [],
+      minM2Data: null
     };
 
     function asciiCompare(a, b) {
@@ -1333,6 +1519,72 @@
       appState.userActionsLog.push({ timestamp_sec: elapsed, action: actionType, details });
       document.getElementById("headerSessionBadge").textContent = `Actions: ${appState.userActionsLog.length}`;
       updateTelemetryView();
+    }
+
+    function positionHelpPop(wrap) {
+      if (!wrap) return;
+      const btn = wrap.querySelector(".q-help-btn");
+      const pop = wrap.querySelector(".q-help-pop");
+      if (!btn || !pop) return;
+      const rect = btn.getBoundingClientRect();
+      const popW = 276;
+      const vw = window.innerWidth || 1280;
+      const vh = window.innerHeight || 800;
+      let left = pop.classList.contains("pop-left") ? rect.left : (rect.right - popW);
+      if (left + popW > vw - 12) left = vw - popW - 12;
+      if (left < 12) left = 12;
+      let top = rect.bottom + 7;
+      if (top + 110 > vh - 12 && rect.top > 120) {
+        top = Math.max(12, rect.top - 96);
+      }
+      pop.style.left = `${Math.round(left)}px`;
+      pop.style.top = `${Math.round(top)}px`;
+    }
+
+    function logHelpHover(topicKey, el = null) {
+      if (el) positionHelpPop(el);
+      const now = Date.now();
+      const prev = appState.lastHelpLogByTopic[topicKey] || 0;
+      if (now - prev < 4000) return;
+      appState.lastHelpLogByTopic[topicKey] = now;
+      logAction("help_tooltip_view", topicKey);
+    }
+
+    function toggleHelpPin(ev, topicKey) {
+      if (ev) ev.stopPropagation();
+      const btn = ev && ev.currentTarget ? ev.currentTarget : null;
+      const wrap = btn ? btn.closest(".q-help") : null;
+      if (!wrap) return;
+      const wasPinned = wrap.classList.contains("is-pinned");
+      document.querySelectorAll(".q-help.is-pinned").forEach(el => el.classList.remove("is-pinned"));
+      if (!wasPinned) {
+        positionHelpPop(wrap);
+        wrap.classList.add("is-pinned");
+        appState.lastHelpLogByTopic[topicKey] = Date.now();
+        logAction("help_tooltip_pin", topicKey);
+      }
+    }
+
+    function renderHelpBadge(tipHtml, topicKey, alignLeft = false) {
+      const safeTopic = escapeHtml(topicKey);
+      const posCls = alignLeft ? "q-help-pop pop-left" : "q-help-pop";
+      return `<span class="q-help" onmouseenter="logHelpHover('${safeTopic}', this)"><button type="button" class="q-help-btn" onclick="toggleHelpPin(event, '${safeTopic}')" aria-label="Explanation">?</button><span class="${posCls}">${tipHtml}</span></span>`;
+    }
+
+    function openMinimizationExtension() {
+      const chk = document.getElementById("chkOptionalMinDfa");
+      if (!appState.showOptionalMinDfa) {
+        appState.showOptionalMinDfa = true;
+        if (chk) chk.checked = true;
+        const minOpt = document.getElementById("lblStepperMinDfaOption");
+        if (minOpt) minOpt.classList.remove("hidden");
+      }
+      if (appState.pipelineData) {
+        appState.convStageIndex = appState.pipelineData.steps.length + 1;
+        appState.minSubIndex = 0;
+      }
+      logAction("open_min_dfa_extension", "M2_GroupByGroup");
+      recomputeAndRenderAll();
     }
 
     function flashResetToast(msg = "✓ Reset") {
@@ -1743,6 +1995,7 @@
       steps.push({ key: "final_states", title: "Definition of final states" });
       steps.forEach((s, idx) => { s.stepNum = idx + 1; });
       pipelineData.steps = steps;
+      pipelineData.aliasMap = Object.fromEntries(dfaStateLabels.map((lbl, idx) => [lbl, `Q${idx + 1}`]));
 
       return {
         dfaDef: {
@@ -1756,8 +2009,21 @@
       };
     }
 
-    function minimizeDfa(dfaDef) {
-      if (!dfaDef || !dfaDef.states || dfaDef.states.length === 0) return { minDfa: null, mapping: [] };
+    const GROUP_PALETTE = [
+      { fill: "#e0f2fe", stroke: "#0284c7", sw: "2.4" },
+      { fill: "#dcfce7", stroke: "#15803d", sw: "2.4" },
+      { fill: "#fef9c3", stroke: "#ca8a04", sw: "2.4" },
+      { fill: "#f3e8ff", stroke: "#7e22ce", sw: "2.4" },
+      { fill: "#ffedd5", stroke: "#c2410c", sw: "2.4" },
+      { fill: "#fce7f3", stroke: "#be185d", sw: "2.4" },
+      { fill: "#e0e7ff", stroke: "#4338ca", sw: "2.4" },
+      { fill: "#ccfbf1", stroke: "#0f766e", sw: "2.4" }
+    ];
+
+    function minimizeDfa(dfaDef, aliasObj = null) {
+      if (!dfaDef || !dfaDef.states || dfaDef.states.length === 0) {
+        return { minDfa: null, mapping: [], m2Data: { subSteps: [], isAlreadyMinimal: true } };
+      }
       const states = dfaDef.states;
       const acceptSet = new Set(dfaDef.accept_states);
       const nonAccept = states.filter(s => !acceptSet.has(s));
@@ -1765,33 +2031,164 @@
       const alphabet = dfaDef.alphabet;
       const transitions = dfaDef.transitions;
 
+      const getAlias = (st) => {
+        if (aliasObj && aliasObj[st]) return aliasObj[st];
+        const idx = states.indexOf(st);
+        return idx >= 0 ? `Q${idx + 1}` : st;
+      };
+      const fmtCompact = (st) => {
+        const al = getAlias(st);
+        return al !== st ? `${al} ${st}` : st;
+      };
+
+      const subSteps = [];
       let partitions = [];
       if (nonAccept.length > 0) partitions.push(nonAccept);
       if (accept.length > 0) partitions.push(accept);
 
+      // Sub-step 0: P0 Initial Partition (Non-Final vs Final)
+      const p0Palette = {};
+      partitions.forEach((blk, bIdx) => {
+        const pal = GROUP_PALETTE[bIdx % GROUP_PALETTE.length];
+        blk.forEach(st => { p0Palette[st] = pal; });
+      });
+      subSteps.push({
+        kind: "init_p0",
+        pill: "1. P0",
+        headline: `P0 = { ${partitions.map((_, i) => `G${i}`).join(", ")} }`,
+        badge: `${partitions.length} initial block${partitions.length > 1 ? "s" : ""}`,
+        badgeCls: "hop-chip-src",
+        helpTip: `Moore's algorithm starts at <code>P0</code> by separating non-accepting DFA subsets (<code>K' \ F'</code>) from accepting subsets (<code>F'</code>). Singleton blocks (1 state) can never split further.`,
+        highlightCfg: {
+          nodePaletteMap: p0Palette,
+          dimInactive: false
+        },
+        blocksSummary: partitions.map((blk, bIdx) => {
+          const isFinalBlk = blk.every(s => acceptSet.has(s));
+          return {
+            groupName: `G${bIdx}`,
+            roleLabel: isFinalBlk ? "Final (F')" : "Non-Final (K' \ F')",
+            aliasesStr: blk.map(getAlias).join(", "),
+            subsetsStr: blk.map(fmtCompact).join(", "),
+            status: blk.length >= 2 ? `${blk.length} states → test` : "Singleton (fixed)",
+            tip: isFinalBlk
+              ? `Accepting DFA states (${blk.map(fmtCompact).join(", ")}) contain at least one NFA final state.`
+              : `Non-accepting DFA states (${blk.map(fmtCompact).join(", ")}) contain no NFA final state.`
+          };
+        })
+      });
+
+      // M2 Iterative Refinement: inspect each multi-state block (|B| >= 2) one by one
+      let round = 1;
       while (true) {
+        const multiBlocksExist = partitions.some(p => p.length >= 2);
+        if (!multiBlocksExist) break;
+
         const newPartitions = [];
-        for (const part of partitions) {
-          const sigMap = new Map();
-          for (const st of part) {
-            const sig = alphabet.map(sym => {
-              const target = (transitions[st] && transitions[st][sym]) ? transitions[st][sym] : "Ø";
-              return partitions.findIndex(p => p.includes(target));
-            });
-            const sigKey = JSON.stringify(sig);
-            if (!sigMap.has(sigKey)) sigMap.set(sigKey, { vec: sig, members: [] });
-            sigMap.get(sigKey).members.push(st);
+        let anySplitInRound = false;
+
+        partitions.forEach((part, bIdx) => {
+          if (part.length < 2) {
+            newPartitions.push(part);
+            return;
           }
+
+          const sigMap = new Map();
+          const stateDetails = [];
+          for (const st of part) {
+            const perSym = alphabet.map(sym => {
+              const target = (transitions[st] && transitions[st][sym]) ? transitions[st][sym] : "Ø";
+              const gIdx = partitions.findIndex(p => p.includes(target));
+              return { sym, target, targetAlias: getAlias(target), gIdx };
+            });
+            const vec = perSym.map(x => x.gIdx);
+            const sigKey = JSON.stringify(vec);
+            if (!sigMap.has(sigKey)) sigMap.set(sigKey, { vec, members: [], samplePerSym: perSym });
+            sigMap.get(sigKey).members.push(st);
+            stateDetails.push({ st, alias: getAlias(st), perSym, vec });
+          }
+
           const entries = Array.from(sigMap.values()).sort((a, b) => {
             for (let i = 0; i < Math.min(a.vec.length, b.vec.length); i++) {
               if (a.vec[i] !== b.vec[i]) return a.vec[i] - b.vec[i];
             }
             return a.vec.length - b.vec.length;
           });
+
+          const didSplit = entries.length > 1;
+          if (didSplit) anySplitInRound = true;
           for (const entry of entries) newPartitions.push(entry.members);
-        }
-        if (newPartitions.length === partitions.length) break;
+
+          // Identify distinguishing symbols (where states in `part` go to different groups)
+          const splittingSyms = alphabet.filter((_, sIdx) => {
+            const seen = new Set(entries.map(e => e.vec[sIdx]));
+            return seen.size > 1;
+          });
+
+          const stepPalette = {};
+          partitions.forEach((otherBlk, oIdx) => {
+            if (oIdx === bIdx) return;
+            otherBlk.forEach(s => { stepPalette[s] = { fill: "#f8fafc", stroke: "#94a3b8", sw: "1.6" }; });
+          });
+          entries.forEach((entry, subIdx) => {
+            const pal = didSplit
+              ? GROUP_PALETTE[(subIdx + 1) % GROUP_PALETTE.length]
+              : GROUP_PALETTE[1];
+            entry.members.forEach(s => { stepPalette[s] = pal; });
+          });
+
+          const highlightEdges = [];
+          for (const d of stateDetails) {
+            for (const ps of d.perSym) {
+              if (didSplit && splittingSyms.includes(ps.sym)) {
+                highlightEdges.push({ src: d.st, dest: ps.target, symbol: ps.sym, role: "move" });
+              } else if (!didSplit) {
+                highlightEdges.push({ src: d.st, dest: ps.target, symbol: ps.sym, role: "eps" });
+              }
+            }
+          }
+
+          const stepNum = subSteps.length + 1;
+          const sigHeaderTuple = `(${alphabet.join(", ")})`;
+          subSteps.push({
+            kind: "test_block",
+            pill: `${stepNum}. R${round}·G${bIdx}`,
+            round,
+            blockName: `G${bIdx}`,
+            sigHeaderTuple,
+            didSplit,
+            headline: `Round ${round} · Test G${bIdx} = {${part.map(getAlias).join(", ")}}`,
+            badge: didSplit ? `✂️ Split → ${entries.length} groups` : "✓ Keep together",
+            badgeCls: didSplit ? "hop-chip-move" : "hop-chip-eps",
+            helpTip: didSplit
+              ? `Testing block <code>G${bIdx}</code> against Round ${round - 1} groups: symbol(s) <code>${splittingSyms.join(", ")}</code> send members into different target blocks, forcing <code>G${bIdx}</code> to split into ${entries.length} sub-blocks.`
+              : `Every state in <code>G${bIdx}</code> transitions into the exact same Round ${round - 1} target block on all symbols <code>(${alphabet.join(", ")})</code>, so they remain equivalent in Round ${round}.`,
+            highlightCfg: {
+              sourceHaloStates: part,
+              nodePaletteMap: stepPalette,
+              edges: highlightEdges,
+              dimInactive: true
+            },
+            subGroupsRows: entries.map((entry, subIdx) => {
+              const tupleStr = "(" + entry.vec.map(g => `G${g}`).join(", ") + ")";
+              const detailMoves = stateDetails
+                .filter(sd => entry.members.includes(sd.st))
+                .map(sd => `${sd.alias}=${sd.st}: ` + sd.perSym.map(p => `${p.sym}→${p.targetAlias}(G${p.gIdx})`).join(", "))
+                .join(" | ");
+              return {
+                membersShort: entry.members.map(getAlias).join(", "),
+                membersFull: entry.members.map(fmtCompact).join(", "),
+                sigTuple: tupleStr,
+                outcome: didSplit ? `Split #${subIdx + 1}` : "Equivalent",
+                tip: detailMoves
+              };
+            })
+          });
+        });
+
         partitions = newPartitions;
+        if (!anySplitInRound) break;
+        round += 1;
       }
 
       const startState = dfaDef.start_state;
@@ -1810,11 +2207,28 @@
 
       const stateMap = {};
       const mapping = [];
+      const origMergePalette = {};
+      const minMergePalette = {};
+
       partitions.forEach((p, idx) => {
         const label = `M${idx}`;
         const sortedMembers = [...p].sort(asciiCompare);
         sortedMembers.forEach(s => { stateMap[s] = label; });
-        mapping.push({ group: label, members: sortedMembers.join(", ") });
+        const pal = p.length >= 2
+          ? GROUP_PALETTE[idx % GROUP_PALETTE.length]
+          : null;
+        if (pal) {
+          sortedMembers.forEach(s => { origMergePalette[s] = pal; });
+          minMergePalette[label] = pal;
+        }
+        mapping.push({
+          group: label,
+          isMerged: sortedMembers.length >= 2,
+          isStart: sortedMembers.includes(startState),
+          isAccept: sortedMembers.some(s => acceptSet.has(s)),
+          aliases: sortedMembers.map(getAlias).join(", "),
+          members: sortedMembers.join(", ")
+        });
       });
 
       const minStates = partitions.map((_, idx) => `M${idx}`);
@@ -1832,15 +2246,63 @@
         }
       }
 
-      return {
-        minDfa: {
-          states: minStates,
-          alphabet,
-          start_state: minStart,
-          accept_states: minAccept,
-          transitions: minTrans
+      const minDfaObj = {
+        states: minStates,
+        alphabet,
+        start_state: minStart,
+        accept_states: minAccept,
+        transitions: minTrans
+      };
+
+      const isAlreadyMinimal = (minStates.length === states.length);
+      const mergedGroups = mapping.filter(m => m.isMerged);
+      const finalStepNum = subSteps.length + 1;
+
+      subSteps.push({
+        kind: "final_min",
+        pill: `${finalStepNum}. Min DFA`,
+        isAlreadyMinimal,
+        headline: isAlreadyMinimal
+          ? `Fixed Point — Already Minimal (${minStates.length} states)`
+          : `Fixed Point — Merged ${states.length} ➔ ${minStates.length} states`,
+        badge: isAlreadyMinimal ? "✓ Already Minimal" : `Merged ${mergedGroups.map(m => m.group).join(", ")}`,
+        badgeCls: "hop-chip-eps",
+        helpTip: isAlreadyMinimal
+          ? `No two states in <code>M'</code> are equivalent; every equivalence class is a singleton, so <code>M'</code> (${states.length} states) is already the unique minimal DFA.`
+          : `Partition stabilized with ${mergedGroups.length} merged equivalence class(es): ${mergedGroups.map(m => `<code>${m.group} = {${m.aliases}}</code>`).join(", ")}. Collapsing each class into one state yields the Minimized DFA.`,
+        origHighlightCfg: {
+          sourceHaloStates: mergedGroups.flatMap(m => partitions[parseInt(m.group.slice(1), 10)] || []),
+          nodePaletteMap: origMergePalette,
+          dimInactive: false
         },
-        mapping
+        minHighlightCfg: {
+          nodePaletteMap: minMergePalette,
+          dimInactive: false
+        },
+        classRows: mapping.map(m => {
+          const transSummary = alphabet.map(sym => `${sym}→${(minTrans[m.group] && minTrans[m.group][sym]) || "Ø"}`).join(", ");
+          const roleTag = m.isStart && m.isAccept ? "Start, Final" : (m.isStart ? "Start" : (m.isAccept ? "Final" : (m.members === "Ø" ? "Trap Ø" : (m.isMerged ? "Merged" : "State"))));
+          return {
+            group: m.group,
+            roleTag,
+            isMerged: m.isMerged,
+            aliases: m.aliases,
+            members: m.members,
+            transSummary,
+            tip: `Class <code>${m.group}</code> (${roleTag}) represents DFA subset(s): <code>${escapeHtml(m.members)}</code>. Transitions: <code>${escapeHtml(transSummary)}</code>.`
+          };
+        })
+      });
+
+      return {
+        minDfa: minDfaObj,
+        mapping,
+        m2Data: {
+          subSteps,
+          isAlreadyMinimal,
+          origCount: states.length,
+          minCount: minStates.length
+        }
       };
     }
 
@@ -1957,6 +2419,7 @@
           originStates: new Set(),
           moveStates: new Set(),
           sourceHaloStates: new Set(),
+          nodePaletteMap: {},
           edges: activeEdge ? [{ src: activeEdge.src, dest: activeEdge.dest, symbol: activeEdge.symbol, role: "move" }] : [],
           dimInactive: false
         };
@@ -1966,6 +2429,7 @@
         originStates: new Set(highlightSpec.originStates || []),
         moveStates: new Set(highlightSpec.moveStates || []),
         sourceHaloStates: new Set(highlightSpec.sourceHaloStates || []),
+        nodePaletteMap: highlightSpec.nodePaletteMap || {},
         edges: highlightSpec.edges || [],
         dimInactive: Boolean(highlightSpec.dimInactive)
       };
@@ -2140,7 +2604,11 @@
         }
 
         let fill = "#ffffff", stroke = cfg.dimInactive ? "#94a3b8" : "#64748b", sw = "1.8";
-        if (cfg.originStates.has(st) || cfg.moveStates.has(st)) {
+        if (cfg.nodePaletteMap && cfg.nodePaletteMap[st]) {
+          fill = cfg.nodePaletteMap[st].fill;
+          stroke = cfg.nodePaletteMap[st].stroke;
+          sw = cfg.nodePaletteMap[st].sw || "2.4";
+        } else if (cfg.originStates.has(st) || cfg.moveStates.has(st)) {
           fill = "#fef08a"; stroke = "#ca8a04"; sw = "3.3";
         } else if (cfg.greenStates.has(st)) {
           fill = "#86efac"; stroke = "#15803d"; sw = "3.3";
@@ -2258,7 +2726,7 @@
         appState.stringTransitions = p.stringTransitions.map(r => ({ ...r }));
         appState.openBuilderStates = new Set(appState.states);
         document.getElementById("stepperStringInput").value = p.sampleStr || "";
-        descBox.innerHTML = `ℹ️ <strong>Scenario Note:</strong> ${escapeHtml(p.description)}`;
+        descBox.innerHTML = `ℹ️ <strong>${escapeHtml(p.description)}</strong>`;
       } else {
         appState.states = ["q1", "q2", "q3"];
         appState.alphabet = ["a", "b", "e"];
@@ -2270,12 +2738,13 @@
         document.getElementById("statesInput").value = "q1, q2, q3";
         document.getElementById("alphabetInput").value = "a, b, e";
         document.getElementById("stepperStringInput").value = "";
-        descBox.innerHTML = `ℹ️ <strong>Custom Mode:</strong> Define states, single-symbol alphabet, and transitions below (including multi-symbol strings like <code>ab</code>) to practice active conversion.`;
+        descBox.innerHTML = `ℹ️ <strong>Custom Automaton</strong> ${renderHelpBadge("Build your own NFA below using single-symbol, <code>ε</code>, or multi-symbol string edges (e.g. <code>ab</code>), then step through its DFA conversion.", "custom_mode_note", true)}`;
       }
       appState.simStepIndex = 0;
       appState.convStageIndex = 0;
       appState.eSetSubIndex = 0;
       appState.transSubIndex = 0;
+      appState.minSubIndex = 0;
       rebuildSidebarControls();
       recomputeAndRenderAll();
     }
@@ -2416,6 +2885,12 @@
       renderPipelineTab();
     }
 
+    function setMinSubStep(val) {
+      appState.minSubIndex = val;
+      logAction("ext_min_dfa_substep", String(val));
+      renderPipelineTab();
+    }
+
     function getActiveStepObject() {
       const pd = appState.pipelineData;
       if (!pd) return null;
@@ -2424,52 +2899,69 @@
       return null;
     }
 
+    function isOnMinExtensionStage() {
+      const pd = appState.pipelineData;
+      if (!pd || !appState.showOptionalMinDfa) return false;
+      return appState.convStageIndex === pd.steps.length + 1;
+    }
+
     function convStepAction(type, explicitIdx = null) {
       const pd = appState.pipelineData;
       if (!pd) return;
       const steps = pd.steps;
       const maxStage = steps.length + (appState.showOptionalMinDfa ? 1 : 0);
       const activeStep = getActiveStepObject();
+      const onMinExt = isOnMinExtensionStage();
+      const minTotal = (appState.minM2Data && appState.minM2Data.subSteps) ? appState.minM2Data.subSteps.length : 0;
 
       if (type === "goto" && explicitIdx !== null) {
         appState.convStageIndex = Math.max(0, Math.min(maxStage, explicitIdx));
         const targetStep = getActiveStepObject();
         if (targetStep && targetStep.key === "e_sets") appState.eSetSubIndex = 0;
         if (targetStep && targetStep.key === "transition_fn") appState.transSubIndex = 0;
+        if (isOnMinExtensionStage()) appState.minSubIndex = 0;
       } else if (type === "reset") {
         appState.convStageIndex = 0;
         appState.eSetSubIndex = 0;
         appState.transSubIndex = 0;
+        appState.minSubIndex = 0;
       } else if (type === "next_major") {
         appState.convStageIndex = Math.min(maxStage, appState.convStageIndex + 1);
         const targetStep = getActiveStepObject();
         if (targetStep && targetStep.key === "e_sets") appState.eSetSubIndex = 0;
         if (targetStep && targetStep.key === "transition_fn") appState.transSubIndex = 0;
+        if (isOnMinExtensionStage()) appState.minSubIndex = 0;
       } else if (type === "next") {
         if (activeStep && activeStep.key === "e_sets" && appState.eSetSubIndex !== "all" && appState.eSetSubIndex < pd.eSetsRows.length - 1) {
           appState.eSetSubIndex += 1;
         } else if (activeStep && activeStep.key === "transition_fn" && appState.transSubIndex !== "all" && appState.transSubIndex < pd.transitionsLog.length - 1) {
           appState.transSubIndex += 1;
+        } else if (onMinExt && appState.minSubIndex !== "all" && appState.minSubIndex < minTotal - 1) {
+          appState.minSubIndex += 1;
         } else {
           appState.convStageIndex = Math.min(maxStage, appState.convStageIndex + 1);
           const nextStep = getActiveStepObject();
           if (nextStep && nextStep.key === "e_sets") appState.eSetSubIndex = 0;
           if (nextStep && nextStep.key === "transition_fn") appState.transSubIndex = 0;
+          if (isOnMinExtensionStage()) appState.minSubIndex = 0;
         }
       } else if (type === "prev") {
         if (activeStep && activeStep.key === "e_sets" && typeof appState.eSetSubIndex === "number" && appState.eSetSubIndex > 0) {
           appState.eSetSubIndex -= 1;
         } else if (activeStep && activeStep.key === "transition_fn" && typeof appState.transSubIndex === "number" && appState.transSubIndex > 0) {
           appState.transSubIndex -= 1;
+        } else if (onMinExt && typeof appState.minSubIndex === "number" && appState.minSubIndex > 0) {
+          appState.minSubIndex -= 1;
         } else {
           appState.convStageIndex = Math.max(0, appState.convStageIndex - 1);
           const prevStep = getActiveStepObject();
           if (prevStep && prevStep.key === "e_sets") appState.eSetSubIndex = Math.max(0, pd.eSetsRows.length - 1);
           if (prevStep && prevStep.key === "transition_fn") appState.transSubIndex = Math.max(0, pd.transitionsLog.length - 1);
+          if (isOnMinExtensionStage()) appState.minSubIndex = Math.max(0, minTotal - 1);
         }
       }
 
-      logAction(`conv_stage_${type}`, `Stage_${appState.convStageIndex}_eSub_${appState.eSetSubIndex}_tSub_${appState.transSubIndex}`);
+      logAction(`conv_stage_${type}`, `Stage_${appState.convStageIndex}_e_${appState.eSetSubIndex}_t_${appState.transSubIndex}_m_${appState.minSubIndex}`);
       renderPipelineTab();
     }
 
@@ -2482,30 +2974,37 @@
             <td>${escapeHtml(r.chain)}</td>
           </tr>
         `).join("");
+        const splitTip = renderHelpBadge(
+          "Slide 100 Step 1: Any multi-symbol transition <code>p ──s1s2..sk──▶ r</code> (<code>k ≥ 2</code>) is decomposed into single-symbol arcs by inserting <code>k − 1</code> fresh states.",
+          "step_string_elim"
+        );
         return `
           <div class="conv-two-equal">
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.55rem;">
-                <span>Original NFA M</span>
+              <h4 class="st-h4" style="margin-bottom:0.45rem;">
+                <span>Given NFA M</span>
                 <span class="state-count-code">${originalNfa.states.length} states</span>
               </h4>
               <div class="st-graph-frame">${renderAutomatonSvg(originalNfa)}</div>
             </div>
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.55rem;">
-                <span>Expanded Single-Symbol NFA</span>
+              <h4 class="st-h4" style="margin-bottom:0.45rem;">
+                <span style="display:inline-flex;align-items:center;">Single-Symbol NFA ${splitTip}</span>
                 <span class="state-count-code">${expandedNfa.states.length} states</span>
               </h4>
               <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, pd.introducedStates)}</div>
+              <div class="mini-graph-legend">
+                <span><span class="legend-dot" style="background:#86efac;border:2px solid #15803d;"></span>New States (${escapeHtml(pd.introducedStates.join(", "))})</span>
+              </div>
             </div>
           </div>
-          <div class="st-table-wrap" style="margin-top:0.9rem;">
+          <div class="st-table-wrap" style="margin-top:0.75rem;">
             <table class="st-table">
               <thead>
                 <tr>
-                  <th>Original Multi-Symbol Transition</th>
-                  <th>Introduced State(s)</th>
-                  <th>Expanded Single-Symbol Chain</th>
+                  <th>String Arc</th>
+                  <th>New State(s)</th>
+                  <th>Single-Symbol Chain</th>
                 </tr>
               </thead>
               <tbody>${rowsHtml}</tbody>
@@ -2528,14 +3027,16 @@
         `).join("");
 
         let highlightCfg = [];
-        let traceCardHtml = "";
+        let mathCardHtml = "";
 
         if (isAll || !activeRow) {
           highlightCfg = [];
-          traceCardHtml = `
-            <div class="substep-trace-card">
-              <strong>Complete Summary — All ${totalSub} E-sets Computed:</strong>
-              Click any <code>E(qi)</code> button above or any row in the table below to inspect its step-by-step ε-path highlight on the NFA diagram.
+          mathCardHtml = `
+            <div class="compact-math-card">
+              <div class="compact-math-head">
+                <strong>All ${totalSub} E-sets</strong>
+                ${renderHelpBadge("Click any <code>E(qi)</code> pill above or any table row below to highlight its exact <code>ε</code>-path on the NFA diagram.", "eset_all_summary")}
+              </div>
             </div>
           `;
         } else {
@@ -2546,27 +3047,31 @@
             dimInactive: true
           };
 
-          const hopsMarkup = activeRow.hops.length === 0
-            ? `<span style="color:var(--st-muted);font-style:italic;">No outgoing ε-transitions from <code>${escapeHtml(activeRow.state)}</code> — only the origin state itself is included.</span>`
-            : activeRow.hops.map(h => `<span class="hop-chip-eps">${escapeHtml(h.from)} ──ε──▶ ${escapeHtml(h.to)}</span>`).join(" ");
+          const hopsChips = activeRow.hops.length === 0
+            ? `<span style="color:var(--st-muted);">∅ ε-out</span>`
+            : activeRow.hops.map(h => `<span class="hop-chip-eps">${escapeHtml(h.from)}→${escapeHtml(h.to)}</span>`).join(" ");
 
-          traceCardHtml = `
-            <div class="substep-trace-card">
-              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem;">
-                <strong>Sub-step ${subIdx + 1} of ${totalSub} — Formation of <code>E(${escapeHtml(activeRow.state)})</code></strong>
-                <span style="font-family:var(--mono);font-weight:700;color:#0068c9;">${escapeHtml(activeRow.formula)}</span>
-              </div>
-              <div class="trace-step-line">
-                <strong>1. Start at origin state:</strong>
-                <span class="hop-chip-origin">${escapeHtml(activeRow.state)}</span>
-              </div>
-              <div class="trace-step-line">
-                <strong>2. Traverse ε-transitions:</strong>
-                ${hopsMarkup}
-              </div>
-              <div class="trace-step-line">
-                <strong>3. Resulting E-set:</strong>
+          const headTip = renderHelpBadge(
+            `<code>E(${escapeHtml(activeRow.state)})</code> is the reflexive-transitive <code>ε</code>-closure: all NFA states reachable from <code>${escapeHtml(activeRow.state)}</code> using 0 or more <code>ε</code>-transitions.`,
+            `eset_head_${activeRow.state}`
+          );
+          const hopTip = activeRow.hops.length === 0
+            ? renderHelpBadge(`No outgoing <code>ε</code>-transitions leave <code>${escapeHtml(activeRow.state)}</code>; by reflexivity (0 steps), <code>E(${escapeHtml(activeRow.state)}) = {${escapeHtml(activeRow.state)}}</code>.`, `eset_hop_${activeRow.state}`)
+            : renderHelpBadge(`BFS follows outgoing green <code>ε</code>-edges from <code>${escapeHtml(activeRow.state)}</code> (${activeRow.hops.map(h => `${escapeHtml(h.from)}──ε──▶${escapeHtml(h.to)}`).join(", ")}) until no new states are reached.`, `eset_hop_${activeRow.state}`);
+
+          mathCardHtml = `
+            <div class="compact-math-card">
+              <div class="compact-math-head">
+                <span style="font-family:var(--mono);font-weight:700;">[${subIdx + 1}/${totalSub}] E(${escapeHtml(activeRow.state)}) ${headTip}</span>
                 <code style="font-weight:700;color:#0f5132;background:#e6f6ed;padding:2px 8px;border-radius:5px;">${escapeHtml(activeRow.formula)}</code>
+              </div>
+              <div class="compact-math-row">
+                <span class="compact-lhs">
+                  <span class="hop-chip-origin">${escapeHtml(activeRow.state)}</span>
+                  <span>──ε*──▶</span>
+                  ${hopsChips}
+                </span>
+                ${hopTip}
               </div>
             </div>
           `;
@@ -2579,35 +3084,38 @@
           const statusMark = (!isAll && i === subIdx) ? "▶ " : ((!isAll && i < subIdx) || isAll ? "✓ " : "· ");
           return `
             <tr class="${rowCls}" onclick="setESetSubStep(${i})">
-              <td style="font-weight:700;">${statusMark}${escapeHtml(r.state)}</td>
+              <td style="font-weight:700;width:84px;">${statusMark}${escapeHtml(r.state)}</td>
               <td style="font-weight:700;color:#0068c9;">${escapeHtml(r.formula)}</td>
-              <td style="font-size:0.81rem;color:var(--st-muted);">${r.hops.length > 0 ? r.hops.map(h => `${escapeHtml(h.from)}→${escapeHtml(h.to)}`).join(", ") : "self only"}</td>
             </tr>
           `;
         }).join("");
 
         return `
           <div class="substep-bar">
-            <button type="button" class="substep-nav-mini" onclick="setESetSubStep(${Math.max(0, subIdx - 1)})" ${(!isAll && subIdx === 0) ? "disabled" : ""}>◀ Prev E-set</button>
-            <button type="button" class="substep-nav-mini" onclick="setESetSubStep(${Math.min(totalSub - 1, subIdx + 1)})" ${(!isAll && subIdx >= totalSub - 1) ? "disabled" : ""}>Next E-set ▶</button>
+            <button type="button" class="substep-nav-mini" onclick="setESetSubStep(${Math.max(0, subIdx - 1)})" ${(!isAll && subIdx === 0) ? "disabled" : ""}>◀</button>
+            <button type="button" class="substep-nav-mini" onclick="setESetSubStep(${Math.min(totalSub - 1, subIdx + 1)})" ${(!isAll && subIdx >= totalSub - 1) ? "disabled" : ""}>▶</button>
             <span style="color:var(--st-border);margin:0 2px;">|</span>
             ${pillsHtml}
-            <button type="button" class="substep-pill ${isAll ? 'active' : ''}" onclick="setESetSubStep('all')">📋 Show All</button>
+            <button type="button" class="substep-pill ${isAll ? 'active' : ''}" onclick="setESetSubStep('all')">📋 All</button>
           </div>
           <div class="conv-split-grid">
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.45rem;">Single-Symbol NFA — ε-Path Highlight</h4>
               <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, highlightCfg)}</div>
               <div class="mini-graph-legend">
-                <span><span class="legend-dot" style="background:#fef08a;border:2px solid #ca8a04;"></span>Origin State <code>qi</code></span>
-                <span><span class="legend-dot" style="background:#86efac;border:2px solid #15803d;"></span>ε-Reached States &amp; Green ε-Edges</span>
+                <span><span class="legend-dot" style="background:#fef08a;border:2px solid #ca8a04;"></span>Origin <code>qi</code></span>
+                <span><span class="legend-dot" style="background:#86efac;border:2px solid #15803d;"></span>ε-Closure</span>
               </div>
             </div>
             <div>
-              ${traceCardHtml}
+              ${mathCardHtml}
               <div class="st-table-wrap">
                 <table class="st-table">
-                  <thead><tr><th>State q</th><th>Definition of E-set</th><th>ε-Hops</th></tr></thead>
+                  <thead>
+                    <tr>
+                      <th>State</th>
+                      <th>E-set ${renderHelpBadge("Click any row to highlight its ε-closure path on the NFA diagram.", "eset_table_help", true)}</th>
+                    </tr>
+                  </thead>
                   <tbody>${rowsHtml}</tbody>
                 </table>
               </div>
@@ -2623,15 +3131,24 @@
           edges: pd.initialStateEpsEdges,
           dimInactive: true
         };
+        const initTip = renderHelpBadge(
+          `The new DFA initial state <code>s'</code> is the E-set of the NFA initial state <code>${escapeHtml(expandedNfa.start_state)}</code>, labeled <code>Q1</code> to start BFS subset construction.`,
+          "step_initial_state"
+        );
         return `
           <div class="conv-split-grid">
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.55rem;">Initial E-Closure Highlighted on NFA</h4>
               <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, initHighlight)}</div>
+              <div class="mini-graph-legend">
+                <span><span class="legend-dot" style="background:#fef08a;border:2px solid #ca8a04;"></span>NFA Start <code>${escapeHtml(expandedNfa.start_state)}</code></span>
+                <span><span class="legend-dot" style="background:#86efac;border:2px solid #15803d;"></span>Initial E-Closure <code>Q1</code></span>
+              </div>
             </div>
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.55rem;">Definition of new initial state</h4>
-              <div class="formula-card">${escapeHtml(pd.initialStateFormula)}</div>
+              <div class="formula-card" style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+                <span>${escapeHtml(pd.initialStateFormula)}</span>
+                ${initTip}
+              </div>
             </div>
           </div>
         `;
@@ -2646,19 +3163,21 @@
 
         const pillsHtml = pd.transitionsLog.map((r, i) => `
           <button type="button" class="substep-pill ${(!isAll && i === subIdx) ? 'active' : ''}" onclick="setTransSubStep(${i})" title="${escapeHtml(r.fullFormula)}">
-            ${i + 1}. δ(${escapeHtml(r.currAlias)}, ${escapeHtml(r.symbol)})
+            ${i + 1}.${escapeHtml(r.currAlias)}·${escapeHtml(r.symbol)}
           </button>
         `).join("");
 
         let highlightCfg = [];
-        let traceCardHtml = "";
+        let mathCardHtml = "";
 
         if (isAll || !activeRow) {
           highlightCfg = [];
-          traceCardHtml = `
-            <div class="substep-trace-card">
-              <strong>Complete Summary — All ${totalSub} Transition Evaluations (Q1..Q${dfaDef.states.length}):</strong>
-              Click any <code>δ(Qi, σ)</code> button above or any row in the table below to highlight its exact symbol move and ε-closure path on the NFA diagram.
+          mathCardHtml = `
+            <div class="compact-math-card">
+              <div class="compact-math-head">
+                <strong>All ${totalSub} Evaluations (Q1..Q${dfaDef.states.length})</strong>
+                ${renderHelpBadge("Click any pill above or formula row below to highlight source subset S, direct symbol moves, and follow-up ε-closures.", "trans_all_summary")}
+              </div>
             </div>
           `;
         } else {
@@ -2671,51 +3190,65 @@
           };
 
           const discoveryBadge = activeRow.isNewlyDiscovered
-            ? `<span style="background:#dcfce7;color:#166534;padding:1px 8px;border-radius:999px;font-size:0.78rem;font-weight:700;">🆕 New State ${escapeHtml(activeRow.targetAlias)}</span>`
-            : `<span style="background:#f1f5f9;color:#475569;padding:1px 8px;border-radius:999px;font-size:0.78rem;font-weight:600;">↪ Known ${escapeHtml(activeRow.targetAlias)}</span>`;
+            ? `<span style="background:#dcfce7;color:#166534;padding:1px 8px;border-radius:999px;font-size:0.78rem;font-weight:700;">🆕 ${escapeHtml(activeRow.targetAlias)}</span>`
+            : `<span style="background:#f1f5f9;color:#475569;padding:1px 8px;border-radius:999px;font-size:0.78rem;font-weight:600;">↪ ${escapeHtml(activeRow.targetAlias)}</span>`;
 
-          const srcMarkup = activeRow.currMembers.length === 0
-            ? `<span class="hop-chip-src">Ø (Empty Set — 0 NFA states)</span>`
-            : activeRow.currMembers.map(s => `<span class="hop-chip-src">${escapeHtml(s)}</span>`).join(" ");
+          const srcText = activeRow.currMembers.length === 0 ? "Ø" : `{${activeRow.currMembers.join(", ")}}`;
+          const srcTip = renderHelpBadge(
+            activeRow.currMembers.length === 0
+              ? "<code>Ø</code> is the empty subset (0 active NFA states). Reading any symbol from <code>Ø</code> stays in <code>Ø</code>."
+              : `Active NFA states inside subset <code>${escapeHtml(activeRow.currAlias)} = ${escapeHtml(srcText)}</code> (marked with blue dashed rings on the NFA diagram).`,
+            `trans_src_${subIdx}`
+          );
 
-          let moveMarkup = "";
+          let moveShort = "";
+          let moveTipText = "";
           if (activeRow.currMembers.length === 0) {
-            moveMarkup = `<span style="color:var(--st-muted);font-style:italic;">From <code>Ø</code>, reading <code>'${escapeHtml(activeRow.symbol)}'</code> stays in <code>Ø</code>.</span>`;
+            moveShort = "Ø ⇒ Ø";
+            moveTipText = `Since <code>${escapeHtml(activeRow.currAlias)} = Ø</code> has no NFA states, reading <code>'${escapeHtml(activeRow.symbol)}'</code> produces <code>Ø</code>.`;
           } else if (activeRow.moveHops.length === 0) {
-            moveMarkup = `<span style="color:#b91c1c;font-weight:600;">No outgoing <code>'${escapeHtml(activeRow.symbol)}'</code> edge from ${escapeHtml(activeRow.currLabel)} ➔ Move = Ø.</span>`;
+            moveShort = "∅ ⇒ Ø";
+            moveTipText = `None of the states in <code>${escapeHtml(srcText)}</code> have an outgoing <code>'${escapeHtml(activeRow.symbol)}'</code> transition, so direct Move is empty (<code>Ø</code>).`;
           } else {
-            moveMarkup = activeRow.moveHops.map(h => `<span class="hop-chip-move">${escapeHtml(h.from)} ──${escapeHtml(h.symbol)}──▶ ${escapeHtml(h.to)}</span>`).join(" ")
-              + ` <span style="font-family:var(--mono);font-weight:700;">➔ {${escapeHtml(activeRow.moveStates.join(", "))}}</span>`;
+            moveShort = `${activeRow.moveHops.map(h => `${h.from}→${h.to}`).join(", ")} ⇒ {${activeRow.moveStates.join(", ")}}`;
+            moveTipText = `Direct <code>'${escapeHtml(activeRow.symbol)}'</code>-arcs from <code>${escapeHtml(srcText)}</code> (red arrows) land on yellow state(s) <code>{${escapeHtml(activeRow.moveStates.join(", "))}}</code>.`;
           }
+          const moveTip = renderHelpBadge(moveTipText, `trans_move_${subIdx}`);
 
-          let closureMarkup = "";
-          if (activeRow.esetComponents.length === 0) {
-            closureMarkup = `<code style="font-weight:700;color:#b91c1c;">Ø = ${escapeHtml(activeRow.targetAlias)}</code>`;
-          } else {
-            const parts = activeRow.esetComponents.map(c => `<span class="hop-chip-eps">E(${escapeHtml(c.state)}) = ${escapeHtml(c.esetStr)}</span>`).join(" ∪ ");
-            closureMarkup = `${parts}`;
-          }
+          const unionShort = activeRow.esetComponents.length === 0
+            ? `Ø = ${activeRow.targetAlias}`
+            : `${activeRow.esetComponents.map(c => `E(${c.state})`).join(" ∪ ")} = ${activeRow.targetLabel} = ${activeRow.targetAlias}`;
+          const unionTip = renderHelpBadge(
+            activeRow.esetComponents.length === 0
+              ? (activeRow.isNewlyDiscovered
+                ? `Empty result <code>Ø</code> is discovered for the first time and enqueued as sink state <code>${escapeHtml(activeRow.targetAlias)}</code>.`
+                : `Maps back to known empty sink state <code>${escapeHtml(activeRow.targetAlias)} = Ø</code>.`)
+              : `Union of E-sets (${activeRow.esetComponents.map(c => `<code>E(${escapeHtml(c.state)})=${escapeHtml(c.esetStr)}</code>`).join(" ∪ ")}) yields <code>${escapeHtml(activeRow.targetLabel)}</code> (${activeRow.isNewlyDiscovered ? `new DFA state <code>${escapeHtml(activeRow.targetAlias)}</code> added to queue` : `known state <code>${escapeHtml(activeRow.targetAlias)}</code>`}).`,
+            `trans_union_${subIdx}`
+          );
 
-          traceCardHtml = `
-            <div class="substep-trace-card">
-              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem;">
-                <strong>Sub-step ${subIdx + 1} of ${totalSub} — Evaluating <code>δ(${escapeHtml(activeRow.currLabel)}, ${escapeHtml(activeRow.symbol)})</code></strong>
+          const headTip = renderHelpBadge(
+            `Evaluating <code>δ(${escapeHtml(activeRow.currLabel)}, ${escapeHtml(activeRow.symbol)})</code>: follow <code>'${escapeHtml(activeRow.symbol)}'</code>-edges from <code>${escapeHtml(activeRow.currAlias)}</code>, then take the union of E-sets.`,
+            `trans_head_${subIdx}`
+          );
+
+          mathCardHtml = `
+            <div class="compact-math-card">
+              <div class="compact-math-head">
+                <span style="font-family:var(--mono);font-weight:700;">[${subIdx + 1}/${totalSub}] δ(${escapeHtml(activeRow.currAlias)}, ${escapeHtml(activeRow.symbol)}) ${headTip}</span>
                 ${discoveryBadge}
               </div>
-              <div class="trace-step-line">
-                <strong>1. Source subset ${escapeHtml(activeRow.currAlias)}:</strong>
-                ${srcMarkup}
+              <div class="compact-math-row">
+                <span class="compact-lhs"><span class="hop-chip-src">S = ${escapeHtml(activeRow.currAlias)}</span> <span>${escapeHtml(srcText)}</span></span>
+                ${srcTip}
               </div>
-              <div class="trace-step-line">
-                <strong>2. Read '${escapeHtml(activeRow.symbol)}':</strong>
-                ${moveMarkup}
+              <div class="compact-math-row">
+                <span class="compact-lhs"><span class="hop-chip-move">Move(${escapeHtml(activeRow.symbol)})</span> <span>${escapeHtml(moveShort)}</span></span>
+                ${moveTip}
               </div>
-              <div class="trace-step-line">
-                <strong>3. E-set union:</strong>
-                ${closureMarkup}
-              </div>
-              <div class="trace-step-line" style="margin-top:0.45rem;">
-                <code style="font-weight:700;color:#004280;background:#e8f2fc;padding:3px 9px;border-radius:5px;font-size:0.89rem;">${escapeHtml(activeRow.fullFormula)}</code>
+              <div class="compact-math-row">
+                <span class="compact-lhs"><span class="hop-chip-eps">∪ E-set</span> <span>${escapeHtml(unionShort)}</span></span>
+                ${unionTip}
               </div>
             </div>
           `;
@@ -2735,27 +3268,30 @@
 
         return `
           <div class="substep-bar">
-            <button type="button" class="substep-nav-mini" onclick="setTransSubStep(${Math.max(0, subIdx - 1)})" ${(!isAll && subIdx === 0) ? "disabled" : ""}>◀ Prev δ</button>
-            <button type="button" class="substep-nav-mini" onclick="setTransSubStep(${Math.min(totalSub - 1, subIdx + 1)})" ${(!isAll && subIdx >= totalSub - 1) ? "disabled" : ""}>Next δ ▶</button>
+            <button type="button" class="substep-nav-mini" onclick="setTransSubStep(${Math.max(0, subIdx - 1)})" ${(!isAll && subIdx === 0) ? "disabled" : ""}>◀</button>
+            <button type="button" class="substep-nav-mini" onclick="setTransSubStep(${Math.min(totalSub - 1, subIdx + 1)})" ${(!isAll && subIdx >= totalSub - 1) ? "disabled" : ""}>▶</button>
             <span style="color:var(--st-border);margin:0 2px;">|</span>
             ${pillsHtml}
-            <button type="button" class="substep-pill ${isAll ? 'active' : ''}" onclick="setTransSubStep('all')">📋 Show All</button>
+            <button type="button" class="substep-pill ${isAll ? 'active' : ''}" onclick="setTransSubStep('all')">📋 All</button>
           </div>
           <div class="conv-split-grid">
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.45rem;">Single-Symbol NFA — Transition &amp; ε-Closure Highlight</h4>
               <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, highlightCfg)}</div>
               <div class="mini-graph-legend">
-                <span><span class="legend-dot" style="background:#dbeafe;border:2px dashed #2563eb;"></span>Source Set <code>S</code></span>
-                <span><span class="legend-dot" style="background:#fef08a;border:2px solid #dc2626;"></span>Read <code>σ</code> (Red Edge ➔ Gold Node)</span>
-                <span><span class="legend-dot" style="background:#86efac;border:2px solid #16a34a;"></span>Follow-up <code>ε</code>-Closure</span>
+                <span><span class="legend-dot" style="background:#dbeafe;border:2px dashed #2563eb;"></span>Source <code>S</code></span>
+                <span><span class="legend-dot" style="background:#fef08a;border:2px solid #dc2626;"></span>Move(<code>σ</code>)</span>
+                <span><span class="legend-dot" style="background:#86efac;border:2px solid #16a34a;"></span>ε-Closure</span>
               </div>
             </div>
             <div>
-              ${traceCardHtml}
+              ${mathCardHtml}
               <div class="st-table-wrap">
                 <table class="st-table">
-                  <thead><tr><th>Slide Derivation Formula (Click any row to highlight)</th></tr></thead>
+                  <thead>
+                    <tr>
+                      <th>Slide Formula δ(S, σ) ${renderHelpBadge("Matches Lecture 5 slide derivations verbatim. Click any row to highlight its path on the NFA diagram.", "trans_table_help", true)}</th>
+                    </tr>
+                  </thead>
                   <tbody>${rowsHtml}</tbody>
                 </table>
               </div>
@@ -2765,18 +3301,230 @@
       }
 
       if (stepObj.key === "final_states") {
+        const finalTip = renderHelpBadge(
+          "Slide 100 Final Step: Every DFA subset <code>Qi</code> that contains at least one original NFA accepting state (<code>Qi ∩ F ≠ Ø</code>) is marked with a double-circle final ring.",
+          "step_final_states"
+        );
         return `
-          <div class="formula-card" style="margin-bottom:1rem;border-left-color:#15803d;">
-            <strong>Definition of final states:</strong> ${escapeHtml(pd.finalStatesFormula)}
+          <div class="formula-card" style="margin-bottom:0.85rem;border-left-color:#15803d;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+            <span>${escapeHtml(pd.finalStatesFormula)}</span>
+            ${finalTip}
           </div>
-          <h4 class="st-h4" style="margin-bottom:0.55rem;">
-            <span>Resulting Converted DFA M'</span>
+          <h4 class="st-h4" style="margin-bottom:0.45rem;">
+            <span>Converted DFA M'</span>
             <span class="state-count-code">${dfaDef.states.length} states</span>
           </h4>
           <div class="st-graph-frame">${renderAutomatonSvg(dfaDef, dfaDef.accept_states.filter(s => s !== dfaDef.start_state))}</div>
+          <div class="mini-graph-legend">
+            <span><span class="legend-dot" style="background:#dbeafe;border:2px solid #1d4ed8;"></span>Initial <code>${escapeHtml(dfaDef.start_state)}</code></span>
+            <span><span class="legend-dot" style="background:#86efac;border:3px double #15803d;"></span>Final States <code>F'</code></span>
+            <span><span class="legend-dot" style="background:#fee2e2;border:2px solid #b91c1c;"></span>Empty / Trap <code>Ø</code></span>
+          </div>
         `;
       }
       return "";
+    }
+
+    function renderMinExtensionHtml(dfaDef, minDfa, m2Data) {
+      const subSteps = (m2Data && m2Data.subSteps) ? m2Data.subSteps : [];
+      const totalSub = subSteps.length;
+      if (totalSub === 0 || !minDfa) return "";
+
+      const isAll = (appState.minSubIndex === "all");
+      const subIdx = isAll ? (totalSub - 1) : Math.max(0, Math.min(totalSub - 1, Number(appState.minSubIndex) || 0));
+      if (!isAll) appState.minSubIndex = subIdx;
+      const cur = subSteps[subIdx];
+
+      const pillsHtml = subSteps.map((st, i) => `
+        <button type="button" class="substep-pill ${(!isAll && i === subIdx) ? 'active' : ''}" onclick="setMinSubStep(${i})">
+          ${escapeHtml(st.pill)}
+        </button>
+      `).join("");
+
+      const navBarHtml = `
+        <div class="substep-bar" style="border-color:#ddd6fe;background:#faf5ff;">
+          <button type="button" class="substep-nav-mini" onclick="setMinSubStep(${Math.max(0, subIdx - 1)})" ${(!isAll && subIdx === 0) ? "disabled" : ""}>◀</button>
+          <button type="button" class="substep-nav-mini" onclick="setMinSubStep(${Math.min(totalSub - 1, subIdx + 1)})" ${(!isAll && subIdx >= totalSub - 1) ? "disabled" : ""}>▶</button>
+          <span style="color:#ddd6fe;margin:0 2px;">|</span>
+          ${pillsHtml}
+          <button type="button" class="substep-pill ${isAll ? 'active' : ''}" onclick="setMinSubStep('all')">📋 All</button>
+        </div>
+      `;
+
+      // Final sub-step or Show All: Dual side-by-side Converted DFA M' vs Minimized DFA
+      if (isAll || cur.kind === "final_min") {
+        const fin = subSteps[totalSub - 1];
+        const rowsHtml = fin.classRows.map(r => `
+          <tr style="${r.isMerged ? 'background:#eff6ff;font-weight:700;' : ''}">
+            <td style="font-weight:700;color:#5b21b6;">${escapeHtml(r.group)} <span style="font-weight:500;font-size:0.76rem;color:#64748b;">(${escapeHtml(r.roleTag)})</span></td>
+            <td>${escapeHtml(r.aliases)} <span style="color:#64748b;font-size:0.8rem;">${escapeHtml(r.members)}</span></td>
+            <td>
+              <span style="display:inline-flex;align-items:center;justify-content:space-between;width:100%;gap:0.35rem;">
+                <span>${escapeHtml(r.transSummary)}</span>
+                ${renderHelpBadge(r.tip, `min_class_${r.group}`)}
+              </span>
+            </td>
+          </tr>
+        `).join("");
+
+        const logRowsHtml = subSteps.map((s, i) => `
+          <tr class="clickable-row ${(!isAll && i === subIdx) ? 'active-substep-row' : ''}" onclick="setMinSubStep(${i})">
+            <td style="font-weight:700;width:110px;">${escapeHtml(s.pill)}</td>
+            <td>${escapeHtml(s.headline)}</td>
+            <td><span class="${s.badgeCls}">${escapeHtml(s.badge)}</span></td>
+          </tr>
+        `).join("");
+
+        return `
+          ${navBarHtml}
+          <div class="compact-math-card ext-card">
+            <div class="compact-math-head">
+              <span style="font-family:var(--mono);font-weight:700;">[${totalSub}/${totalSub}] ${escapeHtml(fin.headline)} ${renderHelpBadge(fin.helpTip, "min_final_head", true)}</span>
+              <span class="${fin.badgeCls}">${escapeHtml(fin.badge)}</span>
+            </div>
+          </div>
+          <div class="conv-two-equal" style="margin-bottom:0.8rem;">
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.42rem;">
+                <span>Converted DFA M'</span>
+                <span class="state-count-code">${dfaDef.states.length} states</span>
+              </h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(dfaDef, fin.origHighlightCfg)}</div>
+              <div class="mini-graph-legend">
+                <span><span class="legend-dot" style="background:#e0f2fe;border:2px dashed #2563eb;"></span>Merged Equivalent Subsets</span>
+              </div>
+            </div>
+            <div>
+              <h4 class="st-h4" style="margin-bottom:0.42rem;">
+                <span>Minimized DFA</span>
+                <span class="state-count-code">${minDfa.states.length} states</span>
+              </h4>
+              <div class="st-graph-frame">${renderAutomatonSvg(minDfa, fin.minHighlightCfg)}</div>
+              <div class="mini-graph-legend">
+                <span><span class="legend-dot" style="background:#e0f2fe;border:2px solid #0284c7;"></span>Collapsed Class <code>Mi</code></span>
+                <span><span class="legend-dot" style="background:#ffffff;border:3px double #334155;"></span>Final Class</span>
+              </div>
+            </div>
+          </div>
+          <div class="st-table-wrap" style="margin-bottom:0.75rem;">
+            <table class="st-table">
+              <thead>
+                <tr>
+                  <th>Class Mi</th>
+                  <th>DFA Subsets</th>
+                  <th>δ_min ${renderHelpBadge("Induced transitions between equivalence classes M0..Mm.", "min_final_table", true)}</th>
+                </tr>
+              </thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>
+          ${isAll ? `
+            <div class="st-table-wrap">
+              <table class="st-table">
+                <thead><tr><th>Step</th><th>M2 Partition Trace (Click row to inspect)</th><th>Status</th></tr></thead>
+                <tbody>${logRowsHtml}</tbody>
+              </table>
+            </div>
+          ` : ""}
+        `;
+      }
+
+      if (cur.kind === "init_p0") {
+        const blkRows = cur.blocksSummary.map(b => `
+          <tr>
+            <td style="font-weight:700;color:#0068c9;">${escapeHtml(b.groupName)} <span style="font-weight:400;color:#64748b;font-size:0.78rem;">(${escapeHtml(b.roleLabel)})</span></td>
+            <td>${escapeHtml(b.aliasesStr)}</td>
+            <td>
+              <span style="display:inline-flex;align-items:center;justify-content:space-between;width:100%;gap:0.35rem;">
+                <span>${escapeHtml(b.status)}</span>
+                ${renderHelpBadge(b.tip, `min_p0_${b.groupName}`)}
+              </span>
+            </td>
+          </tr>
+        `).join("");
+
+        return `
+          ${navBarHtml}
+          <div class="conv-split-grid">
+            <div>
+              <div class="st-graph-frame">${renderAutomatonSvg(dfaDef, cur.highlightCfg)}</div>
+              <div class="mini-graph-legend">
+                <span><span class="legend-dot" style="background:#e0f2fe;border:2px solid #0284c7;"></span>G0 (Non-Final)</span>
+                <span><span class="legend-dot" style="background:#dcfce7;border:2px solid #15803d;"></span>G1 (Final)</span>
+              </div>
+            </div>
+            <div>
+              <div class="compact-math-card ext-card">
+                <div class="compact-math-head">
+                  <span style="font-family:var(--mono);font-weight:700;">[${subIdx + 1}/${totalSub}] ${escapeHtml(cur.headline)} ${renderHelpBadge(cur.helpTip, "min_p0_head", true)}</span>
+                  <span class="${cur.badgeCls}">${escapeHtml(cur.badge)}</span>
+                </div>
+              </div>
+              <div class="st-table-wrap">
+                <table class="st-table">
+                  <thead>
+                    <tr>
+                      <th>Block</th>
+                      <th>States Qi</th>
+                      <th>Status ${renderHelpBadge("Multi-state blocks (≥ 2 states) are tested in Round 1; singleton blocks are already minimal.", "min_p0_status", true)}</th>
+                    </tr>
+                  </thead>
+                  <tbody>${blkRows}</tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // cur.kind === "test_block"
+      const sigRows = cur.subGroupsRows.map(r => `
+        <tr>
+          <td style="font-weight:700;">${escapeHtml(r.membersShort)}</td>
+          <td style="font-weight:700;color:#5b21b6;">${escapeHtml(r.sigTuple)}</td>
+          <td>
+            <span style="display:inline-flex;align-items:center;justify-content:space-between;width:100%;gap:0.35rem;">
+              <span class="${cur.didSplit ? 'hop-chip-move' : 'hop-chip-eps'}">${escapeHtml(r.outcome)}</span>
+              ${renderHelpBadge(`Transitions into previous-round blocks: <code>${escapeHtml(r.tip)}</code>.`, `min_r${cur.round}_${cur.blockName}_${r.membersShort}`)}
+            </span>
+          </td>
+        </tr>
+      `).join("");
+
+      return `
+        ${navBarHtml}
+        <div class="conv-split-grid">
+          <div>
+            <div class="st-graph-frame">${renderAutomatonSvg(dfaDef, cur.highlightCfg)}</div>
+            <div class="mini-graph-legend">
+              <span><span class="legend-dot" style="background:#dbeafe;border:2px dashed #2563eb;"></span>Tested <code>${escapeHtml(cur.blockName)}</code></span>
+              ${cur.didSplit
+                ? `<span><span class="legend-dot" style="background:#fef9c3;border:2px solid #dc2626;"></span>Splitting Arcs</span>`
+                : `<span><span class="legend-dot" style="background:#dcfce7;border:2px solid #16a34a;"></span>Matching Arcs</span>`}
+            </div>
+          </div>
+          <div>
+            <div class="compact-math-card ext-card">
+              <div class="compact-math-head">
+                <span style="font-family:var(--mono);font-weight:700;">[${subIdx + 1}/${totalSub}] ${escapeHtml(cur.headline)} ${renderHelpBadge(cur.helpTip, `min_head_${subIdx}`, true)}</span>
+                <span class="${cur.badgeCls}">${escapeHtml(cur.badge)}</span>
+              </div>
+            </div>
+            <div class="st-table-wrap">
+              <table class="st-table">
+                <thead>
+                  <tr>
+                    <th>Subset(s) in ${escapeHtml(cur.blockName)}</th>
+                    <th>Sig ${escapeHtml(cur.sigHeaderTuple)} ${renderHelpBadge("Target partition block index (Gi) reached on each symbol in Σ.", `min_sig_col_${subIdx}`, true)}</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody>${sigRows}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function renderPipelineTab() {
@@ -2785,6 +3533,7 @@
       const expandedNfa = appState.expandedNfa;
       const dfaDef = appState.dfaDef;
       const minDfa = appState.minDfaDef;
+      const m2Data = appState.minM2Data;
       if (!pd || !dfaDef) return;
 
       const steps = pd.steps;
@@ -2792,20 +3541,32 @@
       appState.convStageIndex = Math.min(appState.convStageIndex, maxStage);
       const stageIdx = appState.convStageIndex;
       const activeStep = getActiveStepObject();
+      const onMinExt = isOnMinExtensionStage();
+      const minTotal = (m2Data && m2Data.subSteps) ? m2Data.subSteps.length : 0;
 
       const atVeryStart = (stageIdx === 0);
       const onLastESetSub = activeStep && activeStep.key === "e_sets" && (appState.eSetSubIndex === "all" || appState.eSetSubIndex >= pd.eSetsRows.length - 1);
       const onLastTransSub = activeStep && activeStep.key === "transition_fn" && (appState.transSubIndex === "all" || appState.transSubIndex >= pd.transitionsLog.length - 1);
-      const atVeryEnd = (stageIdx >= maxStage) && (!activeStep || (activeStep.key !== "e_sets" && activeStep.key !== "transition_fn") || onLastESetSub || onLastTransSub);
+      const onLastMinSub = onMinExt && (appState.minSubIndex === "all" || appState.minSubIndex >= minTotal - 1);
+
+      const atVeryEnd = (stageIdx >= maxStage) && (
+        (!activeStep && !onMinExt) ||
+        (activeStep && activeStep.key !== "e_sets" && activeStep.key !== "transition_fn") ||
+        onLastESetSub ||
+        onLastTransSub ||
+        onLastMinSub
+      );
 
       document.getElementById("btnConvPrev").disabled = atVeryStart;
       document.getElementById("btnConvNext").disabled = atVeryEnd;
 
       const skipBtn = document.getElementById("btnConvSkipMajor");
-      const showSkip = activeStep && ((activeStep.key === "e_sets" && !onLastESetSub) || (activeStep.key === "transition_fn" && !onLastTransSub));
+      const showSkip = stageIdx < maxStage && (
+        (activeStep && activeStep.key === "e_sets" && !onLastESetSub) ||
+        (activeStep && activeStep.key === "transition_fn" && !onLastTransSub)
+      );
       skipBtn.classList.toggle("hidden", !showSkip);
 
-      const fullStageTitles = ["Given NFA M", ...steps.map(s => `Step ${s.stepNum}: ${s.title}`)];
       const shortMap = {
         string_elim: "Eliminate Strings",
         e_sets: "E-sets",
@@ -2813,93 +3574,87 @@
         transition_fn: "Transition δ",
         final_states: "Final States & DFA"
       };
-      const pillLabels = ["Given NFA M", ...steps.map(s => `Step ${s.stepNum}: ${shortMap[s.key] || s.title}`)];
+      const pillItems = [
+        { label: "Given NFA M", isExt: false },
+        ...steps.map(s => ({ label: `Step ${s.stepNum}: ${shortMap[s.key] || s.title}`, isExt: false }))
+      ];
       if (appState.showOptionalMinDfa) {
-        fullStageTitles.push("Bonus: Minimized DFA");
-        pillLabels.push("Bonus: Min DFA");
+        pillItems.push({ label: "🧩 Ext: Minimize DFA", isExt: true });
       }
 
-      document.getElementById("convCurrentStageLabel").textContent = fullStageTitles[stageIdx] || "";
-      document.getElementById("convStagePillsContainer").innerHTML = pillLabels.map((lbl, i) => `
-        <button type="button" class="conv-pill ${i === stageIdx ? 'active' : ''}" onclick="convStepAction('goto', ${i})">${escapeHtml(lbl)}</button>
+      document.getElementById("convStagePillsContainer").innerHTML = pillItems.map((item, i) => `
+        <button type="button" class="conv-pill ${item.isExt ? 'ext-pill' : ''} ${i === stageIdx ? 'active' : ''}" onclick="convStepAction('goto', ${i})">${escapeHtml(item.label)}</button>
       `).join("");
 
       const stageContainer = document.getElementById("convActiveStageContent");
       if (stageIdx === 0) {
-        const planItems = steps.map(s => `<li style="margin-bottom:0.25rem;"><strong>Step ${s.stepNum}:</strong> ${escapeHtml(s.title)}</li>`).join("");
+        const planItems = steps.map(s => `<li style="margin-bottom:0.22rem;"><strong>Step ${s.stepNum}:</strong> ${escapeHtml(s.title)}</li>`).join("");
+        const detectTip = renderHelpBadge(
+          pd.hasStringSplits
+            ? "Auto-detected multi-symbol string transition(s) → executing all 5 Slide 100 conversion steps."
+            : "No multi-symbol string transitions present → string splitting is skipped automatically (4 steps, matching Lecture 5 Example 3).",
+          "given_nfa_steps_detect",
+          true
+        );
         stageContainer.innerHTML = `
           <div class="conv-split-grid">
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.55rem;">
+              <h4 class="st-h4" style="margin-bottom:0.45rem;">
                 <span>Given NFA M</span>
                 <span class="state-count-code">${originalNfa.states.length} states</span>
               </h4>
               <div class="st-graph-frame">${renderAutomatonSvg(originalNfa)}</div>
+              <div class="mini-graph-legend">
+                <span><span class="legend-dot" style="background:#dbeafe;border:2px solid #1d4ed8;"></span>Initial <code>${escapeHtml(originalNfa.start_state)}</code></span>
+                <span><span class="legend-dot" style="background:#ffffff;border:3px double #334155;"></span>Final <code>F</code></span>
+              </div>
             </div>
             <div>
-              <h4 class="st-h4" style="margin-bottom:0.55rem;">Conversion Steps (${steps.length} Steps — Slide 100)</h4>
-              <div class="formula-card" style="font-family:var(--sans);">
-                <ol style="padding-left:1.25rem;">${planItems}</ol>
+              <h4 class="st-h4" style="margin-bottom:0.45rem;">
+                <span style="display:inline-flex;align-items:center;">Slide 100 Steps (${steps.length}) ${detectTip}</span>
+              </h4>
+              <div class="formula-card" style="font-family:var(--sans);padding:0.75rem 1rem;">
+                <ol style="padding-left:1.2rem;">${planItems}</ol>
               </div>
             </div>
           </div>
         `;
       } else if (stageIdx <= steps.length) {
-        stageContainer.innerHTML = `
-          <h3 class="st-h3" style="font-size:1.26rem;margin-bottom:0.55rem;">Step ${activeStep.stepNum} of ${steps.length} — ${escapeHtml(activeStep.title)}</h3>
-          ${renderStepBodyHtml(activeStep, pd, originalNfa, expandedNfa, dfaDef)}
-        `;
+        stageContainer.innerHTML = renderStepBodyHtml(activeStep, pd, originalNfa, expandedNfa, dfaDef);
         const activeTr = stageContainer.querySelector("tr.active-substep-row");
         if (activeTr && activeTr.scrollIntoView) {
           activeTr.scrollIntoView({ block: "nearest" });
         }
-      } else if (minDfa) {
-        const mapRows = appState.minMapping.map(r => `
-          <tr>
-            <td style="font-weight:700;color:#059669;">${escapeHtml(r.group)}</td>
-            <td>${escapeHtml(r.members)}</td>
-          </tr>
-        `).join("");
-        stageContainer.innerHTML = `
-          <h3 class="st-h3" style="font-size:1.26rem;margin-bottom:0.55rem;">Optional Bonus Stage — Minimized DFA (${minDfa.states.length} states)</h3>
-          <div class="conv-split-grid">
-            <div class="st-graph-frame">${renderAutomatonSvg(minDfa)}</div>
-            <div class="st-table-wrap">
-              <table class="st-table">
-                <thead><tr><th>Minimized Group</th><th>Original DFA Subsets</th></tr></thead>
-                <tbody>${mapRows}</tbody>
-              </table>
-            </div>
-          </div>
-        `;
+      } else if (minDfa && m2Data) {
+        stageContainer.innerHTML = renderMinExtensionHtml(dfaDef, minDfa, m2Data);
       }
 
       // Render Full Pipeline Overview
       const cards = [];
       cards.push(`
         <div>
-          <h4 class="st-h4" style="margin-bottom:0.5rem;"><span>Given NFA M</span><span class="state-count-code">${originalNfa.states.length} states</span></h4>
+          <h4 class="st-h4" style="margin-bottom:0.45rem;"><span>Given NFA M</span><span class="state-count-code">${originalNfa.states.length} states</span></h4>
           <div class="st-graph-frame">${renderAutomatonSvg(originalNfa)}</div>
         </div>
       `);
       if (pd.hasStringSplits) {
         cards.push(`
           <div>
-            <h4 class="st-h4" style="margin-bottom:0.5rem;"><span>Step 1 Single-Symbol NFA</span><span class="state-count-code">${expandedNfa.states.length} states</span></h4>
+            <h4 class="st-h4" style="margin-bottom:0.45rem;"><span>Single-Symbol NFA</span><span class="state-count-code">${expandedNfa.states.length} states</span></h4>
             <div class="st-graph-frame">${renderAutomatonSvg(expandedNfa, pd.introducedStates)}</div>
           </div>
         `);
       }
       cards.push(`
         <div>
-          <h4 class="st-h4" style="margin-bottom:0.5rem;"><span>Converted DFA M'</span><span class="state-count-code">${dfaDef.states.length} states</span></h4>
+          <h4 class="st-h4" style="margin-bottom:0.45rem;"><span>Converted DFA M'</span><span class="state-count-code">${dfaDef.states.length} states</span></h4>
           <div class="st-graph-frame">${renderAutomatonSvg(dfaDef)}</div>
         </div>
       `);
       if (appState.showOptionalMinDfa && minDfa) {
         cards.push(`
           <div>
-            <h4 class="st-h4" style="margin-bottom:0.5rem;"><span>Minimized DFA</span><span class="state-count-code">${minDfa.states.length} states</span></h4>
+            <h4 class="st-h4" style="margin-bottom:0.45rem;"><span>🧩 Minimized DFA</span><span class="state-count-code">${minDfa.states.length} states</span></h4>
             <div class="st-graph-frame">${renderAutomatonSvg(minDfa)}</div>
           </div>
         `);
@@ -2908,21 +3663,29 @@
       gridEl.className = `overview-grid overview-cols-${Math.min(4, Math.max(2, cards.length))}`;
       gridEl.innerHTML = cards.join("");
 
-      document.getElementById("overviewStepsStack").innerHTML = steps.map(s => {
+      const stepExpanders = steps.map(s => {
         let inner = "";
         if (s.key === "string_elim") {
-          inner = `<div class="st-table-wrap"><table class="st-table"><thead><tr><th>Original</th><th>Introduced State(s)</th><th>Expanded Chain</th></tr></thead><tbody>${pd.splitLog.map(r => `<tr><td>${escapeHtml(r.original)}</td><td>${escapeHtml(r.introduced)}</td><td>${escapeHtml(r.chain)}</td></tr>`).join("")}</tbody></table></div>`;
+          inner = `<div class="st-table-wrap"><table class="st-table"><thead><tr><th>Original</th><th>New State(s)</th><th>Chain</th></tr></thead><tbody>${pd.splitLog.map(r => `<tr><td>${escapeHtml(r.original)}</td><td>${escapeHtml(r.introduced)}</td><td>${escapeHtml(r.chain)}</td></tr>`).join("")}</tbody></table></div>`;
         } else if (s.key === "e_sets") {
-          inner = `<div class="st-table-wrap"><table class="st-table"><thead><tr><th>State q</th><th>Definition of E-set</th></tr></thead><tbody>${pd.eSetsRows.map(r => `<tr><td>${escapeHtml(r.state)}</td><td>${escapeHtml(r.formula)}</td></tr>`).join("")}</tbody></table></div>`;
+          inner = `<div class="st-table-wrap"><table class="st-table"><thead><tr><th>State</th><th>E-set</th></tr></thead><tbody>${pd.eSetsRows.map(r => `<tr><td>${escapeHtml(r.state)}</td><td>${escapeHtml(r.formula)}</td></tr>`).join("")}</tbody></table></div>`;
         } else if (s.key === "initial_state") {
           inner = `<div class="formula-card">${escapeHtml(pd.initialStateFormula)}</div>`;
         } else if (s.key === "transition_fn") {
-          inner = `<div class="st-table-wrap"><table class="st-table"><thead><tr><th>State S</th><th>Symbol σ</th><th>E-set Union</th><th>Target = Qi</th><th>Slide Formula</th></tr></thead><tbody>${pd.transitionsLog.map(r => `<tr><td>${escapeHtml(r.stateWithAlias)}</td><td>${escapeHtml(r.symbol)}</td><td>${escapeHtml(r.unionExpr)}</td><td>${escapeHtml(r.targetWithAlias)}</td><td>${escapeHtml(r.fullFormula)}</td></tr>`).join("")}</tbody></table></div>`;
+          inner = `<div class="st-table-wrap"><table class="st-table"><thead><tr><th>Slide Formula δ(S, σ)</th></tr></thead><tbody>${pd.transitionsLog.map(r => `<tr><td>${escapeHtml(r.fullFormula)}</td></tr>`).join("")}</tbody></table></div>`;
         } else if (s.key === "final_states") {
           inner = `<div class="formula-card">${escapeHtml(pd.finalStatesFormula)}</div>`;
         }
-        return `<details class="st-expander" open><summary>Step ${s.stepNum} of ${steps.length} — ${escapeHtml(s.title)}</summary><div class="st-expander-content">${inner}</div></details>`;
-      }).join("");
+        return `<details class="st-expander" open><summary>Step ${s.stepNum}: ${escapeHtml(s.title)}</summary><div class="st-expander-content">${inner}</div></details>`;
+      });
+
+      if (appState.showOptionalMinDfa && minDfa && m2Data) {
+        const fin = m2Data.subSteps[m2Data.subSteps.length - 1];
+        const minRows = fin ? fin.classRows.map(r => `<tr><td style="font-weight:700;color:#5b21b6;">${escapeHtml(r.group)}</td><td>${escapeHtml(r.aliases)} (${escapeHtml(r.members)})</td><td>${escapeHtml(r.transSummary)}</td></tr>`).join("") : "";
+        stepExpanders.push(`<details class="st-expander" open><summary>🧩 Extension: DFA Minimization (${dfaDef.states.length} ➔ ${minDfa.states.length} states)</summary><div class="st-expander-content"><div class="st-table-wrap"><table class="st-table"><thead><tr><th>Class</th><th>Subsets</th><th>δ_min</th></tr></thead><tbody>${minRows}</tbody></table></div></div></details>`);
+      }
+
+      document.getElementById("overviewStepsStack").innerHTML = stepExpanders.join("");
     }
 
     function recomputeAndRenderAll() {
@@ -2944,7 +3707,7 @@
         appState.transitions, appState.stringTransitions
       );
       const { dfaDef, pipelineData } = nfaToDfaSlide100Pipeline(expandedNfa, splitLog, introducedStates);
-      const { minDfa, mapping } = minimizeDfa(dfaDef);
+      const { minDfa, mapping, m2Data } = minimizeDfa(dfaDef, pipelineData.aliasMap);
 
       appState.originalNfa = originalNfa;
       appState.expandedNfa = expandedNfa;
@@ -2952,6 +3715,7 @@
       appState.pipelineData = pipelineData;
       appState.minDfaDef = minDfa;
       appState.minMapping = mapping;
+      appState.minM2Data = m2Data;
 
       renderPipelineTab();
       renderStepperView();
@@ -3183,6 +3947,9 @@
         });
       });
 
+      document.addEventListener("click", () => {
+        document.querySelectorAll(".q-help.is-pinned").forEach(el => el.classList.remove("is-pinned"));
+      });
       document.getElementById("participantIdInput").addEventListener("input", updateTelemetryView);
       loadPreset(DEFAULT_PRESET_NAME);
     });
