@@ -161,7 +161,6 @@ PREBUILT_SCENARIOS = {
     },
 }
 
-
 def init_session_state():
     defaults = {
         "user_actions_log": [],
@@ -182,9 +181,7 @@ def init_session_state():
         if k not in st.session_state:
             st.session_state[k] = v
 
-
 init_session_state()
-
 
 def log_action(action_type, details=""):
     """Tracks learner behavior for educational research telemetry."""
@@ -195,13 +192,11 @@ def log_action(action_type, details=""):
         "details": details,
     })
 
-
 def clear_automaton_widget_keys():
     """Clears dynamic transition and specification widget keys on reset."""
     for key in list(st.session_state.keys()):
         if key.startswith(("trans_", "states_in_", "alpha_in_", "start_sel_", "acc_sel_", "str_from_", "str_lbl_", "str_to_")):
             del st.session_state[key]
-
 
 def reset_to_default():
     """Resets all automaton parameters, transitions, and steppers back to Custom Automaton (blank canvas)."""
@@ -218,7 +213,6 @@ def reset_to_default():
     st.session_state.reset_counter += 1
     clear_automaton_widget_keys()
     log_action("reset_to_default", DEFAULT_PRESET_NAME)
-
 
 def reset_current_preset():
     """Restores the currently selected scenario preset without losing scenario selection."""
@@ -238,7 +232,6 @@ def reset_current_preset():
     clear_automaton_widget_keys()
     log_action("reset_current_preset", current)
 
-
 # ==========================================
 # 3. FORMAL ALGORITHM ENGINES (SLIDE 100 + SUB-STEP + M2)
 # ==========================================
@@ -250,17 +243,14 @@ def state_sort_key(state_name, state_order_map=None):
         return (1, int(m.group(2)), m.group(1))
     return (2, 0, state_name)
 
-
 def sort_states(state_iterable, state_order_map=None):
     return sorted(list(state_iterable), key=lambda s: state_sort_key(s, state_order_map))
-
 
 def format_state_name(state_set, state_order_map=None):
     if not state_set or state_set == frozenset({"Ø"}):
         return "Ø"
     ordered = sort_states(state_set, state_order_map)
     return "{" + ", ".join(ordered) + "}"
-
 
 def validate_alphabet_and_strings(alphabet_list, states_list, string_transitions):
     errors = []
@@ -302,7 +292,6 @@ def validate_alphabet_and_strings(alphabet_list, states_list, string_transitions
             )
     return errors
 
-
 def build_combined_original_nfa(states_list, alphabet_list, start_state, accept_states, single_trans, string_transitions):
     combined = {s: {} for s in states_list}
     for s, row in single_trans.items():
@@ -324,7 +313,6 @@ def build_combined_original_nfa(states_list, alphabet_list, start_state, accept_
         "accept_states": list(accept_states),
         "transitions": combined,
     }
-
 
 def expand_string_transitions(states_list, alphabet_list, start_state, accept_states, single_trans, string_transitions):
     existing = set(states_list)
@@ -393,7 +381,6 @@ def expand_string_transitions(states_list, alphabet_list, start_state, accept_st
     }
     return expanded_nfa, split_log, introduced_states
 
-
 def trace_epsilon_closure_bfs(seed_states, transitions, state_order_map=None):
     """Traces exact BFS epsilon-closure hops and traversed ε-edges."""
     closure_set = set(seed_states)
@@ -412,11 +399,9 @@ def trace_epsilon_closure_bfs(seed_states, transitions, state_order_map=None):
     members = sort_states(closure_set, state_order_map)
     return members, hops, eps_edges
 
-
 def get_empty_closure(states, transitions):
     members, _, _ = trace_epsilon_closure_bfs(states, transitions)
     return frozenset(members)
-
 
 def move(states, symbol, transitions):
     reachable = set()
@@ -424,7 +409,6 @@ def move(states, symbol, transitions):
         for nxt in transitions.get(s, {}).get(symbol, []):
             reachable.add(nxt)
     return frozenset(reachable)
-
 
 def nfa_to_dfa_slide100_pipeline(original_nfa, expanded_nfa, split_log, introduced_states):
     """Executes Lecture 5 (Slide 100) NFA -> DFA conversion with sub-step path traces."""
@@ -590,9 +574,9 @@ def nfa_to_dfa_slide100_pipeline(original_nfa, expanded_nfa, split_log, introduc
         "start_state": initial_label,
         "accept_states": dfa_accept_list,
         "transitions": dfa_transitions,
+        "nodeBadges": {lbl: f"Q{idx + 1}" for idx, lbl in enumerate(dfa_state_labels)},
     }
     return final_dfa, pipeline_data
-
 
 def minimize_dfa(dfa_def, alias_map=None):
     """Minimizes DFA using Moore's Equivalence Partitioning with full M2 group-by-group trace."""
@@ -747,21 +731,33 @@ def minimize_dfa(dfa_def, alias_map=None):
 
     def partition_key(p):
         if start_state in p:
-            return (0, "")
+            return (0, 0)
         if len(p) == 1 and p[0] == "Ø":
-            return (2, "Ø")
-        return (1, min(sorted(list(p))))
+            return (2, 999999)
+        return (1, min((states.index(s) if s in states else 99999) for s in p))
 
     partitions.sort(key=partition_key)
+
+    def build_min_class_label(sorted_members):
+        if len(sorted_members) == 1:
+            return sorted_members[0]
+        joined_subsets = " ≡ ".join(sorted_members)
+        if len(sorted_members) == 2 and len(joined_subsets) <= 22:
+            return joined_subsets
+        return " ≡ ".join(get_alias(s) for s in sorted_members)
 
     state_map = {}
     orig_merge_palette = {}
     min_merge_palette = {}
+    min_badge_map = {}
     mapping_rows = []
+    min_states = []
 
     for idx, p in enumerate(partitions):
-        label = f"M{idx}"
-        sorted_members = sorted(list(p))
+        sorted_members = sorted(list(p), key=lambda s: states.index(s) if s in states else 99999)
+        label = build_min_class_label(sorted_members)
+        min_states.append(label)
+        min_badge_map[label] = "≡".join(get_alias(s) for s in sorted_members)
         for s in sorted_members:
             state_map[s] = label
         if len(sorted_members) >= 2:
@@ -777,18 +773,15 @@ def minimize_dfa(dfa_def, alias_map=None):
             else ("Start" if is_start else ("Final" if is_acc else ("Trap Ø" if sorted_members == ["Ø"] else ("Merged" if len(sorted_members) >= 2 else "State"))))
         )
         mapping_rows.append({
-            "Class Mi": f"{label} ({role_tag})",
+            "Equivalence Class": f"{label} ({role_tag})",
             "group": label,
+            "aliases_equiv": "≡".join(get_alias(s) for s in sorted_members),
             "is_merged": len(sorted_members) >= 2,
             "DFA Subsets": f"{', '.join(get_alias(s) for s in sorted_members)} ({', '.join(sorted_members)})",
         })
 
-    min_states = [f"M{i}" for i in range(len(partitions))]
     min_start = state_map.get(start_state)
-    min_accept = sorted(
-        list({state_map[s] for s in accept_set if s in state_map}),
-        key=lambda x: int(x[1:]),
-    )
+    min_accept = [lbl for lbl in min_states if any(state_map.get(s) == lbl for s in accept)]
     min_trans = {}
     for s in states:
         mapped_src = state_map[s]
@@ -808,9 +801,11 @@ def minimize_dfa(dfa_def, alias_map=None):
         "start_state": min_start,
         "accept_states": min_accept,
         "transitions": min_trans,
+        "nodeBadges": min_badge_map,
     }
 
     is_already_minimal = len(min_states) == len(states)
+    merged_aliases = [r["aliases_equiv"] for r in mapping_rows if r["is_merged"]]
     merged_groups = [r["group"] for r in mapping_rows if r["is_merged"]]
     final_step_no = len(sub_steps) + 1
 
@@ -823,9 +818,9 @@ def minimize_dfa(dfa_def, alias_map=None):
             if is_already_minimal
             else f"Fixed Point — Merged {len(states)} ➔ {len(min_states)} states"
         ),
-        "badge": "✓ Already Minimal" if is_already_minimal else f"Merged {', '.join(merged_groups)}",
+        "badge": "✓ Already Minimal" if is_already_minimal else f"Merged {', '.join(merged_aliases)}",
         "help_tip": (
-            f"Every equivalence class is a singleton, so M' ({len(states)} states) is already minimal."
+            f"Every equivalence class is a singleton, so the Converted DFA ({len(states)} states) is already minimal."
             if is_already_minimal
             else f"Equivalent states collapse into merged class(es) {', '.join(merged_groups)} to form the minimal DFA."
         ),
@@ -838,11 +833,11 @@ def minimize_dfa(dfa_def, alias_map=None):
             "node_palette_map": min_merge_palette,
             "dim_inactive": False,
         },
-        "rows": [{k: v for k, v in r.items() if k in ("Class Mi", "DFA Subsets", "δ_min")} for r in mapping_rows],
+        "rows": [{k: v for k, v in r.items() if k in ("Equivalence Class", "DFA Subsets", "δ_min")} for r in mapping_rows],
     })
 
     mapping_df = pd.DataFrame([
-        {k: v for k, v in r.items() if k in ("Class Mi", "DFA Subsets", "δ_min")}
+        {k: v for k, v in r.items() if k in ("Equivalence Class", "DFA Subsets", "δ_min")}
         for r in mapping_rows
     ])
     m2_data = {
@@ -852,7 +847,6 @@ def minimize_dfa(dfa_def, alias_map=None):
         "min_count": len(min_states),
     }
     return min_dfa, mapping_df, m2_data
-
 
 def simulate_string(dfa_def, input_string):
     curr = dfa_def["start_state"]
@@ -870,7 +864,6 @@ def simulate_string(dfa_def, input_string):
     is_accepted = curr in dfa_def["accept_states"]
     return is_accepted, path, "Success"
 
-
 # ==========================================
 # 4. VISUALIZATION ENGINE (GRAPHVIZ DOT WITH MULTI-ROLE CUES)
 # ==========================================
@@ -884,13 +877,14 @@ def wrap_subset_label_for_dot(state_name):
     mid = (len(parts) + 1) // 2
     return "{" + ", ".join(parts[:mid]) + ",\n" + ", ".join(parts[mid:]) + "}"
 
-
 def draw_automaton(automaton_def, name="Automaton", highlighted_states=None, active_edge=None, highlight_cfg=None):
     """Generates styled topological DOT source with multi-role path & partition cues."""
     dot = _DotBuilder(name, graph_attr={
         "rankdir": "LR",
         "bgcolor": "transparent",
-        "margin": "0.12",
+        "margin": "0.18",
+        "nodesep": "0.82",
+        "ranksep": "1.15",
     })
     if not automaton_def or not automaton_def.get("start_state"):
         return dot.source
@@ -1005,7 +999,6 @@ def draw_automaton(automaton_def, name="Automaton", highlighted_states=None, act
             fontsize="12",
         )
     return dot.source
-
 
 # ==========================================
 # 5. USER INTERFACE ARCHITECTURE (COMPACT + (?) TOOLTIPS)
@@ -1454,15 +1447,26 @@ def main():
                         st.dataframe(pd.DataFrame(t_rows)[["Slide Formula"]], hide_index=True, use_container_width=True)
 
                 elif active_step["key"] == "final_states":
-                    st.markdown(
-                        f"**`{pipeline_data['final_states_formula']}`**",
-                        help="Every DFA subset Qi containing at least one original NFA final state (Qi ∩ F ≠ Ø) is marked accepting.",
-                    )
-                    st.markdown(f"**Converted DFA M'** (`{len(dfa_def['states'])} states`)")
-                    st.graphviz_chart(
-                        draw_automaton(dfa_def, "Result_DFA", highlighted_states=[s for s in dfa_def["accept_states"] if s != dfa_def["start_state"]]),
-                        use_container_width=True,
-                    )
+                    fc_left, fc_right = st.columns([1.5, 1])
+                    with fc_left:
+                        st.markdown(f"**Converted DFA** (`{len(dfa_def['states'])} states`)")
+                        st.graphviz_chart(
+                            draw_automaton(dfa_def, "Result_DFA", highlighted_states=[s for s in dfa_def["accept_states"] if s != dfa_def["start_state"]]),
+                            use_container_width=True,
+                        )
+                    with fc_right:
+                        st.markdown(
+                            f"**`{pipeline_data['final_states_formula']}`**",
+                            help="Every DFA subset Qi containing at least one original NFA final state (Qi ∩ F ≠ Ø) is marked accepting.",
+                        )
+                        summary_rows = []
+                        for idx_s, st_lbl in enumerate(dfa_def["states"]):
+                            row_d = {"Qi": f"Q{idx_s + 1}", "Subset": st_lbl}
+                            for sym in dfa_def["alphabet"]:
+                                dst = dfa_def["transitions"].get(st_lbl, {}).get(sym, "Ø")
+                                row_d[f"δ(Qi,{sym})"] = f"{pipeline_data['q_aliases'].get(dst, '')} ({dst})".strip()
+                            summary_rows.append(row_d)
+                        st.dataframe(pd.DataFrame(summary_rows), hide_index=True, use_container_width=True)
 
             elif show_min_dfa and min_dfa_def and min_m2_data:
                 m_steps = min_m2_data["sub_steps"]
@@ -1573,7 +1577,7 @@ def main():
                 )
             else:
                 machine_target = "Converted DFA"
-                st.markdown("**Target Automaton:** `Converted DFA (M')`")
+                st.markdown("**Target Automaton:** `Converted DFA`")
             chosen_machine = min_dfa_def if (machine_target == "Minimized DFA" and min_dfa_def) else dfa_def
 
         if is_blank_custom and not target_str:
@@ -1626,10 +1630,22 @@ def main():
                     prev_state = path[current_idx - 1][0]
                     active_edge_tuple = (prev_state, current_state, consumed_symbol)
 
-                st.graphviz_chart(
-                    draw_automaton(chosen_machine, "Stepper_Graph", highlighted_states=[current_state], active_edge=active_edge_tuple),
-                    use_container_width=True,
-                )
+                st_gcol, st_tcol = st.columns([1.5, 1])
+                with st_gcol:
+                    st.graphviz_chart(
+                        draw_automaton(chosen_machine, "Stepper_Graph", highlighted_states=[current_state], active_edge=active_edge_tuple),
+                        use_container_width=True,
+                    )
+                with st_tcol:
+                    cfg_rows = []
+                    for idx_p, (p_st, p_sym) in enumerate(path):
+                        unread = target_str[idx_p:] if idx_p < len(target_str) else "ε"
+                        cfg_rows.append({
+                            "Step": idx_p,
+                            "Configuration (q, w)": f"({p_st}, {unread or 'ε'})",
+                            "Transition δ": "Initial" if idx_p == 0 else f"δ({path[idx_p - 1][0]}, {p_sym}) → {p_st}",
+                        })
+                    st.dataframe(pd.DataFrame(cfg_rows), hide_index=True, use_container_width=True)
 
                 if current_idx == max_steps:
                     disp_str = target_str if target_str else "ε"
@@ -1664,7 +1680,6 @@ def main():
                 st.dataframe(pd.DataFrame(st.session_state.user_actions_log), hide_index=True, use_container_width=True)
             else:
                 st.info("No interaction events recorded yet in this session.")
-
 
 if __name__ == "__main__":
     main()
